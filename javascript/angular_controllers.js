@@ -1,38 +1,43 @@
-var institutionId = 'lancaster';
+// var institutionId = 'lancaster';
+
+// var ApiService = {
+//     prefix: function() {
+//         var uri = URI({
+//             protocol:   'http',
+//             hostname:   'lib-ldiv.lancs.ac.uk',
+//             port:       '8080',
+//             path:       'dmaonline', 
+//         });
+//         return uri.toString();
+//     },
+//     template: {
+//         dr: '/dr/{institutionId}/{startDate}/{endDate}/{dateFilter}'
+//     },
+// };
 
 
-var app = angular.module('dmaApp', []);
+var app = angular.module('dmaoApp', []);
 
+// This is a compromise. Factory is used to create an Angular service with dependency injection 
+// into the controllers to make it explicit that api is an external dependency. 
+// Api is actually a global variable, so that it can be used with jQuery code, without duplicating 
+// the config definition.
 app.factory('api', function() { 
-    return { 
-        // protocol:   'http',
-        // resource:   'lib-ldiv.lancs.ac.uk',
-        // port:       '8080',
-        // suburi:     'dmaonline',
-        // prefix: function() {
-        //     var value = '';
-        //     value += this.protocol + '://' + this.resource;
-        //     if (this.port) value += ':' + this.port;
-        //     if (this.suburi) value += '/' + this.suburi;
-        //     value += '/';  // trailing slash
-        //     return value;
-        // }
-        prefix: function() {
-            var uri = URI({
-                protocol:   'http',
-                hostname:   'lib-ldiv.lancs.ac.uk',
-                port:       '8080',
-                path:       'dmaonline', 
-            });
-            return uri.toString();
-        },
-        template: {
-            dr: '/dr/{institutionId}/{startDate}/{endDate}/{dateFilter}'
-        },
-        // dr_project_start: function() {
-        //     return '/dr/{institutionId}/{startDate}/{endDate}/project_start';
-        // }
-    };
+    return ApiService;
+    // return { 
+    //     prefix: function() {
+    //         var uri = URI({
+    //             protocol:   'http',
+    //             hostname:   'lib-ldiv.lancs.ac.uk',
+    //             port:       '8080',
+    //             path:       'dmaonline', 
+    //         });
+    //         return uri.toString();
+    //     },
+    //     template: {
+    //         dr: '/dr/{institutionId}/{startDate}/{endDate}/{dateFilter}'
+    //     },
+    // };
 });
 
 app.controller('rcukFundedDatasetsCtrl', function($scope, $rootScope, $http, api) {
@@ -180,14 +185,6 @@ app.controller('dmpStatusCtrl', function($scope, $rootScope, $http, api) {
                 });
 
     $http.get(url)
-    // .success(function(response) {
-    //     var count = 0;
-    //     for(i=0;i<response.length;++i) {
-    //         if (response[i].dmp_status === 'completed') ++count;
-    //     }
-    //     var fraction = (count / response.length) * 100;
-    //     $scope.value = Math.ceil(fraction); 
-    // });
     .success(function(response) {
         $scope.value = successHandler(response);
     });
@@ -211,6 +208,7 @@ app.controller('dmpStatusCtrl', function($scope, $rootScope, $http, api) {
 });
 
 app.controller('expectedStorageCtrl', function($scope, $http, api) {
+
     var previous_project_id = -1;
 
     // var url = api.prefix() + 'use_case_4' + '/' + institutionId;

@@ -2,7 +2,7 @@
 <!--[if IE 8]> <html lang="en" class="ie8 no-js"> <![endif]-->
 <!--[if IE 9]> <html lang="en" class="ie9 no-js"> <![endif]-->
 <!--[if !IE]><!-->
-<html lang="en" class="no-js" ng-app="dmaApp">
+<html lang="en" class="no-js" ng-app="dmaoApp">
 <!--<![endif]-->
 <!-- BEGIN HEAD -->
 <head>
@@ -1447,6 +1447,7 @@
 <!-- dmao -->
 <script src="javascript/daterangepicker.js"></script>
 <script src="javascript/URI.min.js"></script>
+<script src="javascript/dmao.js"></script>
 
 
 <!-- END PAGE LEVEL SCRIPTS -->
@@ -1474,21 +1475,21 @@ jQuery(document).ready(function() {
                 negBarColor: '#e02222'
             });
 
-var hosting = URI({
-	protocol: 	'http',
-	hostname: 	'lib-ldiv.lancs.ac.uk',
-	port: 		'8080',
-	path:       'dmaonline'
-	});
-var hostingStr =  hosting.toString();
-console.log('Built URI ' + hostingStr);
+// var hosting = URI({
+// 	protocol: 	'http',
+// 	hostname: 	'lib-ldiv.lancs.ac.uk',
+// 	port: 		'8080',
+// 	path:       'dmaonline'
+// 	});
+// var hostingStr =  hosting.toString();
+// console.log('Built URI ' + hostingStr);
 
-var template = URITemplate(hostingStr + "/use_case_1/dr/{institutionId}/{start}/{end}/project_start");
-var institutionId = 'lancaster';
-var start = '20150101';
-var end = '20201231';
-var result = template.expand({institutionId: institutionId, start: start, end: end});
-console.log('Expanded template ' + result);
+// var template = URITemplate(hostingStr + "/use_case_1/dr/{institutionId}/{start}/{end}/project_start");
+// var institutionId = 'lancaster';
+// var start = '20150101';
+// var end = '20201231';
+// var result = template.expand({institutionId: institutionId, start: start, end: end});
+// console.log('Expanded template ' + result);
 
         // var url =   prefix +
         //             'use_case_1' + '/' +
