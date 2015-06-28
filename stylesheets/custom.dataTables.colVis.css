@@ -1,0 +1,12 @@
+div.ColVis {
+	float: left;
+	margin-right: 50px;
+}
+
+ul.ColVis_collection li {
+	height: 40px;
+}
+
+ul.ColVis_collection li span {
+	font-size: 80%;
+}

@@ -1,0 +1,102 @@
+var Storage = function() {
+    var storageTable;
+
+    var init = function() {
+        setupTable();
+        setupRowExpanderListener();
+    };
+    return {
+        init: init,
+    };
+}();
+
+function setupTable() {
+    $.ajax({
+
+        // url: "http://lib-ldiv.lancs.ac.uk:8080/dmaonline/use_case_5/lancaster/", 
+        
+        url: getUrl({use_case_code:"4", institution:"lancaster"}),
+        success: function(json){
+
+            var hash = toDataTablesFormat(json);
+
+            storageTable = $('#storageTable').DataTable( {
+                data: hash['data'],
+                dom: 'ClfrtipR', // drag n drop reorder
+                columns: [
+                    {
+                        data:           null,
+                        className:      'details-control',
+                        orderable:      false,                      
+                        defaultContent: ''
+                    }, 
+                    { data: 'project_name' },
+                    { data: 'expected_storage' },
+                    { data: 'dataset_size' },                    
+                    { data: 'project_start' },
+                    { data: 'project_end' },
+                    { data: 'dataset_pid' },
+
+                ]
+            });
+        }
+    });
+}
+
+function setupRowExpanderListener() {
+    $('#storageTable tbody').on('click', 'td.details-control', function () {
+
+        var tr = $(this).closest('tr');
+        var row = storageTable.row( tr );
+
+        if ( row.child.isShown() ) {
+            // This row is already open - close it
+            row.child.hide();
+            tr.removeClass('shown');
+        }
+        else {
+            // Open this row
+            row.child( format(row.data()) ).show();
+            tr.addClass('shown');
+        }
+    });
+}
+
+/* Formatting function for row details - modify as you need */
+function format ( d ) {
+    // `d` is the original data object for the row
+    return '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">'+      
+        '<tr>'+        
+            '<td>Project id:</td>'+
+            '<td>'+d.project_id+'</td>'+
+        '</tr>'+  
+        '<tr>'+        
+            '<td>Project name:</td>'+
+            '<td>'+d.project_name+'</td>'+
+        '</tr>'+         
+        '<tr>'+        
+            '<td>Project start date:</td>'+
+            '<td>'+d.project_start+'</td>'+
+        '</tr>'+ 
+        '<tr>'+        
+            '<td>Project end date:</td>'+
+            '<td>'+d.project_end+'</td>'+
+        '</tr>'+   
+        '</tr>'+        
+            '<td>Expected storage:</td>'+
+            '<td>'+d.expected_storage+'</td>'+
+        '</tr>'+                       
+        '<tr>'+        
+            '<td>Dataset pid:</td>'+
+            '<td>'+d.dataset_pid+'</td>'+
+        '</tr>'+  
+        '<tr>'+        
+            '<td>Dataset id:</td>'+
+            '<td>'+d.dataset_id+'</td>'+
+        '</tr>'+              
+        '</tr>'+        
+            '<td>Dataset size:</td>'+
+            '<td>'+d.dataset_size+'</td>'+
+        '</tr>'+      
+    '</table>';
+}
