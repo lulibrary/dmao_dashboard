@@ -2,7 +2,7 @@
     // var $endDate;
     
 
-    $('#reportrange span').html(moment("20000101", "YYYYMMDD").format('MMMM D, YYYY') + ' - ' + moment().format('MMMM D, YYYY'));
+    $('#reportrange span').html(moment(ApiService.defaults.startDate, "YYYYMMDD").format('MMMM D, YYYY') + ' - ' + moment().format('MMMM D, YYYY'));
 
     $('#reportrange').daterangepicker({
         format: 'DD/MM/YYYY',

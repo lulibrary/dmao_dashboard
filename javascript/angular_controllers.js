@@ -1,21 +1,3 @@
-// var institutionId = 'lancaster';
-
-// var ApiService = {
-//     prefix: function() {
-//         var uri = URI({
-//             protocol:   'http',
-//             hostname:   'lib-ldiv.lancs.ac.uk',
-//             port:       '8080',
-//             path:       'dmaonline', 
-//         });
-//         return uri.toString();
-//     },
-//     template: {
-//         dr: '/dr/{institutionId}/{startDate}/{endDate}/{dateFilter}'
-//     },
-// };
-
-
 var app = angular.module('dmaoApp', []);
 
 // This is a compromise. Factory is used to create an Angular service with dependency injection 
@@ -24,241 +6,239 @@ var app = angular.module('dmaoApp', []);
 // the config definition.
 app.factory('api', function() { 
     return ApiService;
-    // return { 
-    //     prefix: function() {
-    //         var uri = URI({
-    //             protocol:   'http',
-    //             hostname:   'lib-ldiv.lancs.ac.uk',
-    //             port:       '8080',
-    //             path:       'dmaonline', 
-    //         });
-    //         return uri.toString();
-    //     },
-    //     template: {
-    //         dr: '/dr/{institutionId}/{startDate}/{endDate}/{dateFilter}'
-    //     },
-    // };
 });
 
-app.controller('rcukFundedDatasetsCtrl', function($scope, $rootScope, $http, api) {
-    console.log('Dot notation string ' + api.template.dr);
-    // console.table(api);
-    // console.log('prefix ' + api.prefix());
-    $scope.value = 0;
 
-    var template = URITemplate(api.prefix() + "/use_case_1/{institutionId}");
-    var url = template.expand(
-                {
-                    institutionId:  institutionId, 
-                });     
-    $http.get(url)
-    .success(function(response) {
-        $scope.value = response.length;
-    });
+app.controller('datasetsCtrl', function($scope, $rootScope, $http, api) {
+    // init
+    $scope.value = 0;
+    request({
+                startDate:      api.defaults.startDate, 
+                endDate:        api.defaults.endDate 
+            });
+
+    function request(message){
+        var uri = URI(api.prefix() + '/use_case_1' + '/' + institutionId);
+        uri.addSearch("date", 'project_start');
+        uri.addSearch("sd", message.startDate);
+        uri.addSearch("ed", message.endDate);
+        console.log('UC datasets ' + uri);
+
+        $http.get(uri)
+        .success(function(response) {
+            var value = response.length;
+            // only update if dirty
+            if (value !== $scope.value)
+                $scope.value = value;
+        });
+    }
 
     $rootScope.$on("DatePickerEvent", function (event, message) {
-        // $scope.message = message.msg;
-        // console.log('In RCUK message.msg ' + $scope.message);
-        // $scope.startDate = message.startDate;
-        // console.log('In RCUK message.startDate ' + $scope.startDate);        
-        // $scope.endDate = message.endDate;
-        // console.log('In RCUK message.endDate ' + $scope.endDate);   
-        $scope.value = 0;        
-        // Build url for date range
-        // var url =   prefix +
-        //             'use_case_1' + '/' +
-        //             'dr' + '/' +
-        //             institutionId + '/' + 
-        //             message.startDate + '/' +
-        //             message.endDate + '/' +
-        //             'project_start';
-        // console.log('Date range url ' + url);
+        request(message);
+    });        
+});   
 
-        var template = URITemplate(api.prefix() + '/use_case_1' + api.template.dr);
-        var url = template.expand(
-                    {
-                        institutionId:  institutionId, 
-                        startDate:      message.startDate, 
-                        endDate:        message.endDate,
-                        dateFilter:     'project_start'
-                    });
-        // console.log('Expanded template ' + result);
-        $http.get(url)
+app.controller('rcukFundedDatasetsCtrl', function($scope, $rootScope, $http, api) {
+    // init
+    $scope.value = 0;
+    request({
+                startDate:      api.defaults.startDate, 
+                endDate:        api.defaults.endDate 
+            });
+
+    function request(message){
+        var uri = URI(api.prefix() + '/use_case_1' + '/' + institutionId);
+        uri.addSearch("date", 'project_start');
+        uri.addSearch("sd", message.startDate);
+        uri.addSearch("ed", message.endDate);
+        uri.addSearch("filter", 'rcuk');
+        console.log('UC 1 ' + uri);
+
+        $http.get(uri)
         .success(function(response) {
-            $scope.value = response.length;
+            var value = response.length;
+            // only update if dirty
+            if (value !== $scope.value)
+                $scope.value = value;
         });
+    }
+
+    $rootScope.$on("DatePickerEvent", function (event, message) {
+        request(message);
     });        
 });
 
 app.controller('dmpsCreatedCtrl', function($scope, $rootScope, $http, api) {
-	$scope.value = 0;
+    // init
+    $scope.value = 0;
+    request({
+                startDate:      api.defaults.startDate, 
+                endDate:        api.defaults.endDate 
+            });
     
-    // var url = api.prefix() + 'use_case_2a' + '/' + institutionId + '/' + 'count';
-
-    var template = URITemplate(api.prefix() + "/use_case_2a/{institutionId}/count");
-    var url = template.expand(
-                {
-                    institutionId:  institutionId, 
-                });      
-    $http.get(url)
-    .success(function(response) {
-		$scope.value = response[0].num_projects_with_a_dmp;
-    });    
-
-    $rootScope.$on("DatePickerEvent", function (event, message) {
-        console.log('dmpsCreatedCtrl message received');
-        $scope.value = 0;        
-        var template = URITemplate(api.prefix() + '/use_case_2a' + api.template.dr);
-        var url = template.expand(
-                    {
-                        institutionId:  institutionId, 
-                        startDate:      message.startDate, 
-                        endDate:        message.endDate,
-                        dateFilter:     'project_start'
-                    });
-        console.log('dmpsCreatedCtrl date range url ' + url);
-        $http.get(url)
+    function request(message){
+        var uri = URI(api.prefix() + '/use_case_2a' + '/' + institutionId);
+        uri.addSearch("date", 'project_start');
+        uri.addSearch("sd", message.startDate);
+        uri.addSearch("ed", message.endDate);
+        console.log('UC 2a ' + uri);
+        $http.get(uri)
         .success(function(response) {
             var count = 0;
             for(i=0;i<response.length;++i) {
                 if (response[i].has_dmp === true) ++count;
             }
-            $scope.value = count;
-            console.log('dmpsCreated date range count ' + count);
+
+            // only update if dirty
+            if (count !== $scope.value)
+                $scope.value = count;
         });
-    });
+    }
+
+    $rootScope.$on("DatePickerEvent", function (event, message) {
+        request(message);
+    });    
 });
 
 app.controller('noDmpProjectsCtrl', function($scope, $rootScope, $http, api) {
-	$scope.value = 0;
+    // init
+    $scope.value = 0;
+    request({
+                startDate:      api.defaults.startDate, 
+                endDate:        api.defaults.endDate 
+            });
 
-    // var url = api.prefix() + 'use_case_2b' + '/' + institutionId + '/' + 'count';
-
-    var template = URITemplate(api.prefix() + "/use_case_2b/{institutionId}/count");
-    var url = template.expand(
-                {
-                    institutionId:  institutionId, 
-                });    
-    $http.get(url)
-    .success(function(response) {
-		$scope.value = response[0].num_funded_proj_with_no_dmp;
-    });
-
-    $rootScope.$on("DatePickerEvent", function (event, message) {
-        $scope.value = 0;        
-        var template = URITemplate(api.prefix() + '/use_case_2b' + api.template.dr);
-        var url = template.expand(
-                    {
-                        institutionId:  institutionId, 
-                        startDate:      message.startDate, 
-                        endDate:        message.endDate,
-                        dateFilter:     'project_start'
-                    });
-        $http.get(url)
+    function request(message){
+        var uri = URI(api.prefix() + '/use_case_2b' + '/' + institutionId);
+        uri.addSearch("date", 'project_start');
+        uri.addSearch("sd", message.startDate);
+        uri.addSearch("ed", message.endDate);
+        console.log('UC 2b ' + uri);
+        $http.get(uri)
         .success(function(response) {
             var count = 0;
             for(i=0;i<response.length;++i) {
                 if (response[i].has_dmp === false) ++count;
             }
-            $scope.value = count;
-            console.log('noDmpProjects date range count ' + count);
+
+            // only update if dirty
+            if (count !== $scope.value)
+                $scope.value = count;
         });
-    });
-});
-
-app.controller('dmpStatusCtrl', function($scope, $rootScope, $http, api) {    
-    // var url = api.prefix() + 'use_case_3' + '/' + institutionId;
-
-    function successHandler(response) {
-        var count = 0;
-        for(i=0;i<response.length;++i) {
-            if (response[i].dmp_status === 'completed') ++count;
-        }
-        var fraction = (count / response.length) * 100;
-        return Math.ceil(fraction);
     }
 
-    var template = URITemplate(api.prefix() + "/use_case_3/{institutionId}");
-    var url = template.expand(
-                {
-                    institutionId:  institutionId, 
-                });
-
-    $http.get(url)
-    .success(function(response) {
-        $scope.value = successHandler(response);
-    });
-
     $rootScope.$on("DatePickerEvent", function (event, message) {
-        $scope.value = 0;        
-        var template = URITemplate(api.prefix() + '/use_case_3' + api.template.dr);
-        var url = template.expand(
-                    {
-                        institutionId:  institutionId, 
-                        startDate:      message.startDate, 
-                        endDate:        message.endDate,
-                        dateFilter:     'project_start'
-                    });
-        $http.get(url)
-        .success(function(response) {
-            $scope.value = successHandler(response);
-        });
-    });    
-
+        request(message);
+    });
 });
 
-app.controller('expectedStorageCtrl', function($scope, $http, api) {
+app.controller('dmpStatusCtrl', function($scope, $rootScope, $http, api) {  
+    // init
+    $scope.fraction = {numerator: 0, denominator: 0}
+    request({
+                startDate:      api.defaults.startDate, 
+                endDate:        api.defaults.endDate 
+            });
 
-    var previous_project_id = -1;
-
-    // var url = api.prefix() + 'use_case_4' + '/' + institutionId;
-
-    var template = URITemplate(api.prefix() + "/use_case_4/{institutionId}");
-    var url = template.expand(
-                {
-                    institutionId:  institutionId, 
-                });
-
-    $http.get(url)
-    .success(function(response) {
-    	var total = 0;
-    	for(i=0;i<response.length;++i) {            
-    		if (response[i].project_id != previous_project_id) {
-                total += response[i].expected_storage;
+    function request(message){
+        var uri = URI(api.prefix() + '/use_case_3' + '/' + institutionId);
+        uri.addSearch("date", 'project_start');
+        uri.addSearch("sd", message.startDate);
+        uri.addSearch("ed", message.endDate);
+        console.log('UC 3 ' + uri);
+        $http.get(uri)
+        .success(function(response) {
+            var count = 0;
+            for(i=0;i<response.length;++i) {
+                if (response[i].dmp_status === 'completed') ++count;
             }
-            previous_project_id = response[i].project_id;
-    	}
-		$scope.value = Math.ceil(total);
-    });
+
+            // only update if dirty
+            if (count !== $scope.fraction.numerator)
+                $scope.fraction.numerator = count;
+            // only update if dirty
+            if (response.length !== $scope.fraction.denominator)
+                $scope.fraction.denominator = response.length;
+        });
+    }
+
+    $rootScope.$on("DatePickerEvent", function (event, message) {
+        request(message);
+    });  
+});
+
+app.controller('expectedStorageCtrl', function($scope, $rootScope, $http, api) {
+    // init
+    $scope.value = 0;
+    request({
+                startDate:      api.defaults.startDate, 
+                endDate:        api.defaults.endDate 
+            });
+
+    function request(message){
+        var uri = URI(api.prefix() + '/use_case_4' + '/' + institutionId);
+        uri.addSearch("date", 'project_start');
+        uri.addSearch("sd", message.startDate);
+        uri.addSearch("ed", message.endDate);
+        console.log('UC 4 ' + uri);
+        $http.get(uri)
+        .success(function(response) {
+            var total = 0;
+            var previous_project_id = -1;
+            for(i=0;i<response.length;++i) {            
+                if (response[i].project_id != previous_project_id) {
+                    total += response[i].expected_storage;
+                }
+                previous_project_id = response[i].project_id;
+            }
+            var value = Math.ceil(total);
+
+            // only update if dirty
+            if (value !== $scope.value)
+                $scope.value = value;
+        });
+    }
+
+    $rootScope.$on("DatePickerEvent", function (event, message) {
+        request(message);
+    });   
 });
 
 app.controller('rcukAccessComplianceCtrl', function($scope, $rootScope, $http, api) {
-    // var url = api.prefix() + 'use_case_5' + '/' + institutionId;
+    // init
+    $scope.value = 0;
+    request({
+                startDate:      api.defaults.startDate, 
+                endDate:        api.defaults.endDate 
+            });
 
-    var template = URITemplate(api.prefix() + "/use_case_5/{institutionId}");
-    var url = template.expand(
-                {
-                    institutionId:  institutionId, 
-                });
+    function request(message){
+        var uri = URI(api.prefix() + '/use_case_5' + '/' + institutionId);
+        uri.addSearch("date", 'project_start');
+        uri.addSearch("sd", message.startDate);
+        uri.addSearch("ed", message.endDate);
+        console.log('UC 5 ' + uri);
+        $http.get(uri)
+        .success(function(response) {
+            var count = 0;
+            for(i=0;i<response.length;++i) {
+                if (response[i].data_access_statement === 'exists with persistent link') ++count;
+            }
 
-    $http.get(url)
-    .success(function(response) {
-    	var count = 0;
-    	for(i=0;i<response.length;++i) {
-    		if (response[i].data_access_statement === 'exists with persistent link') ++count;
-    	}
-        var fraction = (count / response.length) * 100;
-        $scope.value = Math.ceil(fraction); 
-
-        if ($scope.value === 0)
-            $rootScope.$broadcast("NonComplianceEvent", {
-            msg: "Compliance FAIL"
+            // only update if dirty
+            var value = 0;
+            if (count && count !== $scope.value)
+                value = (count / response.length) * 100;
+                $scope.value = Math.ceil(value);
         });
-    });
+    }
+
+    $rootScope.$on("DatePickerEvent", function (event, message) {
+        request(message);
+    });    
 });
 
 app.controller('accessDataCtrl', function($scope, $http, api) {
-    // var url = api.prefix() + 
     var template = URITemplate(api.prefix() + "/dataset_accesses/inst/count/{institutionId}");
     var url = template.expand(
                 {
@@ -313,22 +293,42 @@ app.controller('dateCtrl', function($scope, $rootScope) {
     };
 });
 
-app.controller('dateRangeCtrl', function($scope, $rootScope) {
-    $scope.startDate = '20000101';
-    $scope.endDate = '99991231';
-    // $scope.stateChangeHandler = function() {
-    //     console.log('Start date change');
-    //     // alert('bla');
-    //     // $rootScope.$broadcast("DatePickerEvent", {msg: "The year is " + $scope.dateRange});
-    // };
-    $scope.dateRangeChangeHandler = function() {
-        console.log('Date range change');
-        // alert('bla');
+app.controller('dateRangeCtrl', function($scope, $rootScope, $interval, api) {
+    $scope.startDate = api.defaults.startDate;
+    $scope.endDate = api.defaults.endDate;
+
+    function broadcastDate(msg){
+        console.log(msg);
         $rootScope.$broadcast("DatePickerEvent", {  
-                                                    msg: "New date range ",
+                                                    msg: msg,
                                                     startDate: $scope.startDate,
                                                     endDate: $scope.endDate
                                                     }
-            );
-    };    
+            );       
+    }
+
+    $scope.dateRangeChangeHandler = function() {
+        broadcastDate("New date range");
+    };   
+
+
+    function update() {
+        broadcastDate("Timed update");
+    }
+    var timeout = 100000000;
+    $interval(update, timeout); 
 });
+
+
+
+app.controller('updateCtrl', function($scope, $rootScope, $interval) {
+    // console.log('updateCtrl initialised');
+  // var timeout = 10000;
+
+  // function update() {
+
+  // }
+
+  // $interval(update, timeout);
+});
+
