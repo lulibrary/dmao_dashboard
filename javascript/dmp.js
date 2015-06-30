@@ -12,10 +12,7 @@ var Dmp = function() {
 
 function setupTable() {
     $.ajax({
-
-        // url: "http://lib-ldiv.lancs.ac.uk:8080/dmaonline/use_case_5/lancaster/", 
-        
-        url: getUrl({use_case_code:"2a", institution:"lancaster"}),
+        url: ApiService.uri.dmps(),
         success: function(json){
 
             var hash = toDataTablesFormat(json);

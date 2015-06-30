@@ -12,10 +12,7 @@ var RcukAccessCompliance = function() {
 
 function setupTable() {
     $.ajax({
-
-        // url: "http://lib-ldiv.lancs.ac.uk:8080/dmaonline/use_case_5/lancaster/", 
-        
-        url: getUrl({use_case_code:"5", institution:"lancaster"}),
+        url: ApiService.uri.rcukAccessCompliance(),
         success: function(json){
 
             var hash = toDataTablesFormat(json);

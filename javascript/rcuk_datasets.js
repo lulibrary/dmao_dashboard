@@ -11,11 +11,12 @@ var RcukDatasets = function() {
 }();
 
 function setupTable() {
+    var uri = ApiService.uri.datasets();
+    uri.addSearch("filter", 'rcuk');
+    // console.table(uri);
+    
     $.ajax({
-
-        // url: "http://lib-ldiv.lancs.ac.uk:8080/dmaonline/use_case_5/lancaster/", 
-        
-        url: getUrl({use_case_code:"1", institution:"lancaster"}),
+        url: uri,
         success: function(json){
 
             var hash = toDataTablesFormat(json);
