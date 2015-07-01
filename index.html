@@ -660,10 +660,11 @@
 			<div class="row">
 				<div class="col-md-6 col-sm-6">
 					<!-- BEGIN PORTLET-->
-					<div class="portlet solid bordered grey-cararra">
+					<div class="portlet light">
 						<div class="portlet-title">
 							<div class="caption">
-								<!-- <i class="fa fa-bar-chart-o"></i>-->Data access
+								<!-- <i class="fa fa-bar-chart-o"></i>--><!--Data access-->
+								<span class="caption-subject font-red-sunglo bold uppercase">Data access</span>
 							</div>
 						</div>
 						<div class="portlet-body">
@@ -676,13 +677,16 @@
 							</div>
 						</div>
 					</div>
+				</div>
 					<!-- END PORTLET-->
+				<div class="col-md-6 col-sm-6">
 					<!-- BEGIN PORTLET-->
- 					<!-- <div class="portlet solid bordered grey-cararra"> -->
-						<!-- <div class="portlet-title"> -->
-							<!-- <div class="caption"> -->
+ 					<div class="portlet light">
+						<div class="portlet-title">
+							<div class="caption">
 								<!-- <i class="fa fa-bar-chart-o"></i>--><!--Metadata access-->
-		<!-- 					</div>
+								<span class="caption-subject font-green-sharp bold uppercase">Metadata access</span>
+							</div>
 						</div>
 						<div class="portlet-body">
 							<div id="metadata_access_loading">
@@ -693,7 +697,7 @@
 								</div>
 							</div>
 						</div>
-					</div> -->
+					</div>
 					<!-- END PORTLET-->					
 				</div>
 				<!-- <div class="col-md-6 col-sm-6"> -->
@@ -1489,7 +1493,7 @@
 <script src="javascript/daterangepicker.js"></script>
 <script src="javascript/charts.js"></script>
 <script src="javascript/dataAccessChart.js"></script>
-<!-- <script src="javascript/metadataAccessChart.js"></script> -->
+<script src="javascript/metadataAccessChart.js"></script>
 <script src="javascript/URI.min.js"></script>
 
 
@@ -1512,7 +1516,7 @@ jQuery(document).ready(function() {
 
 	<!-- dmao -->
    DataAccessChart.init();
-   // MetadataAccessChart.init();
+   MetadataAccessChart.init();
 
             //    $("#sparkline_bar").sparkline([8, 9, 10, 11, 10, 10, 12, 10, 10, 11, 9, 12, 11, 10, 9, 11, 13, 13, 12, 8, 9, 10, 11, 10, 10, 12, 10, 10, 11, 9, 12, 11, 10, 9, 11, 13, 13, 8, 9, 10, 11, 10, 10, 12, 10, 10, 11, 9, 12, 11, 10, 9, 11, 13, 13, 8, 9, 10, 11, 10, 10, 12, 10, 10, 11, 9, 12, 11, 10, 9, 11, 13, 13, 8, 9, 10, 11, 10, 10, 12, 10, 10, 11, 9, 12, 11, 10, 9, 11, 13, 13, 8, 9, 10, 11, 10, 10, 12, 10, 10, 11, 9, 12, 11, 10, 9, 11, 13, 13,], {
             //     type: 'bar',

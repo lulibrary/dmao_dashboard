@@ -99,8 +99,8 @@ var ApiService = {
                     filteredData.push(data[i]);
                 }
             }
-            console.log('filteredData');
-            console.table(filteredData);
+            // console.log('filteredData');
+            // console.table(filteredData);
             return filteredData;
         },
         dataLastNMonths: function(data, nMonths){
@@ -123,8 +123,8 @@ var ApiService = {
                     }
                 }
             }
-            console.log('monthData');
-            console.table(monthData);
+            // console.log('monthData');
+            // console.table(monthData);
             return monthData;
         },    
     },
