@@ -370,7 +370,7 @@ app.controller('dateRangeCtrl', function($scope, $rootScope, $interval, api) {
     function update() {
         broadcastDate("Timed update");
     }
-    var timeout = 60000;
+    var timeout = 600000;
     $interval(update, timeout); 
 });
 

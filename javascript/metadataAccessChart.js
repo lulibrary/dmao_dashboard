@@ -1,4 +1,4 @@
-var DataAccessChart = function() {
+var MetadataAccessChart = function() {
     var init = function() {
         setupChart();
     };
@@ -13,18 +13,18 @@ function setupChart() {
         success: function(data){
             console.log('data');
             console.log(data);
-            var filteredData = ApiService.filter.datasetAccess(data, 'data_download');
+            var filteredData = ApiService.filter.datasetAccess(data, 'metadata');
             var numMonths = 12;
             var monthData = ApiService.filter.dataLastNMonths(filteredData, numMonths);
             var chartData = reverseChronoChartData(monthData);
 
 
-            if ($('#data_access').size() != 0) {
+            if ($('#metadata_access').size() != 0) {
 
-                $('#data_access_loading').hide();
-                $('#data_access_content').show();
+                $('#metadata_access_loading').hide();
+                $('#metadata_access_content').show();
 
-                var plot_statistics = $.plot($("#data_access"),
+                var plot_statistics = $.plot($("#metadata_access"),
                     [{
                         data: chartData,
                         lines: {
@@ -88,7 +88,7 @@ function setupChart() {
                     });
 
                 var previousPoint = null;
-                $("#data_access").bind("plothover", function (event, pos, item) {
+                $("#metadata_access").bind("plothover", function (event, pos, item) {
                     $("#x").text(pos.x.toFixed(2));
                     $("#y").text(pos.y.toFixed(2));
                     if (item) {

@@ -28,7 +28,7 @@ var ApiService = {
             return uri;
         },
         datasets: function(){
-            var uri = URI(ApiService.prefix() + '/use_case_1' + '/' + institutionId);
+            var uri = URI(ApiService.prefix() + '/datasets' + '/' + institutionId);
             return uri;
         },
         datasetsByDateRange: function(params){
@@ -37,7 +37,7 @@ var ApiService = {
             return uriWithDateRange;
         },
         dmps: function(){
-            var uri = URI(ApiService.prefix() + '/use_case_2a' + '/' + institutionId);
+            var uri = URI(ApiService.prefix() + '/dmps' + '/' + institutionId);
             return uri;
         },
         dmpsByDateRange: function(params){
@@ -46,7 +46,7 @@ var ApiService = {
             return uriWithDateRange;
         },        
         noDmps: function(){
-            var uri = URI(ApiService.prefix() + '/use_case_2b' + '/' + institutionId);
+            var uri = URI(ApiService.prefix() + '/nodmps' + '/' + institutionId);
             return uri;
         },
         noDmpsByDateRange: function(params){
@@ -55,7 +55,7 @@ var ApiService = {
             return uriWithDateRange;
         },   
         dmpStatus: function(){
-            var uri = URI(ApiService.prefix() + '/use_case_3' + '/' + institutionId);
+            var uri = URI(ApiService.prefix() + '/dmp_status' + '/' + institutionId);
             return uri;
         },
         dmpStatusByDateRange: function(params){
@@ -64,7 +64,7 @@ var ApiService = {
             return uriWithDateRange;
         },   
         expectedStorage: function(){
-            var uri = URI(ApiService.prefix() + '/use_case_4' + '/' + institutionId);
+            var uri = URI(ApiService.prefix() + '/expected_storage' + '/' + institutionId);
             return uri;
         },
         expectedStorageByDateRange: function(params){
@@ -73,7 +73,7 @@ var ApiService = {
             return uriWithDateRange;
         },    
         rcukAccessCompliance: function(){
-            var uri = URI(ApiService.prefix() + '/use_case_5' + '/' + institutionId);
+            var uri = URI(ApiService.prefix() + '/rcuk_as' + '/' + institutionId);
             return uri;
         },
         rcukAccessComplianceByDateRange: function(params){
@@ -90,6 +90,43 @@ var ApiService = {
             var uriWithDateRange = this.addDateRange(uri, params);
             return uriWithDateRange;
         },
+    },
+    filter: {
+        datasetAccess: function(data, accessType){
+            var filteredData = [];
+            for(var i = 0; i < data.length; ++i) {
+                if (data[i].access_type === accessType) {
+                    filteredData.push(data[i]);
+                }
+            }
+            console.log('filteredData');
+            console.table(filteredData);
+            return filteredData;
+        },
+        dataLastNMonths: function(data, nMonths){
+            // init
+            var monthData = [];
+            for(var i = 0; i < nMonths; ++i) {
+                var startDate = moment().subtract(i, 'months').startOf('month').format('YYYY-MM-DD');
+                var endDate = moment().subtract(i, 'months').endOf('month').format('YYYY-MM-DD');
+                monthData.push({startDate: startDate, 
+                                endDate: endDate,
+                                month: moment(startDate).format('MMM'),
+                                value: 0
+                            });
+            }
+
+            for(var i = 0; i < data.length; ++i) {
+                for(var j = 0; j < nMonths; ++j) {
+                    if (data[i].access_date >= monthData[j].startDate && data[i].access_date <= monthData[j].endDate){
+                        monthData[j].value += data[i].counter;
+                    }
+                }
+            }
+            console.log('monthData');
+            console.table(monthData);
+            return monthData;
+        },    
     },
     template: {
         dr: '/dr/{institutionId}/{startDate}/{endDate}/{dateFilter}'
