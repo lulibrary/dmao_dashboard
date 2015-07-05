@@ -1,4 +1,67 @@
-var institutionId = 'lancaster';
+var App = {
+    institutionId: 'lancaster',
+    startDate:  '',
+    endDate: '',
+    updateDelay: 60000,
+};
+
+// function dataAccessUpdate() {
+//     var params = {  dateFilter: 'project_start',
+//                     startDate: App.startDate, 
+//                     endDate: App.endDate,
+//                 };
+//     var uri = ApiService.uri.datasetAccessByDateRange(params);
+//     console.log('data access ' + uri);
+//     $.get(uri)
+//     .success(function(data) {
+//         var filteredData = ApiService.filter.datasetAccess(data, 'data_download');
+//         var count = 0;
+//         for(i=0;i<filteredData.length;++i) {
+//             count += filteredData[i].counter;
+//         }
+//         // only update if dirty
+//         if (count != $('#dataAccess').html())
+//             $('#dataAccess').html(count);
+//     });
+// }
+
+// function metadataAccessUpdate() {
+//     var params = {  dateFilter: 'project_start',
+//                     startDate: App.startDate, 
+//                     endDate: App.endDate,
+//                 };
+//     var uri = ApiService.uri.datasetAccessByDateRange(params);
+//     console.log('metadata access ' + uri);
+//     $.get(uri)
+//     .success(function(data) {
+//         var filteredData = ApiService.filter.datasetAccess(data, 'metadata');
+//         var count = 0;
+//         for(i=0;i<filteredData.length;++i) {
+//             count += filteredData[i].counter;
+//         }
+//         // only update if dirty
+//         if (count != $('#metadataAccess').html())
+//             $('#metadataAccess').html(count);
+//     });
+// }
+// $(document).ready(function(){
+//     $("#sd").change(function(){
+//         update();
+//     });
+//     $("#ed").change(function(){
+//         update();
+//     });
+// });
+
+// function update(){
+//     console.log('update');
+// }
+
+
+
+
+
+
 
 var ApiService = {
     version:    'v0.2', 
@@ -28,7 +91,7 @@ var ApiService = {
             return uri;
         },
         datasets: function(){
-            var uri = URI(ApiService.prefix() + '/datasets' + '/' + institutionId);
+            var uri = URI(ApiService.prefix() + '/datasets' + '/' + App.institutionId);
             return uri;
         },
         datasetsByDateRange: function(params){
@@ -37,7 +100,7 @@ var ApiService = {
             return uriWithDateRange;
         },
         dmps: function(){
-            var uri = URI(ApiService.prefix() + '/dmps' + '/' + institutionId);
+            var uri = URI(ApiService.prefix() + '/dmps' + '/' + App.institutionId);
             return uri;
         },
         dmpsByDateRange: function(params){
@@ -46,7 +109,7 @@ var ApiService = {
             return uriWithDateRange;
         },        
         noDmps: function(){
-            var uri = URI(ApiService.prefix() + '/nodmps' + '/' + institutionId);
+            var uri = URI(ApiService.prefix() + '/nodmps' + '/' + App.institutionId);
             return uri;
         },
         noDmpsByDateRange: function(params){
@@ -55,7 +118,7 @@ var ApiService = {
             return uriWithDateRange;
         },   
         dmpStatus: function(){
-            var uri = URI(ApiService.prefix() + '/dmp_status' + '/' + institutionId);
+            var uri = URI(ApiService.prefix() + '/dmp_status' + '/' + App.institutionId);
             return uri;
         },
         dmpStatusByDateRange: function(params){
@@ -64,7 +127,7 @@ var ApiService = {
             return uriWithDateRange;
         },   
         expectedStorage: function(){
-            var uri = URI(ApiService.prefix() + '/expected_storage' + '/' + institutionId);
+            var uri = URI(ApiService.prefix() + '/expected_storage' + '/' + App.institutionId);
             return uri;
         },
         expectedStorageByDateRange: function(params){
@@ -73,7 +136,7 @@ var ApiService = {
             return uriWithDateRange;
         },    
         rcukAccessCompliance: function(){
-            var uri = URI(ApiService.prefix() + '/rcuk_as' + '/' + institutionId);
+            var uri = URI(ApiService.prefix() + '/rcuk_as' + '/' + App.institutionId);
             return uri;
         },
         rcukAccessComplianceByDateRange: function(params){
@@ -82,7 +145,7 @@ var ApiService = {
             return uriWithDateRange;
         },  
         datasetAccess: function(){
-            var uri = URI(ApiService.prefix() + '/dataset_accesses' + '/' + institutionId);
+            var uri = URI(ApiService.prefix() + '/dataset_accesses' + '/' + App.institutionId);
             return uri;
         },
         datasetAccessByDateRange: function(params){

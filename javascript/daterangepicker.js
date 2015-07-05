@@ -1,7 +1,3 @@
-    // var $startDate;
-    // var $endDate;
-    
-
     $('#reportrange span').html(moment(ApiService.defaults.startDate, "YYYYMMDD").format('MMMM D, YYYY') + ' - ' + moment().format('MMMM D, YYYY'));
 
     $('#reportrange').daterangepicker({
@@ -48,9 +44,19 @@
         var endDate = end.format('YYYYMMDD');
         $('#startDate').val(startDate);
         $('#endDate').val(endDate);
+        $('#sd').val(startDate);
+        $('#ed').val(endDate);
+        $('startDate').val(startDate);
+        $('endDate').val(endDate);
         // $('#startDate').triggerHandler('change');
         angular.element($('#startDate')).triggerHandler('input');
         angular.element($('#endDate')).triggerHandler('input');
+        $("#sd").val(startDate).change();
+        $("#ed").val(startDate).change();
+
+        console.log(startDate, endDate);
+        // SummaryUpdate();
+        DataAccessSummary.update;
     });
 
    $('.applyBtn').click(function() {
@@ -69,6 +75,19 @@
         // $endDate = end.format('YYYYMMDD');
         $('#startDate').val(startDate);
         $('#endDate').val(endDate);
+        $('#sd').val(startDate);
+        $('#ed').val(endDate);
+        $('startDate').val(startDate);
+        $('endDate').val(endDate);        
         angular.element($('#startDate')).triggerHandler('input');
-        angular.element($('#endDate')).triggerHandler('input');        
+        angular.element($('#endDate')).triggerHandler('input');   
+
+        console.log(startDate, endDate);  
+        // SummaryUpdate();
+        DataAccessSummary.update;
+
+        // var scope = angular.element($("datasetsCtrl")).scope();
+        // scope.$apply(function(){
+        //     scope.startDate = startDate;
+        // });   
     });

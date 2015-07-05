@@ -586,15 +586,13 @@
 					</div>
 				</div>	
 
-<!--  				<div ng-controller="dataAccessCtrl">
 					<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
 						<div class="dashboard-stat yellow-casablanca">
 							<div class="visual">
 								<i class="fa fa-cloud-download"></i>
 							</div>
 							<div class="details">
-								<div class="number" ng-cloak>
-									 {{value}}
+								<div id="dataAccess" class="number" ng-cloak>
 								</div>
 								<div class="desc">
 									 Data access
@@ -605,17 +603,14 @@
 							</a>
 						</div>
 					</div>
-				</div>	
 
-				<div ng-controller="metadataAccessCtrl">
 					<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
 						<div class="dashboard-stat yellow-casablanca">
 							<div class="visual">
 								<i class="fa fa-cloud-download"></i>
 							</div>
 							<div class="details">
-								<div class="number" ng-cloak>
-									 {{value}}
+								<div id="metadataAccess" class="number">
 								</div>
 								<div class="desc">
 									 Metadata access
@@ -626,7 +621,7 @@
 							</a>
 						</div>
 					</div>
-				</div>  -->	
+
 
 			<!-- <div id="sparkline_bar"></div> -->
 
@@ -646,6 +641,8 @@
 
 
 			</div>
+			<input id="sd"/>
+			<input id="ed"/>
 
 
  
@@ -1490,12 +1487,13 @@
 
 <!-- dmao -->
 <script src="javascript/dmao.js"></script>
+<script src="javascript/data_access_summary.js"></script>
+<!-- <script src="javascript/summary_update.js"></script> -->
 <script src="javascript/daterangepicker.js"></script>
 <script src="javascript/charts.js"></script>
 <script src="javascript/dataAccessChart.js"></script>
 <script src="javascript/metadataAccessChart.js"></script>
 <script src="javascript/URI.min.js"></script>
-
 
 
 <!-- END PAGE LEVEL SCRIPTS -->
@@ -1517,6 +1515,19 @@ jQuery(document).ready(function() {
 	<!-- dmao -->
    DataAccessChart.init();
    MetadataAccessChart.init();
+   DataAccessSummary(App.updateDelay);
+   // SummaryUpdate();
+
+   
+
+
+//    function update(){
+//     console.log('update');
+// }
+//        $("#sd, #ed").change(function(){
+//         update();
+//     });
+ 
 
             //    $("#sparkline_bar").sparkline([8, 9, 10, 11, 10, 10, 12, 10, 10, 11, 9, 12, 11, 10, 9, 11, 13, 13, 12, 8, 9, 10, 11, 10, 10, 12, 10, 10, 11, 9, 12, 11, 10, 9, 11, 13, 13, 8, 9, 10, 11, 10, 10, 12, 10, 10, 11, 9, 12, 11, 10, 9, 11, 13, 13, 8, 9, 10, 11, 10, 10, 12, 10, 10, 11, 9, 12, 11, 10, 9, 11, 13, 13, 8, 9, 10, 11, 10, 10, 12, 10, 10, 11, 9, 12, 11, 10, 9, 11, 13, 13, 8, 9, 10, 11, 10, 10, 12, 10, 10, 11, 9, 12, 11, 10, 9, 11, 13, 13,], {
             //     type: 'bar',

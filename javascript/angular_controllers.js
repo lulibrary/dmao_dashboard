@@ -34,6 +34,11 @@ app.controller('datasetsCtrl', function($scope, $rootScope, $http, api) {
         });
     }
 
+    // $scope.$watch('startDate', function(newValue, oldValue) {
+    //     console.log(newValue);
+    //     console.log(oldValue);
+    // });
+
     $rootScope.$on("DatePickerEvent", function (event, message) {
         request(message);
     });        
@@ -387,3 +392,38 @@ app.controller('dateRangeCtrl', function($scope, $rootScope, $interval, api) {
 //   // $interval(update, timeout);
 // });
 
+// function metadataAccessUpdate() {
+//     var params = {  dateFilter: 'project_start',
+//                     startDate: startDate, 
+//                     endDate: endDate,
+//                 };
+//     var uri = ApiService.uri.datasetAccessByDateRange(params);
+//     console.log('metadata access ' + uri);
+//     $.get(uri)
+//     .success(function(response) {
+//         var filteredData = ApiService.filter.datasetAccess(data, 'metadata');
+//         var count = 0;
+//         for(i=0;i<filteredData.length;++i) {
+//             count += filteredData[i].counter;
+//         }
+//         // only update if dirty
+//         if (count !== $metadataAccess.val())
+//             $metadataAccess.val(count);
+//     });
+// }
+// // $(document).ready(function(){
+// //     $("#sd").change(function(){
+// //         update();
+// //     });
+// //     $("#ed").change(function(){
+// //         update();
+// //     });
+// // });
+
+// // function update(){
+// //     console.log('update');
+// // }
+
+// function setIntervals(){
+//     setInterval(metadataAccessUpdate, 1000);
+// }
