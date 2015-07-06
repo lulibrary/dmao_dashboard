@@ -8,36 +8,32 @@ app.factory('api', function() {
     return ApiService;
 });
 
-
 app.controller('datasetsCtrl', function($scope, $rootScope, $http, api) {
     // init
     $scope.value = 0;
     request({
-                startDate:      api.defaults.startDate, 
-                endDate:        api.defaults.endDate 
+                startDate:      App.startDate, 
+                endDate:        App.endDate 
             });
 
     function request(message){
         var params = {  dateFilter: 'project_start',
                         startDate: message.startDate, 
                         endDate: message.endDate,
+                        faculty: message.faculty
                     };
-        var uri = api.uri.datasetsByDateRange(params);
+        var uri = api.uri.datasets(params);
+        uri.addSearch("count", 'true');
         console.log('UC datasets ' + uri);
 
         $http.get(uri)
         .success(function(response) {
-            var value = response.length;
+            var value = response[0].num_datasets;
             // only update if dirty
             if (value !== $scope.value)
                 $scope.value = value;
         });
     }
-
-    // $scope.$watch('startDate', function(newValue, oldValue) {
-    //     console.log(newValue);
-    //     console.log(oldValue);
-    // });
 
     $rootScope.$on("DatePickerEvent", function (event, message) {
         request(message);
@@ -48,22 +44,24 @@ app.controller('rcukFundedDatasetsCtrl', function($scope, $rootScope, $http, api
     // init
     $scope.value = 0;
     request({
-                startDate:      api.defaults.startDate, 
-                endDate:        api.defaults.endDate 
+                startDate:      App.startDate, 
+                endDate:        App.endDate 
             });
 
     function request(message){
         var params = {  dateFilter: 'project_start',
                         startDate: message.startDate, 
                         endDate: message.endDate,
+                        faculty: message.faculty
                     };
-        var uri = api.uri.datasetsByDateRange(params);
+        var uri = api.uri.datasets(params);
         uri.addSearch("filter", 'rcuk');
+        uri.addSearch("count", 'true');
         console.log('UC 1 ' + uri);
 
         $http.get(uri)
         .success(function(response) {
-            var value = response.length;
+            var value = response[0].num_datasets;
             // only update if dirty
             if (value !== $scope.value)
                 $scope.value = value;
@@ -79,27 +77,26 @@ app.controller('dmpsCreatedCtrl', function($scope, $rootScope, $http, api) {
     // init
     $scope.value = 0;
     request({
-                startDate:      api.defaults.startDate, 
-                endDate:        api.defaults.endDate 
+                startDate:      App.startDate, 
+                endDate:        App.endDate 
             });
     
     function request(message){
         var params = {  dateFilter: 'project_start',
                         startDate: message.startDate, 
                         endDate: message.endDate,
+                        faculty: message.faculty,
                     };
-        var uri = api.uri.dmpsByDateRange(params);
+        var uri = api.uri.dmps(params);
+        uri.addSearch("has_dmp", 'true');
+        uri.addSearch("count", 'true');
         console.log('UC 2a ' + uri);
         $http.get(uri)
         .success(function(response) {
-            var count = 0;
-            for(i=0;i<response.length;++i) {
-                if (response[i].has_dmp === true) ++count;
-            }
-
+            var value = response[0].num_project_dmps;
             // only update if dirty
-            if (count !== $scope.value)
-                $scope.value = count;
+            if (value !== $scope.value)
+                $scope.value = value;
         });
     }
 
@@ -112,27 +109,27 @@ app.controller('noDmpProjectsCtrl', function($scope, $rootScope, $http, api) {
     // init
     $scope.value = 0;
     request({
-                startDate:      api.defaults.startDate, 
-                endDate:        api.defaults.endDate 
+                startDate:      App.startDate, 
+                endDate:        App.endDate 
             });
 
     function request(message){
         var params = {  dateFilter: 'project_start',
                         startDate: message.startDate, 
                         endDate: message.endDate,
+                        faculty: message.faculty
                     };
-        var uri = api.uri.noDmpsByDateRange(params);
+        var uri = api.uri.noDmps(params);
+        uri.addSearch("has_dmp", 'false');
+        uri.addSearch('is_awarded', 'true');
+        uri.addSearch("count", 'true');
         console.log('UC 2b ' + uri);
         $http.get(uri)
         .success(function(response) {
-            var count = 0;
-            for(i=0;i<response.length;++i) {
-                if (response[i].has_dmp === false) ++count;
-            }
-
+            var value = response[0].num_project_dmps;
             // only update if dirty
-            if (count !== $scope.value)
-                $scope.value = count;
+            if (value !== $scope.value)
+                $scope.value = value;
         });
     }
 
@@ -145,16 +142,17 @@ app.controller('dmpStatusCtrl', function($scope, $rootScope, $http, api) {
     // init
     $scope.fraction = {numerator: 0, denominator: 0}
     request({
-                startDate:      api.defaults.startDate, 
-                endDate:        api.defaults.endDate 
+                startDate:      App.startDate, 
+                endDate:        App.endDate 
             });
 
     function request(message){
         var params = {  dateFilter: 'project_start',
                         startDate: message.startDate, 
                         endDate: message.endDate,
+                        faculty: message.faculty
                     };
-        var uri = api.uri.dmpStatusByDateRange(params);
+        var uri = api.uri.dmpStatus(params);
         console.log('UC 3 ' + uri);
         $http.get(uri)
         .success(function(response) {
@@ -181,16 +179,17 @@ app.controller('expectedStorageCtrl', function($scope, $rootScope, $http, api) {
     // init
     $scope.value = 0;
     request({
-                startDate:      api.defaults.startDate, 
-                endDate:        api.defaults.endDate 
+                startDate:      App.startDate, 
+                endDate:        App.endDate 
             });
 
     function request(message){
         var params = {  dateFilter: 'project_start',
                         startDate: message.startDate, 
                         endDate: message.endDate,
+                        faculty: message.faculty
                     };
-        var uri = api.uri.expectedStorageByDateRange(params);
+        var uri = api.uri.expectedStorage(params);
         console.log('UC 4 ' + uri);
         $http.get(uri)
         .success(function(response) {
@@ -219,16 +218,17 @@ app.controller('rcukAccessComplianceCtrl', function($scope, $rootScope, $http, a
     // init
     $scope.value = 0;
     request({
-                startDate:      api.defaults.startDate, 
-                endDate:        api.defaults.endDate 
+                startDate:      App.startDate, 
+                endDate:        App.endDate 
             });
 
     function request(message){
         var params = {  dateFilter: 'project_start',
                         startDate: message.startDate, 
                         endDate: message.endDate,
+                        faculty: message.faculty
                     };
-        var uri = api.uri.rcukAccessComplianceByDateRange(params);
+        var uri = api.uri.rcukAccessCompliance(params);
         console.log('UC 5 ' + uri);
         $http.get(uri)
         .success(function(response) {
@@ -250,44 +250,45 @@ app.controller('rcukAccessComplianceCtrl', function($scope, $rootScope, $http, a
     });    
 });
 
-app.controller('dataAccessCtrl', function($scope, $rootScope, $http, api) {
-    // init
-    $scope.value = 0;
-    request({
-                startDate:      api.defaults.startDate, 
-                endDate:        api.defaults.endDate 
-            });
+// app.controller('dataAccessCtrl', function($scope, $rootScope, $http, api) {
+//     // init
+//     $scope.value = 0;
+//     request({
+//                 startDate:      App.startDate, 
+//                 endDate:        App.endDate 
+//             });
 
-    function request(message){
-        var params = {  dateFilter: 'project_start',
-                        startDate: message.startDate, 
-                        endDate: message.endDate,
-                    };
-        var uri = api.uri.datasetAccessByDateRange(params);
-        console.log('data access ' + uri);
-        $http.get(uri)
-        .success(function(response) {
-            var count = 0;
-            for(i=0;i<response.length;++i) {
-                if (response[i].access_type === 'data_download') count += response[i].counter;
-            }
-            // only update if dirty
-            if (count !== $scope.value)
-                $scope.value = count;
-        });
-    }
+//     function request(message){
+//         var params = {  dateFilter: 'project_start',
+//                         startDate: message.startDate, 
+//                         endDate: message.endDate,
+//                     };
+//         var uri = api.uri.datasetAccessByDateRange(params);
+//         console.log('data access ' + uri);
+//         $http.get(uri)
+//         .success(function(response) {
+//             var count = 0;
+//             for(i=0;i<response.length;++i) {
+//                 if (response[i].access_type === 'data_download') count += response[i].counter;
+//             }
+//             // only update if dirty
+//             if (count !== $scope.value)
+//                 $scope.value = count;
+//         });
+//     }
 
-    $rootScope.$on("DatePickerEvent", function (event, message) {
-        request(message);
-    }); 
-});
+//     $rootScope.$on("DatePickerEvent", function (event, message) {
+//         request(message);
+//     }); 
+    
+// });
 
 app.controller('metadataAccessCtrl', function($scope, $rootScope, $http, api) {
     // init
     $scope.value = 0;
     request({
-                startDate:      api.defaults.startDate, 
-                endDate:        api.defaults.endDate 
+                startDate:      App.startDate, 
+                endDate:        App.endDate 
             });
 
     function request(message){
@@ -311,7 +312,7 @@ app.controller('metadataAccessCtrl', function($scope, $rootScope, $http, api) {
 
     $rootScope.$on("DatePickerEvent", function (event, message) {
         request(message);
-    }); 
+    });    
 });
 
 // app.controller('accessMetadataCtrl', function($scope, $rootScope, $http, api) {
@@ -345,85 +346,103 @@ app.controller('metadataAccessCtrl', function($scope, $rootScope, $http, api) {
 //         });        
 // });
 
-// app.controller('dateCtrl', function($scope, $rootScope) {
-//     $scope.year = '1970';
 
-//     $scope.changeHandler = function() {
-//         $rootScope.$broadcast("YearEvent", {msg: "The year is " + $scope.year});
-//     };
-// });
-
-app.controller('dateRangeCtrl', function($scope, $rootScope, $interval, api) {
-    $scope.startDate = api.defaults.startDate;
-    $scope.endDate = api.defaults.endDate;
+app.controller('dateRangeCtrl', function($scope, $rootScope, $interval) {
+    $scope.startDate = App.startDate;
+    $scope.endDate = App.endDate;
+    $scope.faculty = App.faculty;
 
     function broadcastDate(msg){
         console.log(msg);
         $rootScope.$broadcast("DatePickerEvent", {  
                                                     msg: msg,
                                                     startDate: $scope.startDate,
-                                                    endDate: $scope.endDate
+                                                    endDate: $scope.endDate,
+                                                    faculty: $scope.faculty
                                                     }
             );       
     }
 
-    $scope.dateRangeChangeHandler = function() {
-        broadcastDate("New date range");
-    };   
-
-
     function update() {
         broadcastDate("Timed update");
+        console.table(App);
     }
-    var timeout = 600000;
+    var timeout = App.updateDelay;
     $interval(update, timeout); 
+
+    /****************
+        startDate
+    *****************/
+    $scope.$watch(
+        function() {
+            return $scope.startDate;
+        },
+        function(newValue, oldValue) {
+            console.log('Watched App.startDate');
+            // if(angular.equals(newValue, oldValue)){
+            //     return; 
+            // }
+            console.log('old ', oldValue, 'new ', newValue);
+            $scope.startDate = newValue;                
+            // broadcastDate("New date range");
+        }); 
+
+    /****************
+        endDate
+    *****************/
+    $scope.$watch(
+        function() {
+            return $scope.endDate;
+        },
+        function(newValue, oldValue) {
+            console.log('Watched App.endDate');
+            // if(angular.equals(newValue, oldValue)){
+            //     return;
+            // }    
+            console.log('old ', oldValue, 'new ', newValue);
+            $scope.endDate = newValue;
+        });  
+
+    /****************
+        startDate, 
+        endDate
+    *****************/
+    $scope.$watch(
+        function() {
+            return {startDate: $scope.startDate, endDate: $scope.endDate}
+        },
+        function(newRange, oldRange) {
+            // console.log('Watched App.startEndDate in dateRangeCtrl');
+            // console.log('old ', oldValue, 'new ', newValue);
+            var shouldBroadcast = false;
+            if (newRange.startDate !== oldRange.startDate){
+                shouldBroadcast = true;
+            }
+            if (newRange.endDate !== oldRange.endDate){
+                shouldBroadcast = true;
+            }
+            if (shouldBroadcast){
+                broadcastDate("New date range");
+            }
+        },
+        true
+        );   
+
+    /****************
+        faculty
+    *****************/
+    $scope.$watch(
+        function() {
+            return $scope.faculty;
+        },
+        function(newValue, oldValue) {
+            console.log('Watched App.faculty');
+            // if(angular.equals(newValue, oldValue)){
+            //     return;
+            // }    
+            console.log('old ', oldValue, 'new ', newValue);
+            $scope.faculty = newValue;
+            broadcastDate("New date range");
+        });  
+
 });
-
-
-
-// app.controller('updateCtrl', function($scope, $rootScope, $interval) {
-//     // console.log('updateCtrl initialised');
-//   // var timeout = 10000;
-
-//   // function update() {
-
-//   // }
-
-//   // $interval(update, timeout);
-// });
-
-// function metadataAccessUpdate() {
-//     var params = {  dateFilter: 'project_start',
-//                     startDate: startDate, 
-//                     endDate: endDate,
-//                 };
-//     var uri = ApiService.uri.datasetAccessByDateRange(params);
-//     console.log('metadata access ' + uri);
-//     $.get(uri)
-//     .success(function(response) {
-//         var filteredData = ApiService.filter.datasetAccess(data, 'metadata');
-//         var count = 0;
-//         for(i=0;i<filteredData.length;++i) {
-//             count += filteredData[i].counter;
-//         }
-//         // only update if dirty
-//         if (count !== $metadataAccess.val())
-//             $metadataAccess.val(count);
-//     });
-// }
-// // $(document).ready(function(){
-// //     $("#sd").change(function(){
-// //         update();
-// //     });
-// //     $("#ed").change(function(){
-// //         update();
-// //     });
-// // });
-
-// // function update(){
-// //     console.log('update');
-// // }
-
-// function setIntervals(){
-//     setInterval(metadataAccessUpdate, 1000);
-// }

@@ -211,22 +211,22 @@
 					</a>
 					<ul class="sub-menu">
 						<li>
-							<a href="">
+							<a href="javascript:App.setFaculty(2)">
 							<i class="icon-home"></i>
 							FST</a>
 						</li>
 						<li>
-							<a href="">
+							<a href="javascript:App.setFaculty(6)">
 							<i class="icon-basket"></i>
 							FASS</a>
 						</li>
 						<li>
-							<a href="">
+							<a href="javascript:App.setFaculty(66)">
 							<i class="icon-tag"></i>
 							FHM</a>
 						</li>
 						<li>
-							<a href="">
+							<a href="javascript:App.setFaculty(666)">
 							<i class="icon-handbag"></i>
 							LUMS</a>
 						</li>
@@ -586,13 +586,13 @@
 					</div>
 				</div>	
 
-					<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+<!-- 					<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
 						<div class="dashboard-stat yellow-casablanca">
 							<div class="visual">
 								<i class="fa fa-cloud-download"></i>
 							</div>
 							<div class="details">
-								<div id="dataAccess" class="number" ng-cloak>
+								<div id="dataAccess" class="number">
 								</div>
 								<div class="desc">
 									 Data access
@@ -604,13 +604,15 @@
 						</div>
 					</div>
 
+				<div ng-controller="metadataAccessCtrl">
 					<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
 						<div class="dashboard-stat yellow-casablanca">
 							<div class="visual">
 								<i class="fa fa-cloud-download"></i>
 							</div>
 							<div class="details">
-								<div id="metadataAccess" class="number">
+								<div class="number" ng-cloak>
+									 {{value}}
 								</div>
 								<div class="desc">
 									 Metadata access
@@ -621,7 +623,7 @@
 							</a>
 						</div>
 					</div>
-
+				</div> -->
 
 			<!-- <div id="sparkline_bar"></div> -->
 
@@ -631,18 +633,18 @@
 				<input ng-model="year" ng-change="changeHandler()">
 			</div> -->
 
-			<div ng-controller="dateRangeCtrl">
-				<!-- <!-- Start date --><input id="startDate" ng-model="startDate" ng-change="dateRangeChangeHandler()"> <!--type="hidden"> -->
+			<div id="dateRangeCtrl" ng-controller="dateRangeCtrl"></div>
+				<!-- Start date --><!--<input id="startDate" ng-model="startDate" ng-change="dateRangeChangeHandler()"> <!--type="hidden"> -->
 
-				<!-- End date --><input id="endDate" ng-model="endDate" ng-change="dateRangeChangeHandler()"> <!--type="hidden">
+				<!--End date --><!--input id="endDate" ng-model="endDate" ng-change="dateRangeChangeHandler()"> <!--type="hidden">
 			</div>
 
-			<!-- <div ng-controller="updateCtrl"></div>			 -->
+			<!-- <div ng-controller="updateCtrl"></div>			
 
 
 			</div>
-			<input id="sd"/>
-			<input id="ed"/>
+<!-- 			<input id="sd"/>
+			<input id="ed"/> -->
 
 
  
@@ -1487,8 +1489,8 @@
 
 <!-- dmao -->
 <script src="javascript/dmao.js"></script>
-<script src="javascript/data_access_summary.js"></script>
-<!-- <script src="javascript/summary_update.js"></script> -->
+<!-- <script src="javascript/data_access_summary.js"></script>
+<script src="javascript/summary_update.js"></script> -->
 <script src="javascript/daterangepicker.js"></script>
 <script src="javascript/charts.js"></script>
 <script src="javascript/dataAccessChart.js"></script>
@@ -1515,11 +1517,8 @@ jQuery(document).ready(function() {
 	<!-- dmao -->
    DataAccessChart.init();
    MetadataAccessChart.init();
-   DataAccessSummary(App.updateDelay);
-   // SummaryUpdate();
-
+   // DataAccessSummary(App.updateDelay);
    
-
 
 //    function update(){
 //     console.log('update');

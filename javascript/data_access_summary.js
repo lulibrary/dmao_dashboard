@@ -1,10 +1,10 @@
 var DataAccessSummary = function(delay){    
-
-    var update = function() {
-        var params = {  dateFilter: 'project_start',
-                        startDate: App.startDate, 
-                        endDate: App.endDate,
-                    };
+    var params = {  dateFilter: 'project_start',
+                    startDate: App.startDate, 
+                    endDate: App.endDate,
+            };
+    var update = function(params) {
+        console.log(' DataAccessSummary updating using ', params)
         var uri = ApiService.uri.datasetAccessByDateRange(params);
         console.log('data access ' + uri);
         $.get(uri)
@@ -20,7 +20,7 @@ var DataAccessSummary = function(delay){
         });
     };
 
-    update();
+    update(params);
     setInterval(update, delay);
 
     return {

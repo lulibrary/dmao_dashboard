@@ -1,4 +1,4 @@
-    $('#reportrange span').html(moment(ApiService.defaults.startDate, "YYYYMMDD").format('MMMM D, YYYY') + ' - ' + moment().format('MMMM D, YYYY'));
+    $('#reportrange span').html(moment(App.startDate, "YYYYMMDD").format('MMMM D, YYYY') + ' - ' + moment().format('MMMM D, YYYY'));
 
     $('#reportrange').daterangepicker({
         format: 'DD/MM/YYYY',
@@ -42,21 +42,36 @@
         console.log('option has been selected');
         var startDate = start.format('YYYYMMDD');
         var endDate = end.format('YYYYMMDD');
-        $('#startDate').val(startDate);
-        $('#endDate').val(endDate);
-        $('#sd').val(startDate);
-        $('#ed').val(endDate);
-        $('startDate').val(startDate);
-        $('endDate').val(endDate);
-        // $('#startDate').triggerHandler('change');
-        angular.element($('#startDate')).triggerHandler('input');
-        angular.element($('#endDate')).triggerHandler('input');
-        $("#sd").val(startDate).change();
-        $("#ed").val(startDate).change();
+        // $('#startDate').val(startDate);
+        // $('#endDate').val(endDate);
+        // $('#sd').val(startDate);
+        // $('#ed').val(endDate);
+        // $('startDate').val(startDate);
+        // $('endDate').val(endDate);
+        // // $('#startDate').triggerHandler('change');
+        // angular.element($('#startDate')).triggerHandler('input');
+        // angular.element($('#endDate')).triggerHandler('input');
+        // $("#sd").val(startDate).change();
+        // $("#ed").val(startDate).change();
 
-        console.log(startDate, endDate);
-        // SummaryUpdate();
-        DataAccessSummary.update;
+        // console.log(startDate, endDate);
+           
+        App.startDate = startDate;
+        App.endDate = endDate;
+
+        var scope = angular.element($("#dateRangeCtrl")).scope();
+        scope.$apply(function(){
+            scope.startDate = startDate;
+            scope.endDate = endDate;
+        });
+                // var params = {  dateFilter: 'project_start',
+        //             startDate: App.startDate, 
+        //             endDate: App.endDate,
+        //     };
+        // summaryUpdate(params);
+        // DataAccessSummary.update;
+
+        console.log('after date selection ', App.startDate, App.endDate);
     });
 
    $('.applyBtn').click(function() {
@@ -73,18 +88,25 @@
 
         // $startDate = start.format('YYYYMMDD');
         // $endDate = end.format('YYYYMMDD');
-        $('#startDate').val(startDate);
-        $('#endDate').val(endDate);
-        $('#sd').val(startDate);
-        $('#ed').val(endDate);
-        $('startDate').val(startDate);
-        $('endDate').val(endDate);        
-        angular.element($('#startDate')).triggerHandler('input');
-        angular.element($('#endDate')).triggerHandler('input');   
+        // $('#startDate').val(startDate);
+        // $('#endDate').val(endDate);
+        // $('#sd').val(startDate);
+        // $('#ed').val(endDate);
+        // $('startDate').val(startDate);
+        // $('endDate').val(endDate);        
+        // angular.element($('#startDate')).triggerHandler('input');
+        // angular.element($('#endDate')).triggerHandler('input');   
 
         console.log(startDate, endDate);  
+        App.startDate = startDate;
+        App.endDate = endDate;
+        var scope = angular.element($("#dateRangeCtrl")).scope();
+        scope.$apply(function(){
+            scope.startDate = startDate;
+            scope.endDate = endDate;
+        });        
         // SummaryUpdate();
-        DataAccessSummary.update;
+        // DataAccessSummary.update;
 
         // var scope = angular.element($("datasetsCtrl")).scope();
         // scope.$apply(function(){
