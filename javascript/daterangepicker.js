@@ -37,9 +37,9 @@
             firstDay: 1
         }
     }, function(start, end, label) {
-        console.log(start.toISOString(), end.toISOString(), label);        
+        // console.log(start.toISOString(), end.toISOString(), label);        
         $('#reportrange span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
-        console.log('option has been selected');
+        // console.log('option has been selected');
         var startDate = start.format('YYYYMMDD');
         var endDate = end.format('YYYYMMDD');
         // $('#startDate').val(startDate);
@@ -64,6 +64,14 @@
             scope.startDate = startDate;
             scope.endDate = endDate;
         });
+
+        // var params = {  dateFilter: 'project_start',
+        //     startDate: App.startDate, 
+        //     endDate: App.endDate,
+        //     faculty: App.faculty
+        // };
+        // DataAccessChart.init(params);
+        // MetadataAccessChart.init(params);
                 // var params = {  dateFilter: 'project_start',
         //             startDate: App.startDate, 
         //             endDate: App.endDate,
@@ -71,18 +79,18 @@
         // summaryUpdate(params);
         // DataAccessSummary.update;
 
-        console.log('after date selection ', App.startDate, App.endDate);
+        // console.log('after date selection ', App.startDate, App.endDate);
     });
 
    $('.applyBtn').click(function() {
-        console.log( $('input[name="daterangepicker_start"]').val() );
+        // console.log( $('input[name="daterangepicker_start"]').val() );
         // console.log( 'ado format ' + $('input[name="daterangepicker_start"]').format('YYYYMMDD').val() );
         var startDateUI = $('input[name="daterangepicker_start"]').val();
         var startDate = moment(startDateUI, "DD/MM/YYYY").format('YYYYMMDD')
         var endDateUI = $('input[name="daterangepicker_end"]').val();
         var endDate = moment(endDateUI, "DD/MM/YYYY").format('YYYYMMDD')
-        console.log('Button click formatted startDate ' + startDate );
-        console.log('Button click formatted endDate ' + endDate );
+        // console.log('Button click formatted startDate ' + startDate );
+        // console.log('Button click formatted endDate ' + endDate );
         // $('#startDate').val($startDate);
         // $('#endDate').val($endDate);
 
@@ -97,7 +105,7 @@
         // angular.element($('#startDate')).triggerHandler('input');
         // angular.element($('#endDate')).triggerHandler('input');   
 
-        console.log(startDate, endDate);  
+        // console.log(startDate, endDate);  
         App.startDate = startDate;
         App.endDate = endDate;
         var scope = angular.element($("#dateRangeCtrl")).scope();

@@ -1,8 +1,8 @@
 var DataAccessChart = {
 
-    init: function() {
+    init: function(params) {
         $.ajax({
-            url: ApiService.uri.datasetAccess(),
+            url: ApiService.uri.datasetAccess(params),
             success: function(data){
                 // console.log('data');
                 // console.log(data);

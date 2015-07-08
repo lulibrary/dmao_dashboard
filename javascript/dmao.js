@@ -3,7 +3,7 @@ var App = {
     startDate: '20000101',
     endDate: moment().format('YYYYMMDD'),
     faculty: '',
-    updateDelay: 60000,
+    updateDelay: 30000,
     setFaculty: function(faculty){
         this.faculty = faculty;
         // tell Angular
@@ -11,7 +11,10 @@ var App = {
         scope.$apply(function(){
             scope.faculty = faculty;
         });
-    }
+    },
+    // refreshData: function(){
+
+    // }
 };
 
 // function dataAccessUpdate() {
@@ -183,14 +186,17 @@ var ApiService = {
             // var uriWithDateRange = this.addDateRange(uri, params);
             return uri;
         },  
-        datasetAccess: function(){
+        datasetAccess: function(params){
             var uri = URI(ApiService.prefix() + '/dataset_accesses' + '/' + App.institutionId);
+            if (params){
+                uri = this.addParams(uri, params);
+            }
             return uri;
         },
         datasetAccessByDateRange: function(params){
-            var uri = this.datasetAccess();
-            var uriWithDateRange = this.addDateRange(uri, params);
-            return uriWithDateRange;
+            var uri = this.datasetAccess(params);
+            // var uriWithDateRange = this.addDateRange(uri, params);
+            return uri;
         },
     },
     filter: {
@@ -229,7 +235,33 @@ var ApiService = {
             // console.table(monthData);
             return monthData;
         },    
-    },
+        dataAggregateDateCounts: function(data){
+            // console.log('data in dataAggregateDateCounts');
+            // console.table(data);
+            // init
+            var date_data = {};
+            for(var i = 0; i < data.length; ++i) {
+                var access_date_hash = data[i].access_date.replace(/-/g, "");
+                if (date_data[access_date_hash]){
+                    date_data[access_date_hash].counter += data[i].counter;
+                } else{
+                    var o = {   access_date: data[i].access_date,
+                                counter: data[i].counter
+                            };
+                    date_data[access_date_hash] = o;
+                }
+            }
+            // console.log('date_data');
+            // console.log(date_data);
+
+            var date_data_arr = [];
+            $.each(date_data, function(key, value){
+                date_data_arr.push(date_data[key]);
+            });
+            
+            return date_data_arr;
+        },         
+    },   
     template: {
         dr: '/dr/{institutionId}/{startDate}/{endDate}/{dateFilter}'
     },

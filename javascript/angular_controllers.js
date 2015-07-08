@@ -300,6 +300,7 @@ app.controller('metadataAccessCtrl', function($scope, $rootScope, $http, api) {
         console.log('metadata access ' + uri);
         $http.get(uri)
         .success(function(response) {
+
             var count = 0;
             for(i=0;i<response.length;++i) {
                 if (response[i].access_type === 'metadata') count += response[i].counter;
@@ -313,6 +314,36 @@ app.controller('metadataAccessCtrl', function($scope, $rootScope, $http, api) {
     $rootScope.$on("DatePickerEvent", function (event, message) {
         request(message);
     });    
+});
+
+app.controller('dataAccessChartCtrl', function($scope, $rootScope, $http, api) {  
+    var params = {  dateFilter: 'project_start',
+        startDate: App.startDate, 
+        endDate: App.endDate,
+        faculty: App.faculty
+    };
+    DataAccessLineChart({width:700, height:300});
+
+    $rootScope.$on("DatePickerEvent", function (event, message) {
+        // console.log('dataAccessChartCtrl received message');
+        // DataAccessChart.init(message);
+        DataAccessLineChart({width:700, height:300});
+    });  
+});
+
+app.controller('metadataAccessChartCtrl', function($scope, $rootScope, $http, api) {  
+    var params = {  dateFilter: 'project_start',
+        startDate: App.startDate, 
+        endDate: App.endDate,
+        faculty: App.faculty
+    };
+    MetadataAccessLineChart({width:700, height:300});
+
+    $rootScope.$on("DatePickerEvent", function (event, message) {
+        // console.log('metadataAccessChartCtrl received message');
+        // DataAccessChart.init(message);
+        MetadataAccessLineChart({width:700, height:300});
+    });  
 });
 
 // app.controller('accessMetadataCtrl', function($scope, $rootScope, $http, api) {
@@ -353,7 +384,7 @@ app.controller('dateRangeCtrl', function($scope, $rootScope, $interval) {
     $scope.faculty = App.faculty;
 
     function broadcastDate(msg){
-        console.log(msg);
+        // console.log(msg);
         $rootScope.$broadcast("DatePickerEvent", {  
                                                     msg: msg,
                                                     startDate: $scope.startDate,
@@ -365,7 +396,7 @@ app.controller('dateRangeCtrl', function($scope, $rootScope, $interval) {
 
     function update() {
         broadcastDate("Timed update");
-        console.table(App);
+        // console.table(App);
     }
     var timeout = App.updateDelay;
     $interval(update, timeout); 

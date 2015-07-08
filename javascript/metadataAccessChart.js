@@ -1,8 +1,8 @@
 var MetadataAccessChart = {
 
-    init: function() {
+    init: function(params) {
         $.ajax({
-            url: ApiService.uri.datasetAccess(),
+            url: ApiService.uri.datasetAccess(params),
             success: function(data){
                 // console.log('data');
                 // console.log(data);
@@ -10,7 +10,6 @@ var MetadataAccessChart = {
                 var numMonths = 12;
                 var monthData = ApiService.filter.dataLastNMonths(filteredData, numMonths);
                 var chartData = reverseChronoChartData(monthData);
-
 
                 if ($('#metadata_access').size() != 0) {
 
