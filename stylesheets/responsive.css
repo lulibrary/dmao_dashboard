@@ -1,0 +1,6 @@
+/*fixes display issue with long text in stats boxes at certain sizes*/
+@media screen and (min-width:992px) and (max-width:1180px) {
+	div .desc {
+		font-size: 100% !important;	
+		}
+}

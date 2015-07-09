@@ -42,17 +42,6 @@
         // console.log('option has been selected');
         var startDate = start.format('YYYYMMDD');
         var endDate = end.format('YYYYMMDD');
-        // $('#startDate').val(startDate);
-        // $('#endDate').val(endDate);
-        // $('#sd').val(startDate);
-        // $('#ed').val(endDate);
-        // $('startDate').val(startDate);
-        // $('endDate').val(endDate);
-        // // $('#startDate').triggerHandler('change');
-        // angular.element($('#startDate')).triggerHandler('input');
-        // angular.element($('#endDate')).triggerHandler('input');
-        // $("#sd").val(startDate).change();
-        // $("#ed").val(startDate).change();
 
         // console.log(startDate, endDate);
            
@@ -65,20 +54,6 @@
             scope.endDate = endDate;
         });
 
-        // var params = {  dateFilter: 'project_start',
-        //     startDate: App.startDate, 
-        //     endDate: App.endDate,
-        //     faculty: App.faculty
-        // };
-        // DataAccessChart.init(params);
-        // MetadataAccessChart.init(params);
-                // var params = {  dateFilter: 'project_start',
-        //             startDate: App.startDate, 
-        //             endDate: App.endDate,
-        //     };
-        // summaryUpdate(params);
-        // DataAccessSummary.update;
-
         // console.log('after date selection ', App.startDate, App.endDate);
     });
 
@@ -90,21 +65,6 @@
         var endDateUI = $('input[name="daterangepicker_end"]').val();
         var endDate = moment(endDateUI, "DD/MM/YYYY").format('YYYYMMDD')
         // console.log('Button click formatted startDate ' + startDate );
-        // console.log('Button click formatted endDate ' + endDate );
-        // $('#startDate').val($startDate);
-        // $('#endDate').val($endDate);
-
-        // $startDate = start.format('YYYYMMDD');
-        // $endDate = end.format('YYYYMMDD');
-        // $('#startDate').val(startDate);
-        // $('#endDate').val(endDate);
-        // $('#sd').val(startDate);
-        // $('#ed').val(endDate);
-        // $('startDate').val(startDate);
-        // $('endDate').val(endDate);        
-        // angular.element($('#startDate')).triggerHandler('input');
-        // angular.element($('#endDate')).triggerHandler('input');   
-
         // console.log(startDate, endDate);  
         App.startDate = startDate;
         App.endDate = endDate;
@@ -112,12 +72,5 @@
         scope.$apply(function(){
             scope.startDate = startDate;
             scope.endDate = endDate;
-        });        
-        // SummaryUpdate();
-        // DataAccessSummary.update;
-
-        // var scope = angular.element($("datasetsCtrl")).scope();
-        // scope.$apply(function(){
-        //     scope.startDate = startDate;
-        // });   
+        });         
     });

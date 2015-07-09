@@ -3,7 +3,9 @@ var App = {
     startDate: '20000101',
     endDate: moment().format('YYYYMMDD'),
     faculty: '',
-    updateDelay: 30000,
+    updateDelay: 60000,
+    dataAccessResponseData: {},
+    metadataAccessResponseData: {},
     setFaculty: function(faculty){
         this.faculty = faculty;
         // tell Angular
@@ -12,66 +14,7 @@ var App = {
             scope.faculty = faculty;
         });
     },
-    // refreshData: function(){
-
-    // }
 };
-
-// function dataAccessUpdate() {
-//     var params = {  dateFilter: 'project_start',
-//                     startDate: App.startDate, 
-//                     endDate: App.endDate,
-//                 };
-//     var uri = ApiService.uri.datasetAccessByDateRange(params);
-//     console.log('data access ' + uri);
-//     $.get(uri)
-//     .success(function(data) {
-//         var filteredData = ApiService.filter.datasetAccess(data, 'data_download');
-//         var count = 0;
-//         for(i=0;i<filteredData.length;++i) {
-//             count += filteredData[i].counter;
-//         }
-//         // only update if dirty
-//         if (count != $('#dataAccess').html())
-//             $('#dataAccess').html(count);
-//     });
-// }
-
-// function metadataAccessUpdate() {
-//     var params = {  dateFilter: 'project_start',
-//                     startDate: App.startDate, 
-//                     endDate: App.endDate,
-//                 };
-//     var uri = ApiService.uri.datasetAccessByDateRange(params);
-//     console.log('metadata access ' + uri);
-//     $.get(uri)
-//     .success(function(data) {
-//         var filteredData = ApiService.filter.datasetAccess(data, 'metadata');
-//         var count = 0;
-//         for(i=0;i<filteredData.length;++i) {
-//             count += filteredData[i].counter;
-//         }
-//         // only update if dirty
-//         if (count != $('#metadataAccess').html())
-//             $('#metadataAccess').html(count);
-//     });
-// }
-// $(document).ready(function(){
-//     $("#sd").change(function(){
-//         update();
-//     });
-//     $("#ed").change(function(){
-//         update();
-//     });
-// });
-
-// function update(){
-//     console.log('update');
-// }
-
-
-
-
 
 
 

@@ -51,7 +51,7 @@
 
 <!-- dmao -->
 <link href="stylesheets/lineChart.css" rel="stylesheet" type="text/css"/>
-
+<link href="stylesheets/responsive.css" rel="stylesheet" type="text/css"/>
 
 <link rel="shortcut icon" href="favicon.ico"/>
 </head>
@@ -440,17 +440,31 @@
     			<span></span> <b class="caret"></b></div>
 
 			</div>
+
+
+			<!-- DMAO AngularJS start -->
+			<div ng-app="dmaoApp">
+
+			<div id="dateRangeCtrl" ng-controller="dateRangeCtrl" ng-cloak>
+				<h4>Search filters</h4>
+				Faculty: {{facultyName}}
+				<br/>
+				<br/>
+				<input type="button" value="Reset" onclick="">
+				<br/>
+				<br/>
+			</div>
+
 			<!-- END PAGE HEADER-->
 			<!-- BEGIN DASHBOARD STATS -->
 			<div class="row">
-				<div ng-controller="datasetsCtrl">
 					<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
 						<div class="dashboard-stat green-haze">
 							<div class="visual">
 								<i class="fa fa-file"></i>
 							</div>
 							<div class="details">
-								<div class="number" ng-cloak>
+								<div ng-controller="datasetsCtrl" ng-cloak class="number" >
 										{{value}}
 								</div>
 								<div class="desc">
@@ -462,16 +476,14 @@
 							</a>
 						</div>
 					</div>
-				</div>
 
-				<div ng-controller="rcukFundedDatasetsCtrl">
 					<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
 						<div class="dashboard-stat green-haze">
 							<div class="visual">
 								<i class="fa fa-file"></i>
 							</div>
 							<div class="details">
-								<div class="number" ng-cloak>
+								<div ng-controller="rcukFundedDatasetsCtrl" ng-cloak class="number">
 										{{value}}
 								</div>
 								<div class="desc">
@@ -483,17 +495,14 @@
 							</a>
 						</div>
 					</div>
-				</div>
 
-				<div ng-controller="dmpsCreatedCtrl">
 					<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
 						<div class="dashboard-stat blue-madison">
 							<div class="visual">
 								<i class="fa fa-file-text-o"></i>
 							</div>
 							<div class="details">
-								<div class="number" ng-cloak>
-									 <!-- 23 -->
+								<div ng-controller="dmpsCreatedCtrl"  ng-cloak class="number">
 									 {{value}}
 								</div>
 								<div class="desc">
@@ -505,16 +514,14 @@
 							</a>
 						</div>
 					</div>
-				</div>
 
-				<div ng-controller="noDmpProjectsCtrl">	
 					<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
 						<div class="dashboard-stat red-intense">
 							<div class="visual">
 								<i class="fa fa-exclamation-triangle"></i>
 							</div>
 							<div class="details">
-								<div class="number" ng-cloak>
+								<div ng-controller="noDmpProjectsCtrl" ng-cloak class="number">
 									 {{value}}
 								</div>
 								<div class="desc">
@@ -526,16 +533,14 @@
 							</a>
 						</div>
 					</div>
-				</div>
 
-				<div ng-controller="dmpStatusCtrl">	
 					<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
 						<div class="dashboard-stat blue-steel">
 							<div class="visual">
 								<i class="fa fa-th-list"></i>
 							</div>
 							<div class="details">
-								<div class="number" ng-cloak>
+								<div ng-controller="dmpStatusCtrl"  ng-cloak class="number">
 									 {{fraction.numerator}} of {{fraction.denominator}}
 								</div>
 								<div class="desc">
@@ -547,17 +552,14 @@
 							</a>
 						</div>
 					</div>
-				</div>
 
-				<div ng-controller="expectedStorageCtrl">
 					<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
 						<div class="dashboard-stat purple-plum">
 							<div class="visual">
 								<i class="fa fa-hdd-o"></i>
 							</div>
 							<div class="details">
-								<div class="number" ng-cloak>
-									 <!-- 65% -->
+								<div ng-controller="expectedStorageCtrl" ng-cloak class="number">
 									 {{value}}GB
 								</div>
 								<div class="desc">
@@ -569,16 +571,14 @@
 							</a>
 						</div>
 					</div>
-				</div>
 
-				<div ng-controller="rcukAccessComplianceCtrl">
 					<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
 						<div class="dashboard-stat green-jungle">
 							<div class="visual">
 								<i class="fa fa-gavel"></i>
 							</div>
 							<div class="details">
-								<div class="number" ng-cloak>
+								<div ng-controller="rcukAccessComplianceCtrl" ng-cloak class="number">
 									 {{value}}%
 								</div>
 								<div class="desc">
@@ -590,80 +590,13 @@
 							</a>
 						</div>
 					</div>
-				</div>	
-
-<!-- 					<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
-						<div class="dashboard-stat yellow-casablanca">
-							<div class="visual">
-								<i class="fa fa-cloud-download"></i>
-							</div>
-							<div class="details">
-								<div id="dataAccess" class="number">
-								</div>
-								<div class="desc">
-									 Data access
-								</div>
-							</div>
-							<a class="more" href="#">
-							View more <i class="m-icon-swapright m-icon-white"></i>
-							</a>
-						</div>
-					</div>
-
-				<div ng-controller="metadataAccessCtrl">
-					<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
-						<div class="dashboard-stat yellow-casablanca">
-							<div class="visual">
-								<i class="fa fa-cloud-download"></i>
-							</div>
-							<div class="details">
-								<div class="number" ng-cloak>
-									 {{value}}
-								</div>
-								<div class="desc">
-									 Metadata access
-								</div>
-							</div>
-							<a class="more" href="#">
-							View more <i class="m-icon-swapright m-icon-white"></i>
-							</a>
-						</div>
-					</div>
-				</div> -->
-
-			<!-- <div id="sparkline_bar"></div> -->
-
-			<!-- <br> -->
-
-<!-- 			<div ng-controller="dateCtrl">
-				<input ng-model="year" ng-change="changeHandler()">
-			</div> -->
-
-			<div id="dateRangeCtrl" ng-controller="dateRangeCtrl"></div>
-				<!-- Start date --><!--<input id="startDate" ng-model="startDate" ng-change="dateRangeChangeHandler()"> <!--type="hidden"> -->
-
-				<!--End date --><!--input id="endDate" ng-model="endDate" ng-change="dateRangeChangeHandler()"> <!--type="hidden">
 			</div>
-
-			<!-- <div ng-controller="updateCtrl"></div>			
-
-
-			</div>
-<!-- 			<input id="sd"/>
-			<input id="ed"/> -->
-
-
- 
-
-			<!-- <div ng-include="'included.html'"></div> -->
-
-			<!-- </div>		-->	
-
 			<!-- END DASHBOARD STATS-->
+
+
 			<div class="clearfix">
 			</div>
 			<div class="row">
-				<div class="col-md-6 col-sm-6">
 					<!-- BEGIN PORTLET-->
 					<div class="portlet light">
 						<div class="portlet-title">
@@ -677,14 +610,12 @@
 								<img src="../assets/admin/layout/img/loading.gif" alt="loading"/>
 							</div>	 -->						
 								<div ng-controller="dataAccessChartCtrl">
-									<!-- <div id="data_access" class="chart"></div> -->
 									<div id="dataAccessChart"></div>
 								</div>
 						</div>
 					</div>
-				</div>
-			</div>
-				<div class="col-md-6 col-sm-6">
+			</div>				
+			<div class="row">
 					<!-- BEGIN PORTLET-->
 					<div class="portlet light">
 						<div class="portlet-title">
@@ -698,138 +629,18 @@
 								<img src="../assets/admin/layout/img/loading.gif" alt="loading"/>
 							</div>	 -->						
 								<div ng-controller="metadataAccessChartCtrl">
-									<!-- <div id="data_access" class="chart"></div> -->
 									<div id="metadataAccessChart"></div>
 								</div>
 						</div>
-					</div>
-				</div>
-			</div>
-
-			<!-- <div class="row"> -->
-				<!-- <div class="col-md-6 col-sm-6"> -->
-					<!-- BEGIN PORTLET-->
-					<!-- <div class="portlet light"> -->
-						<!-- <div class="portlet-title"> -->
-							<!-- <div class="caption"> -->
-								<!-- <i class="fa fa-bar-chart-o"></i>--><!--Data access-->
-								<!-- <span class="caption-subject font-red-sunglo bold uppercase">Data access</span> -->
-							<!-- </div> -->
-						<!-- </div> -->
-						<!-- <div class="portlet-body"> -->
-							<!-- <div id="data_access_loading"> -->
-								<!-- <img src="../assets/admin/layout/img/loading.gif" alt="loading"/> -->
-							<!-- </div> -->
-							<!-- <div id="data_access_content" class="display-none"> -->
-									<!-- <div id="data_access" class="chart"></div> -->
-							<!-- </div> -->
-						<!-- </div> -->
-					<!-- </div> -->
-				<!-- </div> -->
-					<!-- END PORTLET-->
-				<!-- <div class="col-md-6 col-sm-6"> -->
-					<!-- BEGIN PORTLET-->
- 					<!-- <div class="portlet light"> -->
-						<!-- <div class="portlet-title"> -->
-							<!-- <div class="caption"> -->
-								 <!-- <i class="fa fa-bar-chart-o"></i>Metadata access -->
-								<!-- <span class="caption-subject font-green-sharp bold uppercase">Metadata access</span>  -->
-							<!-- </div> -->
-						<!-- </div> -->
-						<!-- <div class="portlet-body"> -->
-							<!-- <div id="metadata_access_loading"> -->
-								<!-- <img src="../assets/admin/layout/img/loading.gif" alt="loading"/> -->
-							<!-- </div> -->
-							<!-- <div id="metadata_access_content" class="display-none"> -->
-								<!-- <div id="metadata_access" class="chart"> -->
-								<!-- </div> -->
-							<!-- </div> -->
-						<!-- </div> -->
-					 <!-- </div> -->
-					<!-- END PORTLET					 -->
-				<!-- </div> -->
-
-								
-
-				<!-- <div class="col-md-6 col-sm-6"> -->
-					<!-- BEGIN PORTLET-->
-<!-- 					<div class="portlet solid grey-cararra bordered">
-						<div class="portlet-title">
-							<div class="caption">
-								<i class="fa fa-bullhorn"></i>DMPs per faculty
-							</div>
-							<div class="actions">
-								<div class="btn-group pull-right">
-									<a href="" class="btn grey-steel btn-sm dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" data-close-others="true">
-									Filter <span class="fa fa-angle-down">
-									</span>
-									</a>
-									<ul class="dropdown-menu pull-right">
-										<li>
-											<a href="javascript:;">
-											FASS
-											</a>
-										</li>
-										<li>
-											<a href="javascript:;">
-											FST
-											</a>
-										</li>
-										<li class="active">
-											<a href="javascript:;">
-											FHM
-											</a>
-										</li>
-										<li>
-											<a href="javascript:;">
-											LUMS
-											</a>
-										</li>
-									</ul>
-								</div>
-							</div>
-						</div>
-						<div class="portlet-body">
-							<div id="site_activities_loading">
-								<img src="../assets/admin/layout/img/loading.gif" alt="loading"/>
-							</div>
-							<div id="site_activities_content" class="display-none">
-								<div id="site_activities" style="height: 228px;">
-								</div>
-							</div>
-							<div style="margin: 20px 0 10px 30px">
-								<div class="row">
-									<div class="col-md-3 col-sm-3 col-xs-6 text-stat">
-										<span class="label label-sm label-success">
-										FASS: </span>
-										<h3>19 DMPs</h3>
-									</div>
-									<div class="col-md-3 col-sm-3 col-xs-6 text-stat">
-										<span class="label label-sm label-info">
-										FST: </span>
-										<h3>28 DMPs</h3>
-									</div>
-									<div class="col-md-3 col-sm-3 col-xs-6 text-stat">
-										<span class="label label-sm label-danger">
-										FHM: </span>
-										<h3>6 DMPs</h3>
-									</div>
-									<div class="col-md-3 col-sm-3 col-xs-6 text-stat">
-										<span class="label label-sm label-warning">
-										LUMS: </span>
-										<h3>11 DMPs</h3>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div> -->
-					<!-- END PORTLET-->
-				<!-- </div> -->
+					</div>			
 			</div>
 			<div class="clearfix">
-			<!-- </div> -->
 		</div>
 	</div>
+	
+	<!-- DMAO AngularJS end -->
+	</div>
+
 	<!-- END CONTENT -->
 	<!-- BEGIN QUICK SIDEBAR -->
 	<a href="javascript:;" class="page-quick-sidebar-toggler"><i class="icon-close"></i></a>
@@ -1543,6 +1354,7 @@
 <!-- <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.3.14/angular.min.js"></script> -->
 <script src="javascript/angular.min.js"></script>
 <script src="javascript/d3.min.js"></script>
+<script src="javascript/md5.min.js"></script>
 <script src="javascript/URI.min.js"></script>
 <script src="javascript/dmao.js"></script>
 <!-- <script src="javascript/data_access_summary.js"></script>
