@@ -140,7 +140,8 @@ app.controller('noDmpProjectsCtrl', function($scope, $rootScope, $http, api) {
 
 app.controller('dmpStatusCtrl', function($scope, $rootScope, $http, api) {  
     // init
-    $scope.fraction = {numerator: 0, denominator: 0}
+    $scope.value = 0;
+    // $scope.fraction = {numerator: 0, denominator: 0}
     request({
                 startDate:      App.startDate, 
                 endDate:        App.endDate 
@@ -153,20 +154,25 @@ app.controller('dmpStatusCtrl', function($scope, $rootScope, $http, api) {
                         faculty: message.faculty
                     };
         var uri = api.uri.dmpStatus(params);
+        uri.addSearch("count", 'true');
         //console.log('UC 3 ' + uri);
         $http.get(uri)
         .success(function(response) {
-            var count = 0;
-            for(i=0;i<response.length;++i) {
-                if (response[i].dmp_status === 'completed' || response[i].dmp_status === 'verified') ++count;
-            }
+        //     var count = 0;
+        //     for(i=0;i<response.length;++i) {
+        //         if (response[i].dmp_status === 'completed' || response[i].dmp_status === 'verified') ++count;
+        //     }
 
-            // only update if dirty
-            if (count !== $scope.fraction.numerator)
-                $scope.fraction.numerator = count;
-            // only update if dirty
-            if (response.length !== $scope.fraction.denominator)
-                $scope.fraction.denominator = response.length;
+        //     // only update if dirty
+        //     if (count !== $scope.fraction.numerator)
+        //         $scope.fraction.numerator = count;
+        //     // only update if dirty
+        //     if (response.length !== $scope.fraction.denominator)
+        //         $scope.fraction.denominator = response.length;
+        // });
+        var value = response[0].num_dmp_status;
+        if (value !== $scope.value)
+                $scope.value = value;
         });
     }
 
@@ -201,7 +207,7 @@ app.controller('expectedStorageCtrl', function($scope, $rootScope, $http, api) {
                 }
                 previous_project_id = response[i].project_id;
             }
-            var value = Math.ceil(total);
+            var value = Math.ceil(total * 0.001);
 
             // only update if dirty
             if (value !== $scope.value)
@@ -320,7 +326,7 @@ app.controller('dataAccessChartCtrl', function($scope, $rootScope, $http, api) {
     var params = {  dateFilter: 'project_start',
         startDate: App.startDate, 
         endDate: App.endDate,
-        faculty: App.faculty
+        faculty: App.faculty,
     };
 
     DataAccessLineChart({width:700, height:300});
@@ -336,7 +342,7 @@ app.controller('metadataAccessChartCtrl', function($scope, $rootScope, $http, ap
     var params = {  dateFilter: 'project_start',
         startDate: App.startDate, 
         endDate: App.endDate,
-        faculty: App.faculty
+        faculty: App.faculty,
     };
     MetadataAccessLineChart({width:700, height:300});
 
@@ -383,13 +389,6 @@ app.controller('dateRangeCtrl', function($scope, $rootScope, $interval) {
     $scope.startDate = App.startDate;
     $scope.endDate = App.endDate;
     $scope.faculty = App.faculty;
-    var facultyMap = {
-        1: 'q1',
-        2: 'FST',
-        3: 'q3',
-        4: 'q4'      
-    };
-    $scope.facultyName = facultyMap[$scope.faculty];
 
     function broadcastDate(msg){
         // //console.log(msg);
@@ -481,7 +480,15 @@ app.controller('dateRangeCtrl', function($scope, $rootScope, $interval) {
             // }    
             //console.log('old ', oldValue, 'new ', newValue);
             $scope.faculty = newValue;
-            broadcastDate("New date range");
+            var facultyMap = {
+                0: 'All faculties',
+                1: 'FASS',
+                2: 'FST',
+                3: 'FHM',
+                4: 'LUMS'
+            };
+            $scope.facultyName = facultyMap[$scope.faculty];            
+            broadcastDate("New date range");            
         });  
 
 });

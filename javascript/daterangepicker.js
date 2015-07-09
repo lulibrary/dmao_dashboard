@@ -1,9 +1,9 @@
-    $('#reportrange span').html(moment(App.startDate, "YYYYMMDD").format('MMMM D, YYYY') + ' - ' + moment().format('MMMM D, YYYY'));
+    $('#reportrange span').html(moment(App.startDate, "YYYYMMDD").format('MMMM D, YYYY') + ' - ' + moment(App.endDate, "YYYYMMDD").format('MMMM D, YYYY'));
 
     $('#reportrange').daterangepicker({
         format: 'DD/MM/YYYY',
-        startDate: moment().subtract(3650, 'days'),
-        endDate: moment(),
+        startDate: moment(App.startDateDefault, "YYYYMMDD").format('DD/MM/YYYY'),
+        endDate: moment(App.endDateDefault, "YYYYMMDD").format('DD/MM/YYYY'),
         minDate: '01/01/2000',
         maxDate: '31/12/9999',
         dateLimit: { days: 100000 },

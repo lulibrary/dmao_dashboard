@@ -18,6 +18,7 @@ function setupTable() {
             var hash = toDataTablesFormat(json);
 
             storageTable = $('#storageTable').DataTable( {
+                lengthMenu: [ 25, 50, 75, 100 ],
                 data: hash['data'],
                 dom: 'ClfrtipR', // drag n drop reorder
                 columns: [

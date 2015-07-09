@@ -1,8 +1,11 @@
 var App = {
     institutionId: 'lancaster',
+    startDateDefault: '20000101',
+    endDateDefault: '20350101', //moment().add(20, 'years').format('YYYYMMDD'),       
     startDate: '20000101',
-    endDate: moment().format('YYYYMMDD'),
-    faculty: '',
+    endDate: '20350101', //moment().add(20, 'years').format('YYYYMMDD'),
+    faculty: 0,
+    facultyDefault: 0,
     updateDelay: 60000,
     dataAccessResponseData: {},
     metadataAccessResponseData: {},
@@ -14,6 +17,25 @@ var App = {
             scope.faculty = faculty;
         });
     },
+    initUserSelections: function(){
+        // update globals
+        this.faculty = this.facultyDefault;
+        this.startDate = this.startDateDefault;
+        this.endDate = this.endDateDefault;
+
+        // tell jQuery daterangepicker
+        $('#reportrange').data('daterangepicker').setStartDate(moment(this.startDateDefault, "YYYYMMDD").format('DD/MM/YYYY'));
+        $('#reportrange').data('daterangepicker').setEndDate(moment(this.endDateDefault, "YYYYMMDD").format('DD/MM/YYYY'));
+        $('#reportrange span').html(moment(this.startDateDefault, "YYYYMMDD").format('MMMM D, YYYY') + ' - ' + moment(this.endDateDefault, "YYYYMMDD").format('MMMM D, YYYY'));
+
+        // tell Angular
+        var scope = angular.element($("#dateRangeCtrl")).scope();
+        scope.$apply(function(){
+            scope.faculty = App.faculty;
+            scope.startDate = App.startDateDefault;
+            scope.endDate = App.endDateDefault;
+        });
+    }
 };
 
 

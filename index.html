@@ -52,6 +52,7 @@
 <!-- dmao -->
 <link href="stylesheets/lineChart.css" rel="stylesheet" type="text/css"/>
 <link href="stylesheets/responsive.css" rel="stylesheet" type="text/css"/>
+<link href="stylesheets/input.css" rel="stylesheet" type="text/css"/>
 
 <link rel="shortcut icon" href="favicon.ico"/>
 </head>
@@ -212,9 +213,9 @@
 					</a>
 					<ul class="sub-menu">
 						<li>
-							<a href="javascript:App.setFaculty()">
+							<a href="javascript:App.setFaculty(0)">
 							<i class="icon-home"></i>
-							All</a>
+							All faculties</a>
 						</li>
 						<li>
 							<a href="javascript:App.setFaculty(2)">
@@ -439,21 +440,28 @@
     			<i class="glyphicon glyphicon-calendar fa fa-calendar"></i>
     			<span></span> <b class="caret"></b></div>
 
+				
+					
+					
+
+
+
 			</div>
 
-
-			<!-- DMAO AngularJS start -->
-			<div ng-app="dmaoApp">
-
-			<div id="dateRangeCtrl" ng-controller="dateRangeCtrl" ng-cloak>
-				<h4>Search filters</h4>
-				Faculty: {{facultyName}}
-				<br/>
-				<br/>
-				<input type="button" value="Reset" onclick="">
-				<br/>
-				<br/>
-			</div>
+<div id="dateRangeCtrl" ng-controller="dateRangeCtrl" ng-cloak>
+				<div id="searchFilters">
+					<div id="searchFiltersText">
+						Faculty: {{facultyName}}
+					</div>
+					<div id="searchFiltersButton">
+						<a class="btn btn-primary" href="javascript:App.initUserSelections();">
+							Remove filters
+						</a>
+					</div>
+					<br/>
+					<br/>
+				</div>
+</div>				
 
 			<!-- END PAGE HEADER-->
 			<!-- BEGIN DASHBOARD STATS -->
@@ -541,10 +549,10 @@
 							</div>
 							<div class="details">
 								<div ng-controller="dmpStatusCtrl"  ng-cloak class="number">
-									 {{fraction.numerator}} of {{fraction.denominator}}
+									{{value}}
 								</div>
 								<div class="desc">
-									 DMP completions
+									 All DMPs
 								</div>
 							</div>
 							<a class="more" href="dmp_status.html">
@@ -560,7 +568,7 @@
 							</div>
 							<div class="details">
 								<div ng-controller="expectedStorageCtrl" ng-cloak class="number">
-									 {{value}}GB
+									 {{value}}TB
 								</div>
 								<div class="desc">
 									 Storage requirements

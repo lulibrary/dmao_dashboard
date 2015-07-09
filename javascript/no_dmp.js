@@ -11,13 +11,19 @@ var NoDmp = function() {
 }();
 
 function setupTable() {
+    var uri = ApiService.uri.noDmps();
+        uri.addSearch("has_dmp", 'false');
+        uri.addSearch('is_awarded', 'true');
+        uri = uri.toString();
+        console.log('uri', uri);
     $.ajax({
-        url: ApiService.uri.noDmps(),
+        url: uri,
         success: function(json){
 
             var hash = toDataTablesFormat(json);
 
             noDmpTable = $('#noDmpTable').DataTable( {
+                lengthMenu: [ 25, 50, 75, 100 ],
                 data: hash['data'],
                 dom: 'ClfrtipR', // drag n drop reorder
                 columns: [

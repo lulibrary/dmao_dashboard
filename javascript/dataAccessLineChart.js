@@ -6,6 +6,7 @@ var DataAccessLineChart = function(options){
                 faculty: App.faculty
             };
   var uri = ApiService.uri.datasetAccess(params);
+  uri.addSearch("summary_by_date", 'true');
 
   d3.json(uri, function(error, data) {
     if (error) throw error;
@@ -13,8 +14,6 @@ var DataAccessLineChart = function(options){
     //console.log('data access ' + uri);
     // console.log(data.length);
     data = ApiService.filter.datasetAccess(data, 'data_download');
-    // console.log(data.length);
-    data = ApiService.filter.dataAggregateDateCounts(data);
     // console.log(data.length);
 
 
@@ -72,7 +71,7 @@ var DataAccessLineChart = function(options){
           
           data.forEach(function(d) {
             d.access_date = parseDate(d.access_date);
-            d.counter = +d.counter;
+            d.counter = +d.sum;
           });
           // //console.table(data);
 
