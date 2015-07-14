@@ -1,38 +1,21 @@
-var DataAccessLineChart = function(options){
+var DataAccessLineChart = function(data, options){
 
-  var params = {  dateFilter: 'project_start',
-                startDate: App.startDate, 
-                endDate: App.endDate,
-                faculty: App.faculty
-            };
-  var uri = ApiService.uri.datasetAccess(params);
-  uri.addSearch("summary_by_date", 'true');
-
-  d3.json(uri, function(error, data) {
-    if (error) throw error;
-
-    //console.log('data access ' + uri);
-    // console.log(data.length);
-    data = ApiService.filter.datasetAccess(data, 'data_download');
-    // console.log(data.length);
-
-
-    var redrawChart = false;
-    var dataAccessResponseDataOld = App.dataAccessResponseData;
+    var drawChart = true;
+    // var dataAccessResponseDataOld = App.dataAccessResponseData;
     
     // console.log('Data OLD', dataAccessResponseDataOld);
 
-    if (!angular.equals(dataAccessResponseDataOld, data)){
-      // console.log('Data CHANGED, should redraw graph');
-      App.dataAccessResponseData = data;
-      redrawChart = true;
-    }
-    else
-    {
-      // console.log('Checksum SAME, should NOT redraw graph');
-    }
+    // if (!angular.equals(App.dataAccessResponseData, data)){
+    //   // console.log('Data CHANGED, should redraw graph');
+    //   App.dataAccessResponseData = data;
+    //   drawChart = true;
+    // }
+    // else
+    // {
+    //   // console.log('Checksum SAME, should NOT redraw graph');
+    // }
 
-    if (redrawChart){
+    if (drawChart){
         var margin = {top: 20, right: 20, bottom: 30, left: 50},
             width = options.width - margin.left - margin.right,
             height = options.height - margin.top - margin.bottom;
@@ -98,5 +81,4 @@ var DataAccessLineChart = function(options){
               .attr("class", "line")
               .attr("d", line);
     }
-  });
 };

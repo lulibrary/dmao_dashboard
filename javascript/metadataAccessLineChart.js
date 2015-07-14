@@ -1,37 +1,21 @@
-var MetadataAccessLineChart = function(options){
+var MetadataAccessLineChart = function(data, options){
 
-  var params = {  dateFilter: 'project_start',
-                startDate: App.startDate, 
-                endDate: App.endDate,
-                faculty: App.faculty
-            };
-  var uri = ApiService.uri.datasetAccess(params);
-  uri.addSearch("summary_by_date", 'true');
-
-  d3.json(uri, function(error, data) {
-    if (error) throw error;
-
-    //console.log('data access ' + uri);
-    // console.log(data.length);
-    data = ApiService.filter.datasetAccess(data, 'metadata');
-    // console.log(data.length);
-
-    var redrawChart = false;
-    var metadataAccessResponseDataOld = App.metadataAccessResponseData;
+    var drawChart = true;
+    // var metadataAccessResponseDataOld = App.metadataAccessResponseData;
     
-    // console.log('Data OLD', dataAccessResponseDataOld);
+    // // console.log('Data OLD', dataAccessResponseDataOld);
 
-    if (!angular.equals(metadataAccessResponseDataOld, data)){
-      // console.log('Data CHANGED, should redraw graph');
-      App.metadataAccessResponseData = data;
-      redrawChart = true;
-    }
-    else
-    {
-      // console.log('Checksum SAME, should NOT redraw graph');
-    }
+    // if (!angular.equals(metadataAccessResponseDataOld, data)){
+    //   // console.log('Data CHANGED, should redraw graph');
+    //   App.metadataAccessResponseData = data;
+    //   redrawChart = true;
+    // }
+    // else
+    // {
+    //   // console.log('Checksum SAME, should NOT redraw graph');
+    // }
 
-    if (redrawChart){
+    if (drawChart){
         var margin = {top: 20, right: 20, bottom: 30, left: 50},
             width = options.width - margin.left - margin.right,
             height = options.height - margin.top - margin.bottom;
@@ -97,5 +81,4 @@ var MetadataAccessLineChart = function(options){
               .attr("class", "line")
               .attr("d", line);
     }
-  });
 };

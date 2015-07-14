@@ -4,15 +4,22 @@ var App = {
     endDateDefault: '20350101', //moment().add(20, 'years').format('YYYYMMDD'),       
     startDate: '20000101',
     endDate: '20350101', //moment().add(20, 'years').format('YYYYMMDD'),
-    faculty: 0,
-    facultyDefault: 0,
-    updateDelay: 60000,
+    faculty: '',
+    facultyDefault: '',
+    facultyMap: {
+        '': 'All faculties',
+        1: 'FASS',
+        2: 'FST',
+        3: 'FHM',
+        4: 'LUMS'
+    },
+    updateDelay: 600000,
     dataAccessResponseData: {},
     metadataAccessResponseData: {},
     setFaculty: function(faculty){
         this.faculty = faculty;
         // tell Angular
-        var scope = angular.element($("#dateRangeCtrl")).scope();
+        var scope = angular.element($("#filterController")).scope();
         scope.$apply(function(){
             scope.faculty = faculty;
         });
@@ -29,7 +36,7 @@ var App = {
         $('#reportrange span').html(moment(this.startDateDefault, "YYYYMMDD").format('MMMM D, YYYY') + ' - ' + moment(this.endDateDefault, "YYYYMMDD").format('MMMM D, YYYY'));
 
         // tell Angular
-        var scope = angular.element($("#dateRangeCtrl")).scope();
+        var scope = angular.element($("#filterController")).scope();
         scope.$apply(function(){
             scope.faculty = App.faculty;
             scope.startDate = App.startDateDefault;
@@ -57,14 +64,23 @@ var ApiService = {
     },
     uri: {
         addParams: function(uri, params){
-            if (params.dateFilter){
-                uri.addSearch("date", params.dateFilter);
-                uri.addSearch("sd", params.startDate);
-                uri.addSearch("ed", params.endDate);                
+            for (key in params) {
+                uri.addSearch(key, params[key]);
             }
-            if (params.faculty){
-                uri.addSearch("faculty", params.faculty);
-            }            
+            // if (params.dateFilter){
+            //     uri.addSearch("date", params.dateFilter);
+            //     uri.addSearch("sd", params.startDate);
+            //     uri.addSearch("ed", params.endDate);                
+            // }
+            // if (params.faculty){
+            //     uri.addSearch("faculty", params.faculty);
+            // }   
+            // if (params.filter){
+            //     uri.addSearch("filter", params.filter);
+            // }              
+            // if (params.count){
+            //     uri.addSearch("count", params.count);
+            // }                      
             return uri;
         },
         addDateRange: function(uri, params)
@@ -78,90 +94,90 @@ var ApiService = {
             uri.addSearch("faculty", params.faculty);
             return uri;
         },
-        datasets: function(params){
+        datasets: function(params){           
             var uri = URI(ApiService.prefix() + '/datasets' + '/' + App.institutionId);
             if (params){
                 uri = this.addParams(uri, params);
             }
-            return uri;
+            return $.getJSON(uri);
         },
-        datasetsByDateRange: function(params){
-            var uri = this.datasets(params);
-            // var uriWithDateRange = this.addDateRange(uri, params);
-            // return uriWithDateRange;
-            return uri;
-        },
+        // datasetsByDateRange: function(params){
+        //     var uri = this.datasets(params);
+        //     // var uriWithDateRange = this.addDateRange(uri, params);
+        //     // return uriWithDateRange;
+        //     return uri;
+        // },
         dmps: function(params){
             var uri = URI(ApiService.prefix() + '/project_dmps' + '/' + App.institutionId);
             if (params){
                 uri = this.addParams(uri, params);
             }
-            return uri;
+             return $.getJSON(uri);
         },
-        dmpsByDateRange: function(params){
-            var uri = this.dmps(params);
-            // var uriWithDateRange = this.addDateRange(uri, params);
-            return uri;
-        },        
-        noDmps: function(params){
-            var uri = URI(ApiService.prefix() + '/project_dmps' + '/' + App.institutionId);
-            if (params){
-                uri = this.addParams(uri, params);
-            }
-            return uri;
-        },
-        noDmpsByDateRange: function(params){
-            var uri = this.noDmps(params);
-            // var uriWithDateRange = this.addDateRange(uri, params);
-            return uri;
-        },   
+        // dmpsByDateRange: function(params){
+        //     var uri = this.dmps(params);
+        //     // var uriWithDateRange = this.addDateRange(uri, params);
+        //     return uri;
+        // },        
+        // noDmps: function(params){
+        //     var uri = URI(ApiService.prefix() + '/project_dmps' + '/' + App.institutionId);
+        //     if (params){
+        //         uri = this.addParams(uri, params);
+        //     }
+        //     return uri;
+        // },
+        // noDmpsByDateRange: function(params){
+        //     var uri = this.noDmps(params);
+        //     // var uriWithDateRange = this.addDateRange(uri, params);
+        //     return uri;
+        // },   
         dmpStatus: function(params){
             var uri = URI(ApiService.prefix() + '/dmp_status' + '/' + App.institutionId);
             if (params){
                 uri = this.addParams(uri, params);
             }
-            return uri;
+             return $.getJSON(uri);
         },
-        dmpStatusByDateRange: function(params){
-            var uri = this.dmpStatus(params);
-            // var uriWithDateRange = this.addDateRange(uri, params);
-            return uri;
-        },   
-        expectedStorage: function(params){
-            var uri = URI(ApiService.prefix() + '/expected_storage' + '/' + App.institutionId);
+        // dmpStatusByDateRange: function(params){
+        //     var uri = this.dmpStatus(params);
+        //     // var uriWithDateRange = this.addDateRange(uri, params);
+        //     return uri;
+        // },   
+        storage: function(params){
+            var uri = URI(ApiService.prefix() + '/storage' + '/' + App.institutionId);
             if (params){
                 uri = this.addParams(uri, params);
             }
-            return uri;
+            return $.getJSON(uri);
         },
-        expectedStorageByDateRange: function(params){
-            var uri = this.expectedStorage(params);
-            // var uriWithDateRange = this.addDateRange(uri, params);
-            return uri;
-        },    
+        // expectedStorageByDateRange: function(params){
+        //     var uri = this.expectedStorage(params);
+        //     // var uriWithDateRange = this.addDateRange(uri, params);
+        //     return uri;
+        // },    
         rcukAccessCompliance: function(params){
             var uri = URI(ApiService.prefix() + '/rcuk_as' + '/' + App.institutionId);
             if (params){
                 uri = this.addParams(uri, params);
             }
-            return uri;
+             return $.getJSON(uri);
         },
-        rcukAccessComplianceByDateRange: function(params){
-            var uri = this.rcukAccessCompliance(params);
-            // var uriWithDateRange = this.addDateRange(uri, params);
-            return uri;
-        },  
+        // rcukAccessComplianceByDateRange: function(params){
+        //     var uri = this.rcukAccessCompliance(params);
+        //     // var uriWithDateRange = this.addDateRange(uri, params);
+        //     return uri;
+        // },  
         datasetAccess: function(params){
             var uri = URI(ApiService.prefix() + '/dataset_accesses' + '/' + App.institutionId);
             if (params){
                 uri = this.addParams(uri, params);
             }
-            return uri;
+            return $.getJSON(uri);
         },
         datasetAccessByDateRange: function(params){
             var uri = this.datasetAccess(params);
             // var uriWithDateRange = this.addDateRange(uri, params);
-            return uri;
+            return $.getJSON(uri);
         },
     },
     filter: {

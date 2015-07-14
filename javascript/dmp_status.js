@@ -11,33 +11,38 @@ var DmpStatus = function() {
 }();
 
 function setupTable() {
-    $.ajax({
-        url: ApiService.uri.dmpStatus(),
-        success: function(json){
+    var params = {  date:       'project_start',
+                    sd:         App.startDate, 
+                    ed:         App.endDate,
+                    faculty:    App.faculty,
+                };    
+    // console.log('tables params', params);
+    // console.log('App', App);
 
-            var hash = toDataTablesFormat(json);
+    ApiService.uri.dmpStatus(params).then(function(json){
 
-            dmpStatusTable = $('#dmpStatusTable').DataTable( {
-                lengthMenu: [ 25, 50, 75, 100 ],
-                data: hash['data'],
-                dom: 'ClfrtipR', // drag n drop reorder
-                columns: [
-                    {
-                        data:           null,
-                        className:      'details-control',
-                        orderable:      false,                      
-                        defaultContent: ''
-                    }, 
-                    { data: 'project_name' },                    
-                    { data: 'funder_id' },
-                    { data: 'dmp_stage' },
-                    { data: 'dmp_status' },
-                    { data: 'project_start' },
-                    { data: 'project_end' },
+        var hash = toDataTablesFormat(json);
 
-                ]
-            });
-        }
+        dmpStatusTable = $('#dmpStatusTable').DataTable( {
+            lengthMenu: [ 25, 50, 75, 100 ],
+            data: hash['data'],
+            dom: 'ClfrtipR', // drag n drop reorder
+            columns: [
+                {
+                    data:           null,
+                    className:      'details-control',
+                    orderable:      false,                      
+                    defaultContent: ''
+                }, 
+                { data: 'project_name' },                    
+                { data: 'funder_id' },
+                { data: 'dmp_stage' },
+                { data: 'dmp_status' },
+                { data: 'project_start' },
+                { data: 'project_end' },
+
+            ]
+        });
     });
 }
 

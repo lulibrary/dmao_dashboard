@@ -11,35 +11,34 @@ var Datasets = function() {
 }();
 
 function setupTable() {
-    $.ajax({
-        url: ApiService.uri.datasets(),
-        success: function(json){
 
-            var hash = toDataTablesFormat(json);
+    ApiService.uri.datasets().then(function(json){
 
-            datasetsTable = $('#datasetsTable').DataTable( {
-                lengthMenu: [ 25, 50, 75, 100 ],
-                data: hash['data'],
-                dom: 'ClfrtipR', // drag n drop reorder
-                columns: [
-                    {
-                        data:           null,
-                        className:      'details-control',
-                        orderable:      false,                      
-                        defaultContent: ''
-                    }, 
-                    { data: 'dataset_name' },
-                    { data: 'funder_name' },
-                    { data: 'dataset_pid' },
-                    { data: 'lead_faculty_abbrev' },
-                    { data: 'lead_dept_name' },
-                    { data: 'project_name' },
-                    { data: 'project_start' },
-                    { data: 'project_end' },
-                ]
-            });
-        }
+        var hash = toDataTablesFormat(json);
+
+        datasetsTable = $('#datasetsTable').DataTable( {
+            lengthMenu: [ 25, 50, 75, 100 ],
+            data: hash['data'],
+            dom: 'ClfrtipR', // drag n drop reorder
+            columns: [
+                {
+                    data:           null,
+                    className:      'details-control',
+                    orderable:      false,                      
+                    defaultContent: ''
+                }, 
+                { data: 'dataset_name' },
+                { data: 'funder_name' },
+                { data: 'dataset_pid' },
+                { data: 'lead_faculty_abbrev' },
+                { data: 'lead_dept_name' },
+                { data: 'project_name' },
+                { data: 'project_start' },
+                { data: 'project_end' },
+            ]
+        });
     });
+
 }
 
 function setupRowExpanderListener() {

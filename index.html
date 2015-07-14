@@ -213,7 +213,7 @@
 					</a>
 					<ul class="sub-menu">
 						<li>
-							<a href="javascript:App.setFaculty(0)">
+							<a href="javascript:App.setFaculty('')">
 							<i class="icon-home"></i>
 							All faculties</a>
 						</li>
@@ -448,7 +448,7 @@
 
 			</div>
 
-<div id="dateRangeCtrl" ng-controller="dateRangeCtrl" ng-cloak>
+<div id="filterController" ng-controller="filterController" ng-cloak>
 				<div id="searchFilters">
 					<div id="searchFiltersText">
 						Faculty: {{facultyName}}
@@ -472,7 +472,7 @@
 								<i class="fa fa-file"></i>
 							</div>
 							<div class="details">
-								<div ng-controller="datasetsCtrl" ng-cloak class="number" >
+								<div ng-controller="datasetsController" ng-cloak class="number" >
 										{{value}}
 								</div>
 								<div class="desc">
@@ -1374,6 +1374,9 @@
 <script src="javascript/dataAccessLineChart.js"></script>
 <script src="javascript/metadataAccessLineChart.js"></script>
 <script src="javascript/angular_controllers.js"></script>
+<script src="javascript/controllers/datasets.controller.js"></script>
+<script src="javascript/controllers/filter.controller.js"></script>
+
 <!-- END PAGE LEVEL SCRIPTS -->
 <script>
 jQuery(document).ready(function() {    
@@ -1391,15 +1394,17 @@ jQuery(document).ready(function() {
    Tasks.initDashboardWidget();
 
 	<!-- dmao -->
-    var params = {  dateFilter: 'project_start',
-                startDate: App.startDate, 
-                endDate: App.endDate,
-                faculty: App.faculty
-            };
+    // var params = {
+    //             dateFilter: 'project_start',
+    //             startDate:          App.startDateDefault, 
+    //             endDate:            App.endDateDefault,
+    //             faculty:            App.facultyDefault,
+    //             summary_by_date:  true
+    //         };
    // DataAccessChart.init(params);
    // MetadataAccessChart.init(params);
-   DataAccessLineChart({width:700, height:300});
-   MetadataAccessLineChart({width:700, height:300});
+   // DataAccessLineChart({width:700, height:300});
+   // MetadataAccessLineChart({width:700, height:300});
    // DataAccessSummary(App.updateDelay);
    
 

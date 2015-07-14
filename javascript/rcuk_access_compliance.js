@@ -11,31 +11,36 @@ var RcukAccessCompliance = function() {
 }();
 
 function setupTable() {
-    $.ajax({
-        url: ApiService.uri.rcukAccessCompliance(),
-        success: function(json){
+    var params = {  date:       'project_start',
+                    sd:         App.startDate, 
+                    ed:         App.endDate,
+                    faculty:    App.faculty,
+                };    
+    // console.log('tables params', params);
+    // console.log('App', App);
 
-            var hash = toDataTablesFormat(json);
+    ApiService.uri.rcukAccessCompliance(params).then(function(json){
 
-            rcukAccessComplianceTable = $('#rcukAccessComplianceTable').DataTable( {
-                lengthMenu: [ 25, 50, 75, 100 ],
-                data: hash['data'],
-                dom: 'ClfrtipR', // drag n drop reorder
-                columns: [
-                    {
-                        data:           null,
-                        className:      'details-control',
-                        orderable:      false,                      
-                        defaultContent: ''
-                    },                   
-                    { data: 'publication_pid' },
-                    { data: 'publication_date' },
-                    { data: 'data_access_statement' },
-                    { data: 'funder_name' },
-                    { data: 'project_name' },
-                ]
-            });
-        }
+        var hash = toDataTablesFormat(json);
+
+        rcukAccessComplianceTable = $('#rcukAccessComplianceTable').DataTable( {
+            lengthMenu: [ 25, 50, 75, 100 ],
+            data: hash['data'],
+            dom: 'ClfrtipR', // drag n drop reorder
+            columns: [
+                {
+                    data:           null,
+                    className:      'details-control',
+                    orderable:      false,                      
+                    defaultContent: ''
+                },                   
+                { data: 'publication_pid' },
+                { data: 'publication_date' },
+                { data: 'data_access_statement' },
+                { data: 'funder_name' },
+                { data: 'project_name' },
+            ]
+        });
     });
 }
 

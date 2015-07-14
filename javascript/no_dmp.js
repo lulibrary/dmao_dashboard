@@ -11,34 +11,35 @@ var NoDmp = function() {
 }();
 
 function setupTable() {
-    var uri = ApiService.uri.noDmps();
-        uri.addSearch("has_dmp", 'false');
-        uri.addSearch('is_awarded', 'true');
-        uri = uri.toString();
-        console.log('uri', uri);
-    $.ajax({
-        url: uri,
-        success: function(json){
+    var params = {  date:       'project_start',
+                    sd:         App.startDate, 
+                    ed:         App.endDate,
+                    faculty:    App.faculty,
+                    has_dmp:    false,
+                };    
+    // console.log('tables params', params);
+    // console.log('App', App);
 
-            var hash = toDataTablesFormat(json);
+    ApiService.uri.dmps(params).then(function(json){
 
-            noDmpTable = $('#noDmpTable').DataTable( {
-                lengthMenu: [ 25, 50, 75, 100 ],
-                data: hash['data'],
-                dom: 'ClfrtipR', // drag n drop reorder
-                columns: [
-                    {
-                        data:           null,
-                        className:      'details-control',
-                        orderable:      false,                      
-                        defaultContent: ''
-                    }, 
-                    { data: 'project_name' },
-                    { data: 'lead_faculty_abbrev' },
-                    { data: 'lead_dept_name' },
-                ]
+        var hash = toDataTablesFormat(json);
+
+        noDmpTable = $('#noDmpTable').DataTable( {
+            lengthMenu: [ 25, 50, 75, 100 ],
+            data: hash['data'],
+            dom: 'ClfrtipR', // drag n drop reorder
+            columns: [
+                {
+                    data:           null,
+                    className:      'details-control',
+                    orderable:      false,                      
+                    defaultContent: ''
+                }, 
+                { data: 'project_name' },
+                { data: 'lead_faculty_abbrev' },
+                { data: 'lead_dept_name' },
+            ]
             });
-        }
     });
 }
 

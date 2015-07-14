@@ -48,7 +48,7 @@
         App.startDate = startDate;
         App.endDate = endDate;
 
-        var scope = angular.element($("#dateRangeCtrl")).scope();
+        var scope = angular.element($("#filterController")).scope();
         scope.$apply(function(){
             scope.startDate = startDate;
             scope.endDate = endDate;
@@ -68,7 +68,7 @@
         // console.log(startDate, endDate);  
         App.startDate = startDate;
         App.endDate = endDate;
-        var scope = angular.element($("#dateRangeCtrl")).scope();
+        var scope = angular.element($("#filterController")).scope();
         scope.$apply(function(){
             scope.startDate = startDate;
             scope.endDate = endDate;
