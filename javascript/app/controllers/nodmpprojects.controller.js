@@ -1,8 +1,8 @@
-app.controller('noDmpProjectsCtrl', function($scope, $rootScope, $http, api) {
+app.controller('noDmpProjectsCtrl', function($scope, $rootScope, $http, api, config) {
     request({
-                startDate:      App.startDateDefault, 
-                endDate:        App.endDateDefault,
-                faculty:        App.facultyDefault,
+                startDate:      config.startDateDefault, 
+                endDate:        config.endDateDefault,
+                faculty:        config.facultyDefault,
             });
     
     function request(message){

@@ -1,10 +1,10 @@
-app.controller('datasetsController', function($scope, $rootScope, $http, api) {
+app.controller('datasetsController', function($scope, $rootScope, $http, api, config) {
     // init
     $scope.value = 0;
     request({
-                startDate:      App.startDateDefault, 
-                endDate:        App.endDateDefault,
-                faculty:        App.facultyDefault,  
+                startDate:      config.startDateDefault, 
+                endDate:        config.endDateDefault,
+                faculty:        config.facultyDefault,  
             });
 
     function request(message){
@@ -14,8 +14,6 @@ app.controller('datasetsController', function($scope, $rootScope, $http, api) {
                         faculty:    message.faculty,
                         count:      true 
                     };
-        // uri.addSearch("count", 'true');
-        //console.log('UC datasets ' + uri);
 
         api.uri.datasets(params).then(function(response) {
             $scope.$apply(function(){

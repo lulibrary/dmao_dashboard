@@ -1,10 +1,10 @@
-app.controller('rcukFundedDatasetsCtrl', function($scope, $rootScope, $http, api) {
+app.controller('rcukFundedDatasetsCtrl', function($scope, $rootScope, $http, api, config) {
     // init
     $scope.value = 0;
     request({
-                startDate:      App.startDateDefault, 
-                endDate:        App.endDateDefault,
-                faculty:        App.facultyDefault,
+                startDate:      config.startDateDefault, 
+                endDate:        config.endDateDefault,
+                faculty:        config.facultyDefault,
             });
 
     function request(message){
@@ -15,10 +15,6 @@ app.controller('rcukFundedDatasetsCtrl', function($scope, $rootScope, $http, api
                         filter:     'rcuk',
                         count:      true
                     };
-        // var promise = api.uri.datasets(params);
-        // uri.addSearch("filter", 'rcuk');
-        // uri.addSearch("count", 'true');
-        //console.log('UC 1 ' + uri);
 
         api.uri.datasets(params).then(function(response) {
             $scope.$apply(function(){            

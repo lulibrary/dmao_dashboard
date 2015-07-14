@@ -213,27 +213,27 @@
 					</a>
 					<ul class="sub-menu">
 						<li>
-							<a href="javascript:App.setFaculty('')">
+							<a href="javascript:DMAOFilters.setFaculty('')">
 							<i class="icon-home"></i>
 							All faculties</a>
 						</li>
 						<li>
-							<a href="javascript:App.setFaculty(2)">
+							<a href="javascript:DMAOFilters.setFaculty(2)">
 							<i class="icon-home"></i>
 							FST</a>
 						</li>
 						<li>
-							<a href="javascript:App.setFaculty(1)">
+							<a href="javascript:DMAOFilters.setFaculty(1)">
 							<i class="icon-basket"></i>
 							FASS</a>
 						</li>
 						<li>
-							<a href="javascript:App.setFaculty(3)">
+							<a href="javascript:DMAOFilters.setFaculty(3)">
 							<i class="icon-tag"></i>
 							FHM</a>
 						</li>
 						<li>
-							<a href="javascript:App.setFaculty(4)">
+							<a href="javascript:DMAOFilters.setFaculty(4)">
 							<i class="icon-handbag"></i>
 							LUMS</a>
 						</li>
@@ -454,7 +454,7 @@
 						Faculty: {{facultyName}}
 					</div>
 					<div id="searchFiltersButton">
-						<a class="btn btn-primary" href="javascript:App.initUserSelections();">
+						<a class="btn btn-primary" href="javascript:DMAOFilters.initUserSelections();">
 							Remove filters
 						</a>
 					</div>
@@ -1364,10 +1364,13 @@
 <script src="javascript/vendor/d3.min.js"></script>
 <script src="javascript/vendor/md5.min.js"></script>
 <script src="javascript/vendor/URI.min.js"></script>
-<script src="javascript/dmao.js"></script>
+
+<script src="javascript/services/config.js"></script>
+<script src="javascript/services/dmaoapi.service.js"></script>
+
 <!-- <script src="javascript/data_access_summary.js"></script>
 <script src="javascript/summary_update.js"></script> -->
-<script src="javascript/daterangepicker.js"></script>
+<script src="javascript/filters.js"></script>
 <script src="javascript/charts.js"></script>
 <!-- <script src="javascript/dataAccessChart.js"></script>
 <script src="javascript/metadataAccessChart.js"></script> -->
@@ -1401,6 +1404,8 @@ jQuery(document).ready(function() {
    Index.initMiniCharts();
    Tasks.initDashboardWidget();  
 
+   DMAOFilters.init(App);
+   DMAOFilters.DateRangePicker();
  } ); 
 
 </script>

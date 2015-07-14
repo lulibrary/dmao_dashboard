@@ -7,3 +7,7 @@ var app = angular.module('dmaoApp', []);
 app.factory('api', function() { 
     return ApiService;
 });
+
+app.factory('config', function() { 
+    return App;
+});

@@ -1,11 +1,11 @@
-app.controller('dmpStatusCtrl', function($scope, $rootScope, $http, api) {  
+app.controller('dmpStatusCtrl', function($scope, $rootScope, $http, api, config) {  
     // init
     $scope.value = 0;
     // $scope.fraction = {numerator: 0, denominator: 0}
     request({
-                startDate:      App.startDateDefault, 
-                endDate:        App.endDateDefault,
-                faculty:        App.facultyDefault,
+                startDate:      config.startDateDefault, 
+                endDate:        config.endDateDefault,
+                faculty:        config.facultyDefault,
             });
 
     function request(message){

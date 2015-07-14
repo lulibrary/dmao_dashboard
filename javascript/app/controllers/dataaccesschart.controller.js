@@ -1,9 +1,9 @@
-app.controller('dataAccessChartCtrl', function($scope, $rootScope, $http, api) {  
+app.controller('dataAccessChartCtrl', function($scope, $rootScope, $http, api, config) {  
     var params = {
-                startDate:          App.startDateDefault, 
-                endDate:            App.endDateDefault,
-                faculty:            App.facultyDefault,
-                summary_by_date:  true
+                startDate:          config.startDateDefault, 
+                endDate:            config.endDateDefault,
+                faculty:            config.facultyDefault,
+                summary_by_date:    true
             };
     
     request(params);
@@ -17,7 +17,7 @@ app.controller('dataAccessChartCtrl', function($scope, $rootScope, $http, api) {
                     };        
         api.uri.datasetAccess(params).then(function(data){
             //console.log('data access ' + uri);
-            data = ApiService.filter.datasetAccess(data, 'data_download');
+            data = api.filter.datasetAccess(data, 'data_download');
             DataAccessLineChart(data, {width:700, height:300});    
             // console.log('DataAccessLineChart(');        
         });
