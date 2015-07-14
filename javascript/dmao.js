@@ -66,32 +66,7 @@ var ApiService = {
         addParams: function(uri, params){
             for (key in params) {
                 uri.addSearch(key, params[key]);
-            }
-            // if (params.dateFilter){
-            //     uri.addSearch("date", params.dateFilter);
-            //     uri.addSearch("sd", params.startDate);
-            //     uri.addSearch("ed", params.endDate);                
-            // }
-            // if (params.faculty){
-            //     uri.addSearch("faculty", params.faculty);
-            // }   
-            // if (params.filter){
-            //     uri.addSearch("filter", params.filter);
-            // }              
-            // if (params.count){
-            //     uri.addSearch("count", params.count);
-            // }                      
-            return uri;
-        },
-        addDateRange: function(uri, params)
-        {
-            uri.addSearch("date", params.dateFilter);
-            uri.addSearch("sd", params.startDate);
-            uri.addSearch("ed", params.endDate);
-            return uri;
-        },
-        addFaculty: function(uri, param){
-            uri.addSearch("faculty", params.faculty);
+            }                    
             return uri;
         },
         datasets: function(params){           
@@ -101,72 +76,34 @@ var ApiService = {
             }
             return $.getJSON(uri);
         },
-        // datasetsByDateRange: function(params){
-        //     var uri = this.datasets(params);
-        //     // var uriWithDateRange = this.addDateRange(uri, params);
-        //     // return uriWithDateRange;
-        //     return uri;
-        // },
         dmps: function(params){
             var uri = URI(ApiService.prefix() + '/project_dmps' + '/' + App.institutionId);
             if (params){
                 uri = this.addParams(uri, params);
             }
              return $.getJSON(uri);
-        },
-        // dmpsByDateRange: function(params){
-        //     var uri = this.dmps(params);
-        //     // var uriWithDateRange = this.addDateRange(uri, params);
-        //     return uri;
-        // },        
-        // noDmps: function(params){
-        //     var uri = URI(ApiService.prefix() + '/project_dmps' + '/' + App.institutionId);
-        //     if (params){
-        //         uri = this.addParams(uri, params);
-        //     }
-        //     return uri;
-        // },
-        // noDmpsByDateRange: function(params){
-        //     var uri = this.noDmps(params);
-        //     // var uriWithDateRange = this.addDateRange(uri, params);
-        //     return uri;
-        // },   
+        },  
         dmpStatus: function(params){
             var uri = URI(ApiService.prefix() + '/dmp_status' + '/' + App.institutionId);
             if (params){
                 uri = this.addParams(uri, params);
             }
              return $.getJSON(uri);
-        },
-        // dmpStatusByDateRange: function(params){
-        //     var uri = this.dmpStatus(params);
-        //     // var uriWithDateRange = this.addDateRange(uri, params);
-        //     return uri;
-        // },   
+        }, 
         storage: function(params){
             var uri = URI(ApiService.prefix() + '/storage' + '/' + App.institutionId);
             if (params){
                 uri = this.addParams(uri, params);
             }
             return $.getJSON(uri);
-        },
-        // expectedStorageByDateRange: function(params){
-        //     var uri = this.expectedStorage(params);
-        //     // var uriWithDateRange = this.addDateRange(uri, params);
-        //     return uri;
-        // },    
+        },    
         rcukAccessCompliance: function(params){
             var uri = URI(ApiService.prefix() + '/rcuk_as' + '/' + App.institutionId);
             if (params){
                 uri = this.addParams(uri, params);
             }
              return $.getJSON(uri);
-        },
-        // rcukAccessComplianceByDateRange: function(params){
-        //     var uri = this.rcukAccessCompliance(params);
-        //     // var uriWithDateRange = this.addDateRange(uri, params);
-        //     return uri;
-        // },  
+        },  
         datasetAccess: function(params){
             var uri = URI(ApiService.prefix() + '/dataset_accesses' + '/' + App.institutionId);
             if (params){

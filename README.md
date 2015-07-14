@@ -23,7 +23,7 @@ its sibling.
 
 Clone the repository into that directory.
 ```
-$ git clone https://aalbinclark@bitbucket.org/ditlul/dmao_dashboard.git dashboard
+$ git clone <uri for this repository> dashboard
 ```
 
 Configuration

@@ -1,12 +1,12 @@
-var app = angular.module('dmaoApp', []);
+// var app = angular.module('dmaoApp', []);
 
-// This is a compromise. Factory is used to create an Angular service with dependency injection 
-// into the controllers to make it explicit that api is an external dependency. 
-// Api is actually a global variable, so that it can be used with jQuery code, without duplicating 
-// the config definition.
-app.factory('api', function() { 
-    return ApiService;
-});
+// // This is a compromise. Factory is used to create an Angular service with dependency injection 
+// // into the controllers to make it explicit that api is an external dependency. 
+// // Api is actually a global variable, so that it can be used with jQuery code, without duplicating 
+// // the config definition.
+// app.factory('api', function() { 
+//     return ApiService;
+// });
 
 // app.controller('datasetsCtrl', function($scope, $rootScope, $http, api) {
 //     // init
@@ -41,222 +41,222 @@ app.factory('api', function() {
 //     });        
 // });   
 
-app.controller('rcukFundedDatasetsCtrl', function($scope, $rootScope, $http, api) {
-    // init
-    $scope.value = 0;
-    request({
-                startDate:      App.startDateDefault, 
-                endDate:        App.endDateDefault,
-                faculty:        App.facultyDefault,
-            });
+// app.controller('rcukFundedDatasetsCtrl', function($scope, $rootScope, $http, api) {
+//     // init
+//     $scope.value = 0;
+//     request({
+//                 startDate:      App.startDateDefault, 
+//                 endDate:        App.endDateDefault,
+//                 faculty:        App.facultyDefault,
+//             });
 
-    function request(message){
-        var params = {  date:       'project_start',
-                        sd:         message.startDate, 
-                        ed:         message.endDate,
-                        faculty:    message.faculty,
-                        filter:     'rcuk',
-                        count:      true
-                    };
-        // var promise = api.uri.datasets(params);
-        // uri.addSearch("filter", 'rcuk');
-        // uri.addSearch("count", 'true');
-        //console.log('UC 1 ' + uri);
+//     function request(message){
+//         var params = {  date:       'project_start',
+//                         sd:         message.startDate, 
+//                         ed:         message.endDate,
+//                         faculty:    message.faculty,
+//                         filter:     'rcuk',
+//                         count:      true
+//                     };
+//         // var promise = api.uri.datasets(params);
+//         // uri.addSearch("filter", 'rcuk');
+//         // uri.addSearch("count", 'true');
+//         //console.log('UC 1 ' + uri);
 
-        api.uri.datasets(params).then(function(response) {
-            $scope.$apply(function(){            
-                var value = response[0].num_datasets;
-                // only update if dirty
-                if (value !== $scope.value) $scope.value = value;
-            });
-        });
-    }
+//         api.uri.datasets(params).then(function(response) {
+//             $scope.$apply(function(){            
+//                 var value = response[0].num_datasets;
+//                 // only update if dirty
+//                 if (value !== $scope.value) $scope.value = value;
+//             });
+//         });
+//     }
 
-    $rootScope.$on("FilterEvent", function (event, message) {
-        request(message);
-    });        
-});
+//     $rootScope.$on("FilterEvent", function (event, message) {
+//         request(message);
+//     });        
+// });
 
-app.controller('dmpsCreatedCtrl', function($scope, $rootScope, $http, api) {
-    // init
-    $scope.value = 0;
-    request({
-                startDate:      App.startDateDefault, 
-                endDate:        App.endDateDefault,
-                faculty:        App.facultyDefault,
-            });
+// app.controller('dmpsCreatedCtrl', function($scope, $rootScope, $http, api) {
+//     // init
+//     $scope.value = 0;
+//     request({
+//                 startDate:      App.startDateDefault, 
+//                 endDate:        App.endDateDefault,
+//                 faculty:        App.facultyDefault,
+//             });
     
-    function request(message){
-        var params = {  date:       'project_start',
-                        sd:         message.startDate, 
-                        ed:         message.endDate,
-                        faculty:    message.faculty,
-                        has_dmp:    true,
-                        count:      true
-                    };
+//     function request(message){
+//         var params = {  date:       'project_start',
+//                         sd:         message.startDate, 
+//                         ed:         message.endDate,
+//                         faculty:    message.faculty,
+//                         has_dmp:    true,
+//                         count:      true
+//                     };
         
-        api.uri.dmps(params).then(function(response) {
-            $scope.$apply(function(){ 
-                var value = response[0].num_project_dmps;
-                // only update if dirty
-                if (value !== $scope.value) $scope.value = value;
-            });
-        });
-    }
+//         api.uri.dmps(params).then(function(response) {
+//             $scope.$apply(function(){ 
+//                 var value = response[0].num_project_dmps;
+//                 // only update if dirty
+//                 if (value !== $scope.value) $scope.value = value;
+//             });
+//         });
+//     }
 
-    $rootScope.$on("FilterEvent", function (event, message) {
-        request(message);
-    });    
-});
+//     $rootScope.$on("FilterEvent", function (event, message) {
+//         request(message);
+//     });    
+// });
 
-app.controller('noDmpProjectsCtrl', function($scope, $rootScope, $http, api) {
-    request({
-                startDate:      App.startDateDefault, 
-                endDate:        App.endDateDefault,
-                faculty:        App.facultyDefault,
-            });
+// app.controller('noDmpProjectsCtrl', function($scope, $rootScope, $http, api) {
+//     request({
+//                 startDate:      App.startDateDefault, 
+//                 endDate:        App.endDateDefault,
+//                 faculty:        App.facultyDefault,
+//             });
     
-    function request(message){
-        var params = {  date:       'project_start',
-                        sd:         message.startDate, 
-                        ed:         message.endDate,
-                        faculty:    message.faculty,
-                        has_dmp:    false,
-                        count:      true
-                    };
+//     function request(message){
+//         var params = {  date:       'project_start',
+//                         sd:         message.startDate, 
+//                         ed:         message.endDate,
+//                         faculty:    message.faculty,
+//                         has_dmp:    false,
+//                         count:      true
+//                     };
         
-        api.uri.dmps(params).then(function(response) {
-            $scope.$apply(function(){
-                var value = response[0].num_project_dmps;
-                // only update if dirty
-                if (value !== $scope.value) $scope.value = value;
-            });
-        });
-    }
+//         api.uri.dmps(params).then(function(response) {
+//             $scope.$apply(function(){
+//                 var value = response[0].num_project_dmps;
+//                 // only update if dirty
+//                 if (value !== $scope.value) $scope.value = value;
+//             });
+//         });
+//     }
 
-    $rootScope.$on("FilterEvent", function (event, message) {
-        request(message);
-    });
-});
+//     $rootScope.$on("FilterEvent", function (event, message) {
+//         request(message);
+//     });
+// });
 
-app.controller('dmpStatusCtrl', function($scope, $rootScope, $http, api) {  
-    // init
-    $scope.value = 0;
-    // $scope.fraction = {numerator: 0, denominator: 0}
-    request({
-                startDate:      App.startDateDefault, 
-                endDate:        App.endDateDefault,
-                faculty:        App.facultyDefault,
-            });
+// app.controller('dmpStatusCtrl', function($scope, $rootScope, $http, api) {  
+//     // init
+//     $scope.value = 0;
+//     // $scope.fraction = {numerator: 0, denominator: 0}
+//     request({
+//                 startDate:      App.startDateDefault, 
+//                 endDate:        App.endDateDefault,
+//                 faculty:        App.facultyDefault,
+//             });
 
-    function request(message){
-        var params = {  date:       'project_start',
-                        sd:         message.startDate, 
-                        ed:         message.endDate,
-                        faculty:    message.faculty,
-                        count:      true
-                    };
+//     function request(message){
+//         var params = {  date:       'project_start',
+//                         sd:         message.startDate, 
+//                         ed:         message.endDate,
+//                         faculty:    message.faculty,
+//                         count:      true
+//                     };
         
-        api.uri.dmpStatus(params).then(function(response) {
-        //     var count = 0;
-        //     for(i=0;i<response.length;++i) {
-        //         if (response[i].dmp_status === 'completed' || response[i].dmp_status === 'verified') ++count;
-        //     }
+//         api.uri.dmpStatus(params).then(function(response) {
+//         //     var count = 0;
+//         //     for(i=0;i<response.length;++i) {
+//         //         if (response[i].dmp_status === 'completed' || response[i].dmp_status === 'verified') ++count;
+//         //     }
 
-        //     // only update if dirty
-        //     if (count !== $scope.fraction.numerator)
-        //         $scope.fraction.numerator = count;
-        //     // only update if dirty
-        //     if (response.length !== $scope.fraction.denominator)
-        //         $scope.fraction.denominator = response.length;
-        // });
-        $scope.$apply(function(){
-            var value = response[0].num_dmp_status;
-            if (value !== $scope.value) $scope.value = value;
-            });
-        });
-    }
+//         //     // only update if dirty
+//         //     if (count !== $scope.fraction.numerator)
+//         //         $scope.fraction.numerator = count;
+//         //     // only update if dirty
+//         //     if (response.length !== $scope.fraction.denominator)
+//         //         $scope.fraction.denominator = response.length;
+//         // });
+//         $scope.$apply(function(){
+//             var value = response[0].num_dmp_status;
+//             if (value !== $scope.value) $scope.value = value;
+//             });
+//         });
+//     }
 
-    $rootScope.$on("FilterEvent", function (event, message) {
-        request(message);
-    });  
-});
+//     $rootScope.$on("FilterEvent", function (event, message) {
+//         request(message);
+//     });  
+// });
 
-app.controller('expectedStorageCtrl', function($scope, $rootScope, $http, api) {
-    // init
-    $scope.value = 0;
-    request({
-                startDate:      App.startDateDefault, 
-                endDate:        App.endDateDefault,
-                faculty:        App.facultyDefault,
-            });
+// app.controller('expectedStorageCtrl', function($scope, $rootScope, $http, api) {
+//     // init
+//     $scope.value = 0;
+//     request({
+//                 startDate:      App.startDateDefault, 
+//                 endDate:        App.endDateDefault,
+//                 faculty:        App.facultyDefault,
+//             });
 
-    function request(message){
-        var params = {  date:       'project_start',
-                        sd:         message.startDate, 
-                        ed:         message.endDate,
-                        faculty:    message.faculty,
-                    };
+//     function request(message){
+//         var params = {  date:       'project_start',
+//                         sd:         message.startDate, 
+//                         ed:         message.endDate,
+//                         faculty:    message.faculty,
+//                     };
         
-        api.uri.storage(params).then(function(response) {
-            $scope.$apply(function(){
-                var total = 0;
-                var previous_project_id = -1;
-                for(i=0;i<response.length;++i) {            
-                    if (response[i].project_id != previous_project_id) {
-                        total += response[i].expected_storage;
-                    }
-                    previous_project_id = response[i].project_id;
-                }
-                var value = Math.round(total * 0.001);
+//         api.uri.storage(params).then(function(response) {
+//             $scope.$apply(function(){
+//                 var total = 0;
+//                 var previous_project_id = -1;
+//                 for(i=0;i<response.length;++i) {            
+//                     if (response[i].project_id != previous_project_id) {
+//                         total += response[i].expected_storage;
+//                     }
+//                     previous_project_id = response[i].project_id;
+//                 }
+//                 var value = Math.round(total * 0.001);
 
-                // only update if dirty
-                if (value !== $scope.value) $scope.value = value;
-            });
-        });
-    }
+//                 // only update if dirty
+//                 if (value !== $scope.value) $scope.value = value;
+//             });
+//         });
+//     }
 
-    $rootScope.$on("FilterEvent", function (event, message) {
-        request(message);
-    });   
-});
+//     $rootScope.$on("FilterEvent", function (event, message) {
+//         request(message);
+//     });   
+// });
 
-app.controller('rcukAccessComplianceCtrl', function($scope, $rootScope, $http, api) {
-    // init
-    $scope.value = 0;
-    request({
-                startDate:      App.startDateDefault, 
-                endDate:        App.endDateDefault,
-                faculty:        App.facultyDefault,
-            });
+// app.controller('rcukAccessComplianceCtrl', function($scope, $rootScope, $http, api) {
+//     // init
+//     $scope.value = 0;
+//     request({
+//                 startDate:      App.startDateDefault, 
+//                 endDate:        App.endDateDefault,
+//                 faculty:        App.facultyDefault,
+//             });
 
-    function request(message){
-        var params = {  date:       'project_start',
-                        sd:         message.startDate, 
-                        ed:         message.endDate,
-                        faculty: message.faculty
-                    };
-        api.uri.rcukAccessCompliance(params).then(function(response) {
-            $scope.$apply(function(){
-                var count = 0;
-                for(i=0;i<response.length;++i) {
-                    if (response[i].data_access_statement === 'exists with persistent link') ++count;
-                }
+//     function request(message){
+//         var params = {  date:       'project_start',
+//                         sd:         message.startDate, 
+//                         ed:         message.endDate,
+//                         faculty: message.faculty
+//                     };
+//         api.uri.rcukAccessCompliance(params).then(function(response) {
+//             $scope.$apply(function(){
+//                 var count = 0;
+//                 for(i=0;i<response.length;++i) {
+//                     if (response[i].data_access_statement === 'exists with persistent link') ++count;
+//                 }
 
-                // only update if dirty
-                var value = 0;
-                if (count && count !== $scope.value) {
-                    value = (count / response.length) * 100;
-                    $scope.value = Math.round(value);
-                }
-            });
-        });
-    }
+//                 // only update if dirty
+//                 var value = 0;
+//                 if (count && count !== $scope.value) {
+//                     value = (count / response.length) * 100;
+//                     $scope.value = Math.round(value);
+//                 }
+//             });
+//         });
+//     }
 
-    $rootScope.$on("FilterEvent", function (event, message) {
-        request(message);
-    });    
-});
+//     $rootScope.$on("FilterEvent", function (event, message) {
+//         request(message);
+//     });    
+// });
 
 // app.controller('dataAccessCtrl', function($scope, $rootScope, $http, api) {
 //     // init
@@ -324,65 +324,65 @@ app.controller('rcukAccessComplianceCtrl', function($scope, $rootScope, $http, a
 //     });    
 // });
 
-app.controller('dataAccessChartCtrl', function($scope, $rootScope, $http, api) {  
-    var params = {
-                startDate:          App.startDateDefault, 
-                endDate:            App.endDateDefault,
-                faculty:            App.facultyDefault,
-                summary_by_date:  true
-            };
+// app.controller('dataAccessChartCtrl', function($scope, $rootScope, $http, api) {  
+//     var params = {
+//                 startDate:          App.startDateDefault, 
+//                 endDate:            App.endDateDefault,
+//                 faculty:            App.facultyDefault,
+//                 summary_by_date:  true
+//             };
     
-    request(params);
+//     request(params);
 
-    function request(message){
-        var params = {  date:               'project_start',
-                        sd:                 message.startDate,
-                        ed:                 message.endDate,
-                        faculty:            message.faculty,
-                        summary_by_date:    true
-                    };        
-        api.uri.datasetAccess(params).then(function(data){
-            //console.log('data access ' + uri);
-            data = ApiService.filter.datasetAccess(data, 'data_download');
-            DataAccessLineChart(data, {width:700, height:300});    
-            // console.log('DataAccessLineChart(');        
-        });
-    }
+//     function request(message){
+//         var params = {  date:               'project_start',
+//                         sd:                 message.startDate,
+//                         ed:                 message.endDate,
+//                         faculty:            message.faculty,
+//                         summary_by_date:    true
+//                     };        
+//         api.uri.datasetAccess(params).then(function(data){
+//             //console.log('data access ' + uri);
+//             data = ApiService.filter.datasetAccess(data, 'data_download');
+//             DataAccessLineChart(data, {width:700, height:300});    
+//             // console.log('DataAccessLineChart(');        
+//         });
+//     }
 
-    $rootScope.$on("FilterEvent", function (event, message) {
-        request(message);
-    });  
-});
+//     $rootScope.$on("FilterEvent", function (event, message) {
+//         request(message);
+//     });  
+// });
 
-app.controller('metadataAccessChartCtrl', function($scope, $rootScope, $http, api) {  
-    var params = {
-                startDate:          App.startDateDefault, 
-                endDate:            App.endDateDefault,
-                faculty:            App.facultyDefault,
-                summary_by_date:  true
-            };
+// app.controller('metadataAccessChartCtrl', function($scope, $rootScope, $http, api) {  
+//     var params = {
+//                 startDate:          App.startDateDefault, 
+//                 endDate:            App.endDateDefault,
+//                 faculty:            App.facultyDefault,
+//                 summary_by_date:  true
+//             };
     
-    request(params);
+//     request(params);
 
-    function request(message){
-        var params = {  date:               'project_start',
-                        sd:                 message.startDate,
-                        ed:                 message.endDate,
-                        faculty:            message.faculty,
-                        summary_by_date:    true
-                    };        
-        api.uri.datasetAccess(params).then(function(data){
-            //console.log('data access ' + uri);
-            data = ApiService.filter.datasetAccess(data, 'metadata');
-            MetadataAccessLineChart(data, {width:700, height:300});    
-            // console.log('MetadataAccessLineChart(');        
-        });
-    }
+//     function request(message){
+//         var params = {  date:               'project_start',
+//                         sd:                 message.startDate,
+//                         ed:                 message.endDate,
+//                         faculty:            message.faculty,
+//                         summary_by_date:    true
+//                     };        
+//         api.uri.datasetAccess(params).then(function(data){
+//             //console.log('data access ' + uri);
+//             data = ApiService.filter.datasetAccess(data, 'metadata');
+//             MetadataAccessLineChart(data, {width:700, height:300});    
+//             // console.log('MetadataAccessLineChart(');        
+//         });
+//     }
 
-    $rootScope.$on("FilterEvent", function (event, message) {
-        request(message);
-    }); 
-});
+//     $rootScope.$on("FilterEvent", function (event, message) {
+//         request(message);
+//     }); 
+// });
 
 // app.controller('accessMetadataCtrl', function($scope, $rootScope, $http, api) {
 //     var template = URITemplate(api.prefix() + "/dataset_accesses/inst/count/{institutionId}");
