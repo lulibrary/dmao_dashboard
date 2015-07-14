@@ -7,7 +7,7 @@ var App = {
     faculty: '',
     facultyDefault: '',
     facultyMap: {
-        '': 'All faculties',
+       '': 'All faculties',
         1: 'FASS',
         2: 'FST',
         3: 'FHM',

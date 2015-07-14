@@ -6,9 +6,9 @@ app.controller('dataAccessChartCtrl', function($scope, $rootScope, $http, api, c
                 summary_by_date:    true
             };
     
-    request(params);
+    update(params);
 
-    function request(message){
+    function update(message){
         var params = {  date:               'project_start',
                         sd:                 message.startDate,
                         ed:                 message.endDate,
@@ -24,6 +24,6 @@ app.controller('dataAccessChartCtrl', function($scope, $rootScope, $http, api, c
     }
 
     $rootScope.$on("FilterEvent", function (event, message) {
-        request(message);
+        update(message);
     });  
 });

@@ -2,13 +2,13 @@ app.controller('dmpStatusCtrl', function($scope, $rootScope, $http, api, config)
     // init
     $scope.value = 0;
     // $scope.fraction = {numerator: 0, denominator: 0}
-    request({
+    update({
                 startDate:      config.startDateDefault, 
                 endDate:        config.endDateDefault,
                 faculty:        config.facultyDefault,
             });
 
-    function request(message){
+    function update(message){
         var params = {  date:       'project_start',
                         sd:         message.startDate, 
                         ed:         message.endDate,
@@ -37,6 +37,6 @@ app.controller('dmpStatusCtrl', function($scope, $rootScope, $http, api, config)
     }
 
     $rootScope.$on("FilterEvent", function (event, message) {
-        request(message);
+        update(message);
     });  
 });
