@@ -21,10 +21,11 @@ Deployment instructions
 Change to the directory where this repository will be placed, with the Metronic assets directory as
 its sibling.
 
-Clone the repository into that directory.
+Clone the repository into that directory:
 ```
-$ git clone <uri for this repository> dashboard
+$ git clone --depth=1 <uri for this repository> dashboard
 ```
+
 
 Configuration
 -

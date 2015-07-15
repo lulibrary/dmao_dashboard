@@ -1,6 +1,7 @@
 app.controller('rcukFundedDatasetsCtrl', function($scope, $rootScope, $http, api, config) {
     // init
     $scope.value = 0;
+
     update({
                 startDate:      config.startDateDefault, 
                 endDate:        config.endDateDefault,

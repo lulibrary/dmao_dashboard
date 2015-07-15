@@ -1,4 +1,4 @@
-var app = angular.module('dmaoApp', []);
+var app = angular.module('dmaoApp', ['ngRoute']);
 
 // This is a compromise. Factory is used to create an Angular service with dependency injection 
 // into the controllers to make it explicit that api is an external dependency. 
