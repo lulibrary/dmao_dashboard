@@ -457,8 +457,14 @@
 
 				<div ng-include="'javascript/app/components/datasets/datasetsView.html'"></div>
 
-				<div ng-controller="rcukFundedDatasetsCtrl">
-					<statistic description="Bla"></statistic>
+				<div ng-controller="datasetsRCUKCtrl">
+					<statistic 	value="{{value}}" 
+								description="RCUK datasets"
+								icon="file"
+								colour="green-haze"
+								link="rcuk_datasets.html"
+								>
+					</statistic>
 				</div>					
 
 					<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
@@ -1338,7 +1344,7 @@
 <script src="javascript/app/app.routes.js"></script>
 <script src="javascript/app/components/statistic/statisticDirective.js"></script>
 <script src="javascript/app/components/datasets/datasetsController.js"></script>
-<script src="javascript/app/controllers/rcukfundeddatasets.controller.js"></script>
+<script src="javascript/app/components/datasets/datasetsRCUKController.js"></script>
 <script src="javascript/app/controllers/dmpscreated.controller.js"></script>
 <script src="javascript/app/controllers/nodmpprojects.controller.js"></script>
 <script src="javascript/app/controllers/dmpstatus.controller.js"></script>

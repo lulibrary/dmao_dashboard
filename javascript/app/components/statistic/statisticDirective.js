@@ -1,16 +1,14 @@
 app.directive('statistic', function() {
-    var directive = {};
-
-    directive.restrict = 'E';
-
-    directive.templateUrl = 'javascript/app/components/statistic/statisticView.html';
-
-    directive.replace = 'true';
-
-    directive.scope = {
-        description: "=",
-        value: '='
-    };    
-
-    return directive;
+	return {
+		restrict: 		'E',
+		templateUrl: 	'javascript/app/components/statistic/statisticView.html',
+		replace: 		'true',
+		scope: {
+        	value: 			"@",
+        	description: 	"@",
+        	icon: 			"@",
+        	colour:         "@",
+        	link:      		"@",
+        }
+    };
 });

@@ -1,4 +1,4 @@
-app.controller('rcukFundedDatasetsCtrl', function($scope, $rootScope, $http, api, config) {
+app.controller('datasetsRCUKCtrl', function($scope, $rootScope, $http, api, config) {
     // init
     $scope.value = 0;
 
