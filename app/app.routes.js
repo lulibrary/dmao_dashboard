@@ -1,6 +1,7 @@
 app.config(function($routeProvider) {
 	$routeProvider
 	.when('/', { templateUrl: 'app/components/statistic/statisticCompilationView.html' })
+	.when('/datasets', { templateUrl: 'app/components/table/datasets.html' })
 	// .when('/index.html', { templateUrl: 'app/components/statistic/statisticCompilationView.html' })
   	.otherwise({ templateUrl: 'app/components/error/error.html' });
 
