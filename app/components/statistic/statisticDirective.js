@@ -1,7 +1,7 @@
 app.directive('statistic', function() {
 	return {
 		restrict: 		'E',
-		templateUrl: 	'javascript/app/components/statistic/statisticView.html',
+		templateUrl: 	'app/components/statistic/statisticView.html',
 		replace: 		'true',
 		scope: {
         	value: 			"@",
@@ -9,6 +9,7 @@ app.directive('statistic', function() {
         	icon: 			"@",
         	colour:         "@",
         	link:      		"@",
+        	units:      	"@",
         }
     };
 });

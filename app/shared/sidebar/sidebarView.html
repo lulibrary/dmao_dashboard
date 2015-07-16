@@ -1,0 +1,206 @@
+<div class="page-sidebar-wrapper">
+	<div class="page-sidebar navbar-collapse collapse">
+		<!-- BEGIN SIDEBAR MENU -->
+		<!-- DOC: Apply "page-sidebar-menu-light" class right after "page-sidebar-menu" to enable light sidebar menu style(without borders) -->
+		<!-- DOC: Apply "page-sidebar-menu-hover-submenu" class right after "page-sidebar-menu" to enable hoverable(hover vs accordion) sub menu mode -->
+		<!-- DOC: Apply "page-sidebar-menu-closed" class right after "page-sidebar-menu" to collapse("page-sidebar-closed" class must be applied to the body element) the sidebar sub menu mode -->
+		<!-- DOC: Set data-auto-scroll="false" to disable the sidebar from auto scrolling/focusing -->
+		<!-- DOC: Set data-keep-expand="true" to keep the submenues expanded -->
+		<!-- DOC: Set data-auto-speed="200" to adjust the sub menu slide up/down speed -->
+		<ul class="page-sidebar-menu" data-keep-expanded="false" data-auto-scroll="true" data-slide-speed="200">
+			<!-- DOC: To remove the sidebar toggler from the sidebar you just need to completely remove the below "sidebar-toggler-wrapper" LI element -->
+			<li class="sidebar-toggler-wrapper">
+				<!-- BEGIN SIDEBAR TOGGLER BUTTON -->
+				<div class="sidebar-toggler">
+				</div>
+				<!-- END SIDEBAR TOGGLER BUTTON -->
+			</li>
+			<li class="start active">
+				<a href="javascript:;">
+				<i class="icon-home"></i>
+				<span class="title">Overview</span>
+				<span class="selected"></span>
+<!--					<span class="arrow"></span>-->
+				</a>
+			</li>
+			<li>
+				<a href="javascript:;">
+				<i class="icon-basket"></i>
+				<span class="title">Faculties</span>
+				<span class="arrow "></span>
+				</a>
+				<ul class="sub-menu">
+					<li>
+						<a href="javascript:DMAOFilters.setFaculty('')">
+						<i class="icon-home"></i>
+						All faculties</a>
+					</li>
+					<li>
+						<a href="javascript:DMAOFilters.setFaculty(2)">
+						<i class="icon-home"></i>
+						FST</a>
+					</li>
+					<li>
+						<a href="javascript:DMAOFilters.setFaculty(1)">
+						<i class="icon-basket"></i>
+						FASS</a>
+					</li>
+					<li>
+						<a href="javascript:DMAOFilters.setFaculty(3)">
+						<i class="icon-tag"></i>
+						FHM</a>
+					</li>
+					<li>
+						<a href="javascript:DMAOFilters.setFaculty(4)">
+						<i class="icon-handbag"></i>
+						LUMS</a>
+					</li>
+				</ul>
+			</li>
+			<li>
+				<a href="javascript:;">
+				<i class="icon-rocket"></i>
+				<span class="title">Departments</span>
+				<span class="arrow "></span>
+				</a>
+				<ul class="sub-menu">
+					<li>
+						<a href="#">
+						Library</a>
+					</li>
+					<li>
+						<a href="#">
+						Research Support Office</a>
+					</li>
+					<li>
+						<a href="#">
+						IT Services</a>
+					</li>
+				</ul>
+			</li>
+			<li class="heading">
+				<h3 class="uppercase">Detailed Views</h3>
+			</li>
+			<li>
+				<a href="javascript:;">
+				<i class="icon-hourglass"></i>
+				<span class="title">Compliance rates</span>
+                <span class="arrow "></span>
+				</a>
+                <ul class="sub-menu">
+					<li>
+						<a href="#">
+						Projects vs DMPs</a>
+					</li>
+					<li>
+						<a href="#">
+						Publications vs Acknowledgements</a>
+					</li>
+					<li>
+						<a href="#">
+						Datasets vs DOIs</a>
+					</li>
+                </ul>
+
+			</li>
+			<li>
+				<a href="javascript:;">
+				<i class="icon-settings"></i>
+				<span class="title">Data Management Plans</span>
+                <span class="arrow "></span>
+				</a>
+                <ul class="sub-menu">
+					<li>
+						<a href="#">
+						DMPOnline usage</a>
+					</li>
+					<li>
+						<a href="#">
+						DMPs per funding council</a>
+					</li>
+					<li>
+						<a href="#">
+						DMPs per faculty</a>
+					</li>
+                </ul>
+
+			</li>
+            <li>
+				<a href="javascript:;">
+				<i class="icon-wallet"></i>
+				<span class="title">Funding Councils</span>
+				<span class="arrow "></span>
+				</a>
+				<ul class="sub-menu">
+					<li>
+						<a href="#">
+						AHRC</a>
+					</li>
+					<li>
+						<a href="#">
+						<span class="badge badge-roundless badge-danger">new</span>BBSRC</a>
+					</li>
+					<li>
+						<a href="#">
+						EPSRC</a>
+					</li>
+					<li>
+						<a href="#">
+						ESRC</a>
+					</li>
+                    <li>
+						<a href="#">
+						<span class="badge badge-roundless badge-danger">new</span>Horizon 2020</a>
+					</li>
+                    <li>
+						<a href="#">
+						MRC</a>
+					</li>
+                    <li>
+						<a href="#">
+						NERC</a>
+					</li>
+				</ul>
+			</li>
+			<li>
+				<a href="javascript:;">
+				<i class="icon-wrench"></i>
+				<span class="title">IT infrastructure</span>
+                <span class="arrow "></span>
+				</a>
+                <ul class="sub-menu">
+					<li>
+						<a href="#">
+						Active storage usage</a>
+					</li>
+					<li>
+						<a href="#">
+						Archival storage usage</a>
+					</li>
+					<li>
+						<a href="#">
+						Remote storage usage</a>
+					</li>
+                </ul>
+			</li>
+			<li>
+				<a href="javascript:;">
+				<i class="icon-bar-chart"></i>
+				<span class="title">Access statistics</span>
+				<span class="arrow "></span>
+				</a>
+				<ul class="sub-menu">
+					<li>
+						<a href="#">
+						Third party requests</a>
+					</li>
+					<li>
+						<a href="#">
+						Dataset downloads</a>
+					</li>
+				</ul>
+			</li>
+		</ul>
+		<!-- END SIDEBAR MENU -->
+	</div>
+</div>

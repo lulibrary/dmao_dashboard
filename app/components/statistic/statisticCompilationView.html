@@ -1,0 +1,132 @@
+			<!-- BEGIN DASHBOARD STATS -->
+			<div class="row">
+
+				<div ng-controller="datasetsCtrl">
+					<statistic 	value="{{value}}" 
+								description="All datasets"
+								icon="file"
+								colour="green-haze"
+								link="datasets.html"
+								>
+					</statistic>
+				</div>
+				<div ng-controller="datasetsRCUKCtrl">
+					<statistic 	value="{{value}}" 
+								description="RCUK datasets"
+								icon="file"
+								colour="green-haze"
+								link="rcuk_datasets.html"
+								>
+					</statistic>
+				</div>	
+
+				<div ng-controller="dmpsCreatedCtrl">
+					<statistic 	value="{{value}}" 
+								description="DMPs produced"
+								icon="file-text-o"
+								colour="blue-madison"
+								link="dmp.html"
+								>
+					</statistic>
+				</div>				
+
+				<div ng-controller="noDmpProjectsCtrl">
+					<statistic 	value="{{value}}" 
+								description="Projects without DMPs"
+								icon="exclamation-triangle"
+								colour="red-intense"
+								link="no_dmp.html"
+								>
+					</statistic>
+				</div>				
+
+				<div ng-controller="dmpStatusCtrl">
+					<statistic 	value="{{value}}" 
+								description="All DMPs"
+								icon="th-list"
+								colour="blue-steel"
+								link="dmp_status.html"
+								>
+					</statistic>
+				</div>	
+
+				<div ng-controller="storageUnitCtrl">
+					<statistic 	value="{{value}}" 
+								description="Storage requirements"
+								icon="hdd-o"
+								colour="purple-plum"
+								link="storage.html"
+								units="TB"
+								>
+					</statistic>
+				</div>
+
+				<div ng-controller="storageCostCtrl">
+					<statistic 	value="{{value}}" 
+								description="Storage cost"
+								icon="gbp"
+								colour="purple-plum"
+								link="storage.html"
+								units="GBP"
+								>
+					</statistic>
+				</div>				
+
+				<div ng-controller="rcukAccessComplianceCtrl">
+					<statistic 	value="{{value}}" 
+								description="RCUK access compliance"
+								icon="gavel"
+								colour="green-jungle"
+								link="rcuk_access_compliance.html"
+								units="%"
+								>
+					</statistic>
+				</div>
+
+			</div>
+			<!-- END DASHBOARD STATS-->
+
+
+			<div class="clearfix">
+			</div>
+			<div class="row">
+					<!-- BEGIN PORTLET-->
+					<div class="portlet light">
+						<div class="portlet-title">
+							<div class="caption">
+								<!-- <i class="fa fa-bar-chart-o"></i>--><!--Data access-->
+								<span class="caption-subject font-red-sunglo bold uppercase">Data access</span>
+							</div>
+						</div>
+						<div class="portlet-body">
+<!-- 							<div id="data_access_loading">
+								<img src="../assets/admin/layout/img/loading.gif" alt="loading"/>
+							</div>	 -->						
+								<div ng-controller="dataAccessChartCtrl">
+									<div id="dataAccessChart"></div>
+								</div>
+						</div>
+					</div>
+			</div>				
+			<div class="row">
+					<!-- BEGIN PORTLET-->
+					<div class="portlet light">
+						<div class="portlet-title">
+							<div class="caption">
+								<!-- <i class="fa fa-bar-chart-o"></i>--><!--Data access-->
+								<span class="caption-subject font-green-sharp bold uppercase">Metadata access</span>
+							</div>
+						</div>
+						<div class="portlet-body">
+<!-- 							<div id="data_access_loading">
+								<img src="../assets/admin/layout/img/loading.gif" alt="loading"/>
+							</div>	 -->						
+								<div ng-controller="metadataAccessChartCtrl">
+									<div id="metadataAccessChart"></div>
+								</div>
+						</div>
+					</div>			
+			</div>
+			<div class="clearfix">
+		</div>
+	</div>

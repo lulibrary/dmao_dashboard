@@ -1,6 +1,8 @@
-app.controller('expectedStorageCtrl', function($scope, $rootScope, $http, api, config) {
+app.controller('storageCostCtrl', function($scope, $rootScope, $http, api, config) {
     // init
     $scope.value = 0;
+    // $scope.currency = '';
+
     update({
                 startDate:      config.startDateDefault, 
                 endDate:        config.endDateDefault,
@@ -18,13 +20,16 @@ app.controller('expectedStorageCtrl', function($scope, $rootScope, $http, api, c
             $scope.$apply(function(){
                 var total = 0;
                 var previous_project_id = -1;
+                // if (response.length){
+                //     $scope.currency = 
+                // }
                 for(i=0;i<response.length;++i) {            
                     if (response[i].project_id != previous_project_id) {
-                        total += response[i].expected_storage;
+                        total += response[i].expected_storage_cost;
                     }
                     previous_project_id = response[i].project_id;
                 }
-                var value = Math.round(total * 0.001);
+                var value = Math.round(total);
 
                 // only update if dirty
                 if (value !== $scope.value) $scope.value = value;
