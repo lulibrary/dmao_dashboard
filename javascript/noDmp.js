@@ -1,5 +1,5 @@
-var Dmp = function() {
-    var dmpTable;
+var NoDmp = function() {
+    var noDmpTable;
 
     var init = function() {
         setupTable();
@@ -11,7 +11,7 @@ var Dmp = function() {
                         sd:         App.startDate, 
                         ed:         App.endDate,
                         faculty:    App.faculty,
-                        has_dmp:     true,
+                        has_dmp:    false,
                     };    
         // console.log('tables params', params);
         // console.log('App', App);
@@ -20,7 +20,7 @@ var Dmp = function() {
 
             var hash = toDataTablesFormat(json);
 
-            dmpTable = $('#dmpTable').DataTable( {
+            noDmpTable = $('#noDmpTable').DataTable( {
                 lengthMenu: [ 25, 50, 75, 100 ],
                 data: hash['data'],
                 dom: 'ClfrtipR', // drag n drop reorder
@@ -34,20 +34,16 @@ var Dmp = function() {
                     { data: 'project_name' },
                     { data: 'lead_faculty_abbrev' },
                     { data: 'lead_dept_name' },
-                    { data: 'dmp_id' },
-                    { data: 'has_dmp_been_reviewed' },
-                    { data: 'project_start' },
-                    { data: 'project_end' },
                 ]
-            });
+                });
         });
     }
 
     function setupRowExpanderListener() {
-        $('#dmpTable tbody').on('click', 'td.details-control', function () {
+        $('#noDmpTable tbody').on('click', 'td.details-control', function () {
 
             var tr = $(this).closest('tr');
-            var row = dmpTable.row( tr );
+            var row = noDmpTable.row( tr );
 
             if ( row.child.isShown() ) {
                 // This row is already open - close it

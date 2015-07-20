@@ -1,5 +1,5 @@
-var Dmp = function() {
-    var dmpTable;
+var RcukDatasets = function() {
+    var rcukDatasetsTable;
 
     var init = function() {
         setupTable();
@@ -11,16 +11,16 @@ var Dmp = function() {
                         sd:         App.startDate, 
                         ed:         App.endDate,
                         faculty:    App.faculty,
-                        has_dmp:     true,
+                        filter:     'rcuk',
                     };    
         // console.log('tables params', params);
         // console.log('App', App);
 
-        ApiService.uri.dmps(params).then(function(json){
+        ApiService.uri.datasets(params).then(function(json){
 
             var hash = toDataTablesFormat(json);
 
-            dmpTable = $('#dmpTable').DataTable( {
+            rcukDatasetsTable = $('#rcukDatasetsTable').DataTable( {
                 lengthMenu: [ 25, 50, 75, 100 ],
                 data: hash['data'],
                 dom: 'ClfrtipR', // drag n drop reorder
@@ -31,11 +31,12 @@ var Dmp = function() {
                         orderable:      false,                      
                         defaultContent: ''
                     }, 
-                    { data: 'project_name' },
+                    { data: 'dataset_name' },
+                    { data: 'funder_name' },
+                    { data: 'dataset_pid' },
                     { data: 'lead_faculty_abbrev' },
                     { data: 'lead_dept_name' },
-                    { data: 'dmp_id' },
-                    { data: 'has_dmp_been_reviewed' },
+                    { data: 'project_name' },
                     { data: 'project_start' },
                     { data: 'project_end' },
                 ]
@@ -44,10 +45,10 @@ var Dmp = function() {
     }
 
     function setupRowExpanderListener() {
-        $('#dmpTable tbody').on('click', 'td.details-control', function () {
+        $('#rcukDatasetsTable tbody').on('click', 'td.details-control', function () {
 
             var tr = $(this).closest('tr');
-            var row = dmpTable.row( tr );
+            var row = rcukDatasetsTable.row( tr );
 
             if ( row.child.isShown() ) {
                 // This row is already open - close it
@@ -65,7 +66,7 @@ var Dmp = function() {
     /* Formatting function for row details - modify as you need */
     function format ( d ) {
         // `d` is the original data object for the row
-        return '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">'+      
+        return '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">'+
             '<tr>'+        
                 '<td>Project id:</td>'+
                 '<td>'+d.project_id+'</td>'+
@@ -81,39 +82,43 @@ var Dmp = function() {
             '<tr>'+        
                 '<td>Project end date:</td>'+
                 '<td>'+d.project_end+'</td>'+
+            '</tr>'+        
+            '<tr>'+        
+                '<td>Funder id:</td>'+
+                '<td>'+d.funder_id+'</td>'+
+            '</tr>'+         
+            '<tr>'+
+                '<td>Funder name:</td>'+
+                '<td>'+d.funder_name+'</td>'+
+            '</tr>'+ 
+            '<tr>'+        
+                '<td>Dataset id:</td>'+
+                '<td>'+d.dataset_id+'</td>'+
             '</tr>'+          
             '<tr>'+        
-                '<td>Funder project code:</td>'+
-                '<td>'+d.funder_project_code+'</td>'+
-            '</tr>'+ 
-            '<tr>'+        
-                '<td>Is awarded:</td>'+
-                '<td>'+d.is_awarded+'</td>'+
-            '</tr>'+ 
-            '<tr>'+        
-                '<td>Institution id:</td>'+
-                '<td>'+d.inst_id+'</td>'+
-            '</tr>'+
-            '<tr>'+        
-                '<td>Institution project code:</td>'+
-                '<td>'+d.institution_project_code+'</td>'+
-            '</tr>'+
-            '<tr>'+        
-                '<td>Data management plan id:</td>'+
-                '<td>'+d.dmp_id+'</td>'+
-            '</tr>'+
-            '<tr>'+        
-                '<td>Has data management plan:</td>'+
-                '<td>'+d.has_dmp+'</td>'+
+                '<td>Dataset pid:</td>'+
+                '<td>'+d.dataset_pid+'</td>'+
             '</tr>'+        
             '<tr>'+        
-                '<td>Has data management plan been reviewed:</td>'+
-                '<td>'+d.has_dmp_been_reviewed+'</td>'+
+                '<td>Dataset link:</td>'+
+                '<td>'+d.dataset_link+'</td>'+
             '</tr>'+
+            '<tr>'+        
+                '<td>Dataset size:</td>'+
+                '<td>'+d.dataset_size+'</td>'+
+            '</tr>'+
+            '<tr>'+        
+                '<td>Dataset name:</td>'+
+                '<td>'+d.dataset_name+'</td>'+
+            '</tr>'+
+            '<tr>'+        
+                '<td>Dataset notes:</td>'+
+                '<td>'+d.dataset_notes+'</td>'+
+            '</tr>'+
+            '<tr>'+        
+                '<td>Storage location:</td>'+
+                '<td>'+d.storage_location+'</td>'+
             '</tr>'+        
-                '<td>Expected storage:</td>'+
-                '<td>'+d.expected_storage+'</td>'+
-            '</tr>'+ 
             '<tr>'+        
                 '<td>Lead faculty id:</td>'+
                 '<td>'+d.lead_faculty_id+'</td>'+
@@ -137,7 +142,7 @@ var Dmp = function() {
             '<tr>'+        
                 '<td>Lead department name:</td>'+
                 '<td>'+d.lead_dept_name+'</td>'+
-            '</tr>'+        
+            '</tr>'+  
         '</table>';
     }
 

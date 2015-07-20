@@ -74,7 +74,7 @@ var MetadataAccessLineChart = function(data, options){
               .attr("y", 6)
               .attr("dy", ".71em")              
               .style("text-anchor", "end")
-              .text("Downloads");
+              .text("Accesses");
 
           svg.append("path")
               .datum(data)

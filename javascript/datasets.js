@@ -1,20 +1,16 @@
 var Datasets = function() {
     var DatasetsTable;
 
-    var init = function() {
-        setupTable();
+    var init = function(data) {
+        setupTable(data);
         setupRowExpanderListener();
     };
-    return {
-        init: init,
-    };
-}();
 
-function setupTable() {
+    function setupTable(data) {
+        var hash = toDataTablesFormat(data);
 
-    ApiService.uri.datasets().then(function(json){
-
-        var hash = toDataTablesFormat(json);
+        var oTable = $( "#datasetsTable" ).dataTable();
+        oTable.fnDestroy();
 
         datasetsTable = $('#datasetsTable').DataTable( {
             lengthMenu: [ 25, 50, 75, 100 ],
@@ -36,109 +32,112 @@ function setupTable() {
                 { data: 'project_start' },
                 { data: 'project_end' },
             ]
+        });    
+    }
+
+    function setupRowExpanderListener() {
+        $('#datasetsTable tbody').on('click', 'td.details-control', function () {
+
+            var tr = $(this).closest('tr');
+            var row = datasetsTable.row( tr );
+
+            if ( row.child.isShown() ) {
+                // This row is already open - close it
+                row.child.hide();
+                tr.removeClass('shown');
+            }
+            else {
+                // Open this row
+                row.child( format(row.data()) ).show();
+                tr.addClass('shown');
+            }
         });
-    });
+    }  
 
-}
+    /* Formatting function for row details - modify as you need */
+    function format ( d ) {
+        // `d` is the original data object for the row
+        return '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">'+
+            '<tr>'+        
+                '<td>Project id:</td>'+
+                '<td>'+d.project_id+'</td>'+
+            '</tr>'+     
+            '<tr>'+        
+                '<td>Project name:</td>'+
+                '<td>'+d.project_name+'</td>'+
+            '</tr>'+         
+            '<tr>'+        
+                '<td>Project start date:</td>'+
+                '<td>'+d.project_start+'</td>'+
+            '</tr>'+ 
+            '<tr>'+        
+                '<td>Project end date:</td>'+
+                '<td>'+d.project_end+'</td>'+
+            '</tr>'+        
+            '<tr>'+        
+                '<td>Funder id:</td>'+
+                '<td>'+d.funder_id+'</td>'+
+            '</tr>'+         
+            '<tr>'+
+                '<td>Funder name:</td>'+
+                '<td>'+d.funder_name+'</td>'+
+            '</tr>'+ 
+            '<tr>'+        
+                '<td>Dataset id:</td>'+
+                '<td>'+d.dataset_id+'</td>'+
+            '</tr>'+          
+            '<tr>'+        
+                '<td>Dataset pid:</td>'+
+                '<td>'+d.dataset_pid+'</td>'+
+            '</tr>'+        
+            '<tr>'+        
+                '<td>Dataset link:</td>'+
+                '<td>'+d.dataset_link+'</td>'+
+            '</tr>'+
+            '<tr>'+        
+                '<td>Dataset size:</td>'+
+                '<td>'+d.dataset_size+'</td>'+
+            '</tr>'+
+            '<tr>'+        
+                '<td>Dataset name:</td>'+
+                '<td>'+d.dataset_name+'</td>'+
+            '</tr>'+
+            '<tr>'+        
+                '<td>Dataset notes:</td>'+
+                '<td>'+d.dataset_notes+'</td>'+
+            '</tr>'+
+            '<tr>'+        
+                '<td>Storage location:</td>'+
+                '<td>'+d.storage_location+'</td>'+
+            '</tr>'+        
+            '<tr>'+        
+                '<td>Lead faculty id:</td>'+
+                '<td>'+d.lead_faculty_id+'</td>'+
+            '</tr>'+        
+            '<tr>'+        
+                '<td>Lead faculty abbreviation:</td>'+
+                '<td>'+d.lead_faculty_abbrev+'</td>'+
+            '</tr>'+
+            '<tr>'+        
+                '<td>Lead faculty name:</td>'+
+                '<td>'+d.lead_faculty_name+'</td>'+
+            '</tr>'+
+            '<tr>'+        
+                '<td>Lead department id:</td>'+
+                '<td>'+d.lead_department_id+'</td>'+
+            '</tr>'+ 
+            '<tr>'+        
+                '<td>Lead department abbrev:</td>'+
+                '<td>'+d.lead_dept_abbrev+'</td>'+
+            '</tr>'+ 
+            '<tr>'+        
+                '<td>Lead department name:</td>'+
+                '<td>'+d.lead_dept_name+'</td>'+
+            '</tr>'+  
+        '</table>';
+    }      
 
-function setupRowExpanderListener() {
-    $('#datasetsTable tbody').on('click', 'td.details-control', function () {
-
-        var tr = $(this).closest('tr');
-        var row = datasetsTable.row( tr );
-
-        if ( row.child.isShown() ) {
-            // This row is already open - close it
-            row.child.hide();
-            tr.removeClass('shown');
-        }
-        else {
-            // Open this row
-            row.child( format(row.data()) ).show();
-            tr.addClass('shown');
-        }
-    });
-}
-
-/* Formatting function for row details - modify as you need */
-function format ( d ) {
-    // `d` is the original data object for the row
-    return '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">'+
-        '<tr>'+        
-            '<td>Project id:</td>'+
-            '<td>'+d.project_id+'</td>'+
-        '</tr>'+     
-        '<tr>'+        
-            '<td>Project name:</td>'+
-            '<td>'+d.project_name+'</td>'+
-        '</tr>'+         
-        '<tr>'+        
-            '<td>Project start date:</td>'+
-            '<td>'+d.project_start+'</td>'+
-        '</tr>'+ 
-        '<tr>'+        
-            '<td>Project end date:</td>'+
-            '<td>'+d.project_end+'</td>'+
-        '</tr>'+        
-        '<tr>'+        
-            '<td>Funder id:</td>'+
-            '<td>'+d.funder_id+'</td>'+
-        '</tr>'+         
-        '<tr>'+
-            '<td>Funder name:</td>'+
-            '<td>'+d.funder_name+'</td>'+
-        '</tr>'+ 
-        '<tr>'+        
-            '<td>Dataset id:</td>'+
-            '<td>'+d.dataset_id+'</td>'+
-        '</tr>'+          
-        '<tr>'+        
-            '<td>Dataset pid:</td>'+
-            '<td>'+d.dataset_pid+'</td>'+
-        '</tr>'+        
-        '<tr>'+        
-            '<td>Dataset link:</td>'+
-            '<td>'+d.dataset_link+'</td>'+
-        '</tr>'+
-        '<tr>'+        
-            '<td>Dataset size:</td>'+
-            '<td>'+d.dataset_size+'</td>'+
-        '</tr>'+
-        '<tr>'+        
-            '<td>Dataset name:</td>'+
-            '<td>'+d.dataset_name+'</td>'+
-        '</tr>'+
-        '<tr>'+        
-            '<td>Dataset notes:</td>'+
-            '<td>'+d.dataset_notes+'</td>'+
-        '</tr>'+
-        '<tr>'+        
-            '<td>Storage location:</td>'+
-            '<td>'+d.storage_location+'</td>'+
-        '</tr>'+        
-        '<tr>'+        
-            '<td>Lead faculty id:</td>'+
-            '<td>'+d.lead_faculty_id+'</td>'+
-        '</tr>'+        
-        '<tr>'+        
-            '<td>Lead faculty abbreviation:</td>'+
-            '<td>'+d.lead_faculty_abbrev+'</td>'+
-        '</tr>'+
-        '<tr>'+        
-            '<td>Lead faculty name:</td>'+
-            '<td>'+d.lead_faculty_name+'</td>'+
-        '</tr>'+
-        '<tr>'+        
-            '<td>Lead department id:</td>'+
-            '<td>'+d.lead_department_id+'</td>'+
-        '</tr>'+ 
-        '<tr>'+        
-            '<td>Lead department abbrev:</td>'+
-            '<td>'+d.lead_dept_abbrev+'</td>'+
-        '</tr>'+ 
-        '<tr>'+        
-            '<td>Lead department name:</td>'+
-            '<td>'+d.lead_dept_name+'</td>'+
-        '</tr>'+  
-    '</table>';
-}
+    return {
+        init: init,
+    };
+}();

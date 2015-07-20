@@ -1,11 +1,11 @@
 <div class="portlet box green-haze">
 	<div class="portlet-title">
 		<div class="caption">
-			All datasets
+			RCUK datasets
  		</div> 
  	</div>
 	<div class="portlet-body">
-		<table id="datasetsTable" class="display" cellspacing="0" width="100%">
+		<table id="rcukDatasetsTable" class="display" cellspacing="0" width="100%">
 	        <thead>
 	            <tr>
 	            	<th>Detail</th>
@@ -19,23 +19,12 @@
 			        <th>Project End</th>
 	            </tr>
 	        </thead>	
-			<div ng-controller="datasetsTableCtrl" ng-cloak>
-	  			<tbody>
-	  			</tbody>
-			</div>	  		
+	  		<tbody>
+	  		</tbody>
 		</table>
 	</div>
 </div>
 
 <script>
-	// var params = {
-	//     sd:      App.startDate, 
-	//     ed:      App.endDate,
-	//     faculty: App.faculty, 		
-	// };
-	// console.log('Filtering on ', params);
-	// ApiService.uri.datasets(params).then(function(data){
- //   		Datasets.init(data);
- //   	});
+   RcukDatasets.init();
 </script>
-
