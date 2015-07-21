@@ -13,7 +13,8 @@ var App = {
         3: 'FHM',
         4: 'LUMS'
     },
-    updateDelay: 600000,
+    updateDelay: 5000,
     dataAccessResponseData: {},
     metadataAccessResponseData: {},
+    controllersInView: {},
 };

@@ -8,16 +8,18 @@ app.controller('datasetsTableCtrl', function($scope, $rootScope, $http, api, con
     update(params);
 
     function update(message){
-        var params = {  date:               'project_start',
-                        sd:                 message.startDate,
-                        ed:                 message.endDate,
-                        faculty:            message.faculty,
-                    };        
-        api.uri.datasets(params).then(function(data){
-            //console.log('Datasets ' + uri);
-            Datasets.init(data);    
-            // console.log(Datasets.init(');        
-        });
+        if(config.controllersInView.datasetsTableCtrl){
+            var params = {  date:               'project_start',
+                            sd:                 message.startDate,
+                            ed:                 message.endDate,
+                            faculty:            message.faculty,
+                        };                
+            api.uri.datasets(params).then(function(data){
+                //console.log('Datasets ' + uri);
+                Datasets.init(data);    
+                // console.log(Datasets.init(');        
+            });
+        }
     }
 
     $rootScope.$on("FilterEvent", function (event, message) {
