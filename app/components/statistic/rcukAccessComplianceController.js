@@ -2,9 +2,9 @@ app.controller('rcukAccessComplianceCtrl', function($scope, $rootScope, $http, a
     // init
     $scope.value = 0;
     update({
-                startDate:      App.startDateDefault, 
-                endDate:        App.endDateDefault,
-                faculty:        App.facultyDefault,
+                startDate:      config.startDateDefault, 
+                endDate:        config.endDateDefault,
+                faculty:        config.facultyDefault,
             });
 
     function update(message){

@@ -9,18 +9,20 @@ app.controller('dataAccessChartCtrl', function($scope, $rootScope, $http, api, c
     update(params);
 
     function update(message){
-        var params = {  date:               'project_start',
-                        sd:                 message.startDate,
-                        ed:                 message.endDate,
-                        faculty:            message.faculty,
-                        summary_by_date:    true
-                    };        
-        api.uri.datasetAccess(params).then(function(data){
-            //console.log('data access ' + uri);
-            data = api.filter.datasetAccess(data, 'data_download');
-            DataAccessLineChart(data, {width:700, height:300});    
-            // console.log('DataAccessLineChart(');        
-        });
+        if(config.controllersInView.dataAccessChartCtrl){
+            var params = {  date:               'project_start',
+                            sd:                 message.startDate,
+                            ed:                 message.endDate,
+                            faculty:            message.faculty,
+                            summary_by_date:    true
+                        };        
+            api.uri.datasetAccess(params).then(function(data){
+                //console.log('data access ' + uri);
+                data = api.filter.datasetAccess(data, 'data_download');
+                DataAccessLineChart(data, {width:700, height:300});    
+                // console.log('DataAccessLineChart(');        
+            });
+        }
     }
 
     $rootScope.$on("FilterEvent", function (event, message) {
