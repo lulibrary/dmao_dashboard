@@ -10,6 +10,7 @@ app.directive('statistic', function() {
         	colour:         "@",
         	link:      		"@",
         	units:      	"@",
+            currency:       "@", 
         }
     };
 });
