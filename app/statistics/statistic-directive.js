@@ -1,7 +1,7 @@
 app.directive('statistic', function() {
 	return {
 		restrict: 		'E',
-		templateUrl: 	'app/components/statistic/statisticView.html',
+		templateUrl: 	'app/statistics/statistic-directive.html',
 		replace: 		'true',
 		scope: {
         	value: 			"@",

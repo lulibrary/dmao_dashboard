@@ -50,7 +50,7 @@
 <!-- END THEME STYLES -->
 
 <!-- dmao -->
-<link href="assets/css/lineChart.css" rel="stylesheet" type="text/css"/>
+<link href="assets/css/line-chart.css" rel="stylesheet" type="text/css"/>
 <link href="assets/css/responsive.css" rel="stylesheet" type="text/css"/>
 <link href="assets/css/input.css" rel="stylesheet" type="text/css"/>
 
@@ -59,8 +59,8 @@
 <link href="http://cdn.datatables.net/colreorder/1.1.3/css/dataTables.colReorder.css" rel="stylesheet" type="text/css"/>
 <link href="http://cdn.datatables.net/colvis/1.1.2/css/dataTables.colvis.jqueryui.css" rel="stylesheet" type="text/css"/>
 <link href="http://cdn.datatables.net/colvis/1.1.2/css/dataTables.colVis.min.css" rel="stylesheet" type="text/css"/>
-<link href="assets/css/custom.dataTables.colVis.css" rel="stylesheet" type="text/css"/>
-<link href="assets/css/childRows.css" rel="stylesheet" type="text/css"/>
+<link href="assets/css/custom-datatables-colvis.css" rel="stylesheet" type="text/css"/>
+<link href="assets/css/child-rows.css" rel="stylesheet" type="text/css"/>
 
 <link rel="shortcut icon" href="favicon.ico"/>
 </head>
@@ -83,7 +83,7 @@
 
 
 <!-- BEGIN HEADER -->
-<!-- <div ng-include="'app/shared/header/headerView.html'"></div> -->
+<!-- <div ng-include="'app/layout/header.html'"></div> -->
 <!-- END HEADER -->
 
 <div class="clearfix">
@@ -91,7 +91,7 @@
 <!-- BEGIN CONTAINER -->
 <div class="page-container">
 	<!-- BEGIN SIDEBAR -->
-	<!-- <div ng-include="'app/shared/sidebar/sidebarView.html'"></div> -->
+	<!-- <div ng-include="'app/layout/sidebar.html'"></div> -->
 <div class="page-sidebar-wrapper">
 	<div class="page-sidebar navbar-collapse collapse">
 		<!-- BEGIN SIDEBAR MENU -->
@@ -361,7 +361,7 @@
 
     						<div class="clearfix"></div>
 
-						<div ng-include="'app/components/filter/filterView.html'"></div>    	
+						<div ng-include="'app/filter/filter.html'"></div>    	
 						
 						<div class="clearfix"></div>					
 
@@ -384,7 +384,7 @@
 <!-- END CONTAINER -->
 
 <!-- BEGIN FOOTER -->
-<div ng-include="'app/shared/footer/footerView.html'"></div>
+<div ng-include="'app/layout/footer.html'"></div>
 <!-- END FOOTER -->
 
 <!-- BEGIN JAVASCRIPTS(Load javascripts at bottom, this will reduce page load time) -->
@@ -442,46 +442,46 @@
 <script src="assets/libs/md5.min.js"></script>
 <script src="assets/libs/URI.min.js"></script>
 
-<script src="app/app.module.js"></script>
-<script src="app/app.routes.js"></script>
+<script src="app/app-module.js"></script>
+<script src="app/app-routes.js"></script>
 
-<script src="app/components/config/config.js"></script>
-<script src="app/components/api/dmaoApiService.js"></script>
+<script src="app/services/config.service.js"></script>
+<script src="app/services/dmao-api.service.js"></script>
 
-<script src="app/components/filter/filters.js"></script>
-<script src="app/components/filter/filterController.js"></script>
+<script src="app/filter/filters.js"></script>
+<script src="app/filter/filter.controller.js"></script>
 
-<script src="app/components/statistic/statisticDirective.js"></script>
-<script src="app/components/statistic/datasetsController.js"></script>
-<script src="app/components/statistic/datasetsRCUKController.js"></script>
-<script src="app/components/statistic/dmpsCreatedController.js"></script>
-<script src="app/components/statistic/noDmpProjectsController.js"></script>
-<script src="app/components/statistic/dmpStatusController.js"></script>
-<script src="app/components/statistic/storageUnitController.js"></script>
-<script src="app/components/statistic/storageCostController.js"></script>
-<script src="app/components/statistic/rcukAccessComplianceController.js"></script>
+<script src="app/statistics/statistic-directive.js"></script>
+<script src="app/statistics/datasets-statistic.controller.js"></script>
+<script src="app/statistics/datasets-rcuk-statistic.controller.js"></script>
+<script src="app/statistics/dmp-statistic.controller.js"></script>
+<script src="app/statistics/no-dmp-statistic.controller.js"></script>
+<script src="app/statistics/dmp-status-statistic.controller.js"></script>
+<script src="app/statistics/storage-unit-statistic.controller.js"></script>
+<script src="app/statistics/storage-cost-statistic.controller.js"></script>
+<script src="app/statistics/rcuk-access-compliance-statistic.controller.js"></script>
 
-<script src="app/components/chart/charts.js"></script>
-<script src="app/components/chart/dataAccessChartController.js"></script>
-<script src="app/components/chart/metadataAccessChartController.js"></script>
-<script src="app/components/chart/dataAccessLineChart.js"></script>
-<script src="app/components/chart/metadataAccessLineChart.js"></script>
+<script src="app/charts/charts.js"></script>
+<script src="app/charts/data-access-chart.controller.js"></script>
+<script src="app/charts/metadata-access-chart.controller.js"></script>
+<script src="app/charts/data-access-line-chart.js"></script>
+<script src="app/charts/metadata-access-line-chart.js"></script>
 
-<script src="app/components/table/datasetsTableController.js"></script>
-<script src="app/components/table/datasetsRCUKTableController.js"></script>
-<script src="app/components/table/dmpTableController.js"></script>
-<script src="app/components/table/noDmpTableController.js"></script>
-<script src="app/components/table/dmpStatusTableController.js"></script>
-<script src="app/components/table/storageTableController.js"></script>
-<script src="app/components/table/rcukAccessComplianceTableController.js"></script>
-<script src="app/components/table/tables.js"></script>
-<script src="app/components/table/datasetsTable.js"></script>
-<script src="app/components/table/datasetsRCUKTable.js"></script>
-<script src="app/components/table/dmpTable.js"></script>
-<script src="app/components/table/noDmpTable.js"></script>
-<script src="app/components/table/dmpStatusTable.js"></script>
-<script src="app/components/table/storageTable.js"></script>
-<script src="app/components/table/rcukAccessComplianceTable.js"></script>
+<script src="app/tables/datasets-table.controller.js"></script>
+<script src="app/tables/datasets-rcuk-table.controller.js"></script>
+<script src="app/tables/dmp-table.controller.js"></script>
+<script src="app/tables/no-dmp-table.controller.js"></script>
+<script src="app/tables/dmp-status-table.controller.js"></script>
+<script src="app/tables/storage-table.controller.js"></script>
+<script src="app/tables/rcuk-access-compliance-table.controller.js"></script>
+<script src="app/tables/tables.js"></script>
+<script src="app/tables/datasets-table.js"></script>
+<script src="app/tables/datasets-rcuk-table.js"></script>
+<script src="app/tables/dmp-table.js"></script>
+<script src="app/tables/no-dmp-table.js"></script>
+<script src="app/tables/dmp-status-table.js"></script>
+<script src="app/tables/storage-table.js"></script>
+<script src="app/tables/rcuk-access-compliance-table.js"></script>
 
 
 <!-- END PAGE LEVEL SCRIPTS -->
