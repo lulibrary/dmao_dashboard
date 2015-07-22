@@ -9,7 +9,7 @@ app.controller('datasetsCtrl', function($scope, $rootScope, $http, api, config) 
             });
 
     function update(message){
-        if(config.controllersInView.datasetsCtrl){
+        // if(config.inView.datasetsCtrl){
             var params = {  date:       'project_start',
                             sd:         message.startDate, 
                             ed:         message.endDate,
@@ -24,10 +24,15 @@ app.controller('datasetsCtrl', function($scope, $rootScope, $http, api, config) 
                     if (value !== $scope.value) $scope.value = value;
                 });
             });
-        }
+        // }
     }
 
-    $rootScope.$on("FilterEvent", function (event, message) {
+    $scope.filterEventListener = $rootScope.$on("FilterEvent", function (event, message) {
         update(message);
-    });        
+    });  
+
+    $scope.$on('$destroy', function () {
+        // Remove the listener
+        $scope.filterEventListener();
+    });       
 });  

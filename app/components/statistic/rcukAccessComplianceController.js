@@ -8,7 +8,7 @@ app.controller('rcukAccessComplianceCtrl', function($scope, $rootScope, $http, a
             });
 
     function update(message){
-        if(config.controllersInView.rcukAccessComplianceCtrl){ 
+        // if(config.inView.rcukAccessComplianceCtrl){ 
             var params = {  date:       'project_start',
                             sd:         message.startDate, 
                             ed:         message.endDate,
@@ -29,10 +29,15 @@ app.controller('rcukAccessComplianceCtrl', function($scope, $rootScope, $http, a
                     }
                 });
             });
-        }
+        // }
     }
 
-    $rootScope.$on("FilterEvent", function (event, message) {
+    $scope.filterEventListener = $rootScope.$on("FilterEvent", function (event, message) {
         update(message);
-    });    
+    });  
+
+    $scope.$on('$destroy', function () {
+        // Remove the listener
+        $scope.filterEventListener();
+    });   
 });

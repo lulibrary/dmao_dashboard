@@ -1,8 +1,8 @@
 app.config(function($routeProvider) {
 	$routeProvider
 	.when('/', { templateUrl: 'app/components/statistic/statisticCompilationView.html' })
-	.when('/datasetsRCUK', { templateUrl: 'app/components/table/datasetsRCUK.html' })
 	.when('/datasets', { templateUrl: 'app/components/table/datasets.html' })
+	.when('/datasetsRCUK', { templateUrl: 'app/components/table/datasetsRCUK.html' })	
 	.when('/dmp', { templateUrl: 'app/components/table/dmp.html' })
 	.when('/nodmp', { templateUrl: 'app/components/table/noDmp.html' })
 	.when('/dmps', { templateUrl: 'app/components/table/dmpStatus.html' })

@@ -4,12 +4,12 @@ app.controller('dmpStatusCtrl', function($scope, $rootScope, $http, api, config)
     // $scope.fraction = {numerator: 0, denominator: 0}
     update({
                 startDate:      config.startDateDefault, 
-                endDate:        config.endDateDefault,
+                endDate:        config.endDateDefault, 
                 faculty:        config.facultyDefault,
             });
 
     function update(message){
-        if(config.controllersInView.dmpStatusCtrl){        
+        // if(config.inView.dmpStatusCtrl){        
             var params = {  date:       'project_start',
                             sd:         message.startDate, 
                             ed:         message.endDate,
@@ -35,10 +35,15 @@ app.controller('dmpStatusCtrl', function($scope, $rootScope, $http, api, config)
                 if (value !== $scope.value) $scope.value = value;
                 });
             });
-        }
+        // }
     }
 
-    $rootScope.$on("FilterEvent", function (event, message) {
+    $scope.filterEventListener = $rootScope.$on("FilterEvent", function (event, message) {
         update(message);
+    });  
+
+    $scope.$on('$destroy', function () {
+        // Remove the listener
+        $scope.filterEventListener();
     });  
 });

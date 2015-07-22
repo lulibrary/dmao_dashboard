@@ -1,46 +1,37 @@
-var RcukDatasets = function() {
+var DatasetsRCUKTable = function() {
     var rcukDatasetsTable;
 
-    var init = function() {
-        setupTable();
+    var init = function(data) {
+        setupTable(data);
         setupRowExpanderListener();
     };
 
-    function setupTable() {
-        var params = {  date:       'project_start',
-                        sd:         App.startDate, 
-                        ed:         App.endDate,
-                        faculty:    App.faculty,
-                        filter:     'rcuk',
-                    };    
-        // console.log('tables params', params);
-        // console.log('App', App);
+    function setupTable(data) {
+        var hash = toDataTablesFormat(data);
 
-        ApiService.uri.datasets(params).then(function(json){
+        var oTable = $( "#rcukDatasetsTable" ).dataTable();
+        oTable.fnDestroy();            
 
-            var hash = toDataTablesFormat(json);
-
-            rcukDatasetsTable = $('#rcukDatasetsTable').DataTable( {
-                lengthMenu: [ 25, 50, 75, 100 ],
-                data: hash['data'],
-                dom: 'ClfrtipR', // drag n drop reorder
-                columns: [
-                    {
-                        data:           null,
-                        className:      'details-control',
-                        orderable:      false,                      
-                        defaultContent: ''
-                    }, 
-                    { data: 'dataset_name' },
-                    { data: 'funder_name' },
-                    { data: 'dataset_pid' },
-                    { data: 'lead_faculty_abbrev' },
-                    { data: 'lead_dept_name' },
-                    { data: 'project_name' },
-                    { data: 'project_start' },
-                    { data: 'project_end' },
-                ]
-            });
+        rcukDatasetsTable = $('#rcukDatasetsTable').DataTable( {
+            lengthMenu: [ 25, 50, 75, 100 ],
+            data: hash['data'],
+            dom: 'ClfrtipR', // drag n drop reorder
+            columns: [
+                {
+                    data:           null,
+                    className:      'details-control',
+                    orderable:      false,                      
+                    defaultContent: ''
+                }, 
+                { data: 'dataset_name' },
+                { data: 'funder_name' },
+                { data: 'dataset_pid' },
+                { data: 'lead_faculty_abbrev' },
+                { data: 'lead_dept_name' },
+                { data: 'project_name' },
+                { data: 'project_start' },
+                { data: 'project_end' },
+            ]
         });
     }
 

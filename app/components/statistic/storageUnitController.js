@@ -8,7 +8,7 @@ app.controller('storageUnitCtrl', function($scope, $rootScope, $http, api, confi
             });
 
     function update(message){
-        if(config.controllersInView.storageUnitCtrl){ 
+        // if(config.inView.storageUnitCtrl){ 
             var params = {  date:       'project_start',
                             sd:         message.startDate, 
                             ed:         message.endDate,
@@ -31,10 +31,15 @@ app.controller('storageUnitCtrl', function($scope, $rootScope, $http, api, confi
                     if (value !== $scope.value) $scope.value = value;
                 });
             });
-        }
+        // }
     }
 
-    $rootScope.$on("FilterEvent", function (event, message) {
+    $scope.filterEventListener = $rootScope.$on("FilterEvent", function (event, message) {
         update(message);
+    });  
+
+    $scope.$on('$destroy', function () {
+        // Remove the listener
+        $scope.filterEventListener();
     });   
 });

@@ -8,13 +8,12 @@ var App = {
     facultyDefault: '',
     facultyMap: {
        '': 'All faculties',
-        1: 'FASS',
-        2: 'FST',
-        3: 'FHM',
-        4: 'LUMS'
+        1: 'Faculty of Arts and Social Sciences',
+        2: 'Faculty of Science and Technology',
+        3: 'Faculty of Health and Medicine',
+        4: 'Lancaster University Management School'
     },
-    updateDelay: 5000,
-    dataAccessResponseData: {},
-    metadataAccessResponseData: {},
-    controllersInView: {},
+    updateDelay: 30000,
+    // dataAccessResponseData: {},
+    // metadataAccessResponseData: {},
 };

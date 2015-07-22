@@ -1,49 +1,44 @@
-var NoDmp = function() {
-    var noDmpTable;
+var DmpStatusTable = function() {
+    var dmpStatusTable;
 
-    var init = function() {
-        setupTable();
+    var init = function(data) {
+        setupTable(data);
         setupRowExpanderListener();
     };
 
-    function setupTable() {
-        var params = {  date:       'project_start',
-                        sd:         App.startDate, 
-                        ed:         App.endDate,
-                        faculty:    App.faculty,
-                        has_dmp:    false,
-                    };    
-        // console.log('tables params', params);
-        // console.log('App', App);
+    function setupTable(data) {
+        var hash = toDataTablesFormat(data);
 
-        ApiService.uri.dmps(params).then(function(json){
+        var oTable = $( "#dmpStatusTable" ).dataTable();
+        oTable.fnDestroy();
 
-            var hash = toDataTablesFormat(json);
+        dmpStatusTable = $('#dmpStatusTable').DataTable( {
+            lengthMenu: [ 25, 50, 75, 100 ],
+            data: hash['data'],
+            dom: 'ClfrtipR', // drag n drop reorder
+            columns: [
+                {
+                    data:           null,
+                    className:      'details-control',
+                    orderable:      false,                      
+                    defaultContent: ''
+                }, 
+                { data: 'project_name' },                    
+                { data: 'funder_id' },
+                { data: 'dmp_stage' },
+                { data: 'dmp_status' },
+                { data: 'project_start' },
+                { data: 'project_end' },
 
-            noDmpTable = $('#noDmpTable').DataTable( {
-                lengthMenu: [ 25, 50, 75, 100 ],
-                data: hash['data'],
-                dom: 'ClfrtipR', // drag n drop reorder
-                columns: [
-                    {
-                        data:           null,
-                        className:      'details-control',
-                        orderable:      false,                      
-                        defaultContent: ''
-                    }, 
-                    { data: 'project_name' },
-                    { data: 'lead_faculty_abbrev' },
-                    { data: 'lead_dept_name' },
-                ]
-                });
+            ]
         });
     }
 
     function setupRowExpanderListener() {
-        $('#noDmpTable tbody').on('click', 'td.details-control', function () {
+        $('#dmpStatusTable tbody').on('click', 'td.details-control', function () {
 
             var tr = $(this).closest('tr');
-            var row = noDmpTable.row( tr );
+            var row = dmpStatusTable.row( tr );
 
             if ( row.child.isShown() ) {
                 // This row is already open - close it
@@ -61,15 +56,15 @@ var NoDmp = function() {
     /* Formatting function for row details - modify as you need */
     function format ( d ) {
         // `d` is the original data object for the row
-        return '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">'+      
+        return '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">'+    
             '<tr>'+        
                 '<td>Project id:</td>'+
                 '<td>'+d.project_id+'</td>'+
-            '</tr>'+     
+            '</tr>'+ 
             '<tr>'+        
                 '<td>Project name:</td>'+
                 '<td>'+d.project_name+'</td>'+
-            '</tr>'+         
+            '</tr>'+        
             '<tr>'+        
                 '<td>Project start date:</td>'+
                 '<td>'+d.project_start+'</td>'+
@@ -77,7 +72,7 @@ var NoDmp = function() {
             '<tr>'+        
                 '<td>Project end date:</td>'+
                 '<td>'+d.project_end+'</td>'+
-            '</tr>'+          
+            '</tr>'+         
             '<tr>'+        
                 '<td>Funder project code:</td>'+
                 '<td>'+d.funder_project_code+'</td>'+
@@ -97,11 +92,7 @@ var NoDmp = function() {
             '<tr>'+        
                 '<td>Data management plan id:</td>'+
                 '<td>'+d.dmp_id+'</td>'+
-            '</tr>'+
-            '<tr>'+        
-                '<td>Has data management plan:</td>'+
-                '<td>'+d.has_dmp+'</td>'+
-            '</tr>'+        
+            '</tr>'+     
             '<tr>'+        
                 '<td>Has data management plan been reviewed:</td>'+
                 '<td>'+d.has_dmp_been_reviewed+'</td>'+
@@ -115,25 +106,21 @@ var NoDmp = function() {
                 '<td>'+d.lead_faculty_id+'</td>'+
             '</tr>'+        
             '<tr>'+        
-                '<td>Lead faculty abbreviation:</td>'+
-                '<td>'+d.lead_faculty_abbrev+'</td>'+
-            '</tr>'+
-            '<tr>'+        
-                '<td>Lead faculty name:</td>'+
-                '<td>'+d.lead_faculty_name+'</td>'+
-            '</tr>'+
-            '<tr>'+        
                 '<td>Lead department id:</td>'+
                 '<td>'+d.lead_department_id+'</td>'+
             '</tr>'+ 
             '<tr>'+        
-                '<td>Lead department abbrev:</td>'+
-                '<td>'+d.lead_dept_abbrev+'</td>'+
-            '</tr>'+ 
-            '<tr>'+        
-                '<td>Lead department name:</td>'+
-                '<td>'+d.lead_dept_name+'</td>'+
+                '<td>Data management plan source system id:</td>'+
+                '<td>'+d.dmp_source_system_id+'</td>'+
             '</tr>'+        
+            '<tr>'+        
+                '<td>Data management plan stage:</td>'+
+                '<td>'+d.dmp_stage+'</td>'+
+            '</tr>'+        
+            '<tr>'+        
+                '<td>Data management plan status:</td>'+
+                '<td>'+d.dmp_status+'</td>'+
+            '</tr>'+    
         '</table>';
     }
 

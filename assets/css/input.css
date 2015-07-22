@@ -1,19 +1,23 @@
-/*#searchFilters {
-	clear: right;
-	background: pink;
-	width:350px;
+#searchFilters {
+	display:inline-block;
 	float: right;
+	margin-top: -10px;
+	margin-bottom: 10px;
 }
-#searchFiltersText {
-	position: relative;
-	left: 5px;
-	width:100px;
-}
-#searchFiltersButton {
-	position: relative;
-	left: 150px;
-	top: 0px;
-}*/
+
 #searchFiltersText {
 	font-size: 120%;
+	display:inline-block;
+	float: right;
+	margin-right: 15px;
+	margin-top: 5px;
+}
+
+#searchFiltersButton {
+	display:inline-block;
+	float: right;
+}
+
+#reportrange{
+	margin-top: -50px;
 }

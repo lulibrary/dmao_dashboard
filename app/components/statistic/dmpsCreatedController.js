@@ -8,26 +8,29 @@ app.controller('dmpsCreatedCtrl', function($scope, $rootScope, $http, api, confi
             });
     
     function update(message){
-        if(config.controllersInView.dmpsCreatedCtrl){        
-            var params = {  date:       'project_start',
-                            sd:         message.startDate, 
-                            ed:         message.endDate,
-                            faculty:    message.faculty,
-                            has_dmp:    true,
-                            count:      true
-                        };
-            
-            api.uri.dmps(params).then(function(response) {
-                $scope.$apply(function(){ 
-                    var value = response[0].num_project_dmps;
-                    // only update if dirty
-                    if (value !== $scope.value) $scope.value = value;
-                });
+        var params = {  date:       'project_start',
+                        sd:         message.startDate, 
+                        ed:         message.endDate,
+                        faculty:    message.faculty,
+                        has_dmp:    true,
+                        count:      true
+                    };
+        
+        api.uri.dmps(params).then(function(response) {
+            $scope.$apply(function(){ 
+                var value = response[0].num_project_dmps;
+                // only update if dirty
+                if (value !== $scope.value) $scope.value = value;
             });
-        }
+        });
     }
 
-    $rootScope.$on("FilterEvent", function (event, message) {
+    $scope.filterEventListener = $rootScope.$on("FilterEvent", function (event, message) {
         update(message);
+    });  
+
+    $scope.$on('$destroy', function () {
+        // Remove the listener
+        $scope.filterEventListener();
     });    
 });

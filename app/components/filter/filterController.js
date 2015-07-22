@@ -17,6 +17,7 @@ app.controller('filterCtrl', function($scope, $rootScope, $interval, config) {
 
     function update() {
         broadcastFilterChange("Timed update");
+        // console.log("TIMED UPDATE at " + Date());
         // //console.table(config);
     }
     var timeout = config.updateDelay;

@@ -1,45 +1,37 @@
-var Storage = function() {
+var StorageTable = function() {
     var storageTable;
 
-    var init = function() {
-        setupTable();
+    var init = function(data) {
+        setupTable(data);
         setupRowExpanderListener();
     };
 
-    function setupTable() {
-        var params = {  date:       'project_start',
-                        sd:         App.startDate, 
-                        ed:         App.endDate,
-                        faculty:    App.faculty,
-                    };    
-        // console.log('tables params', params);
-        // console.log('App', App);
+    function setupTable(data) {
+        var hash = toDataTablesFormat(data);
+        
+        var oTable = $( "#storageTable" ).dataTable();
+        oTable.fnDestroy();
 
-        ApiService.uri.storage(params).then(function(json){
+        storageTable = $('#storageTable').DataTable( {
+            lengthMenu: [ 25, 50, 75, 100 ],
+            data: hash['data'],
+            dom: 'ClfrtipR', // drag n drop reorder
+            columns: [
+                {
+                    data:           null,
+                    className:      'details-control',
+                    orderable:      false,                      
+                    defaultContent: ''
+                }, 
+                { data: 'project_name' },
+                { data: 'expected_storage' },
+                { data: 'expected_storage_cost' },
+                { data: 'dataset_size' },                    
+                { data: 'project_start' },
+                { data: 'project_end' },
+                { data: 'dataset_pid' },
 
-            var hash = toDataTablesFormat(json);
-
-            storageTable = $('#storageTable').DataTable( {
-                lengthMenu: [ 25, 50, 75, 100 ],
-                data: hash['data'],
-                dom: 'ClfrtipR', // drag n drop reorder
-                columns: [
-                    {
-                        data:           null,
-                        className:      'details-control',
-                        orderable:      false,                      
-                        defaultContent: ''
-                    }, 
-                    { data: 'project_name' },
-                    { data: 'expected_storage' },
-                    { data: 'expected_storage_cost' },
-                    { data: 'dataset_size' },                    
-                    { data: 'project_start' },
-                    { data: 'project_end' },
-                    { data: 'dataset_pid' },
-
-                ]
-            });
+            ]
         });
     }
 

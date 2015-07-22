@@ -1,42 +1,34 @@
-var RcukAccessCompliance = function() {
+var RcukAccessComplianceTable = function() {
     var rcukAccessComplianceTable;
 
-    var init = function() {
-        setupTable();
+    var init = function(data) {
+        setupTable(data);
         setupRowExpanderListener();
     };
 
-    function setupTable() {
-        var params = {  date:       'project_start',
-                        sd:         App.startDate, 
-                        ed:         App.endDate,
-                        faculty:    App.faculty,
-                    };    
-        // console.log('tables params', params);
-        // console.log('App', App);
+    function setupTable(data) {
+        var hash = toDataTablesFormat(data);
 
-        ApiService.uri.rcukAccessCompliance(params).then(function(json){
+        var oTable = $( "#rcukAccessComplianceTable" ).dataTable();
+        oTable.fnDestroy();
 
-            var hash = toDataTablesFormat(json);
-
-            rcukAccessComplianceTable = $('#rcukAccessComplianceTable').DataTable( {
-                lengthMenu: [ 25, 50, 75, 100 ],
-                data: hash['data'],
-                dom: 'ClfrtipR', // drag n drop reorder
-                columns: [
-                    {
-                        data:           null,
-                        className:      'details-control',
-                        orderable:      false,                      
-                        defaultContent: ''
-                    },                   
-                    { data: 'publication_pid' },
-                    { data: 'publication_date' },
-                    { data: 'data_access_statement' },
-                    { data: 'funder_name' },
-                    { data: 'project_name' },
-                ]
-            });
+        rcukAccessComplianceTable = $('#rcukAccessComplianceTable').DataTable( {
+            lengthMenu: [ 25, 50, 75, 100 ],
+            data: hash['data'],
+            dom: 'ClfrtipR', // drag n drop reorder
+            columns: [
+                {
+                    data:           null,
+                    className:      'details-control',
+                    orderable:      false,                      
+                    defaultContent: ''
+                },                   
+                { data: 'publication_pid' },
+                { data: 'publication_date' },
+                { data: 'data_access_statement' },
+                { data: 'funder_name' },
+                { data: 'project_name' },
+            ]
         });
     }
 

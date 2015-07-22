@@ -1,53 +1,40 @@
-var Dmp = function() {
-    var dmpTable;
+var NoDmpTable = function() {
+    var noDmpTable;
 
-    var init = function() {
-        setupTable();
+    var init = function(data) {
+        setupTable(data);
         setupRowExpanderListener();
     };
 
-    function setupTable() {
-        var params = {  date:       'project_start',
-                        sd:         App.startDate, 
-                        ed:         App.endDate,
-                        faculty:    App.faculty,
-                        has_dmp:     true,
-                    };    
-        // console.log('tables params', params);
-        // console.log('App', App);
+    function setupTable(data) {
+        var hash = toDataTablesFormat(data);
 
-        ApiService.uri.dmps(params).then(function(json){
+        var oTable = $( "#noDmpTable" ).dataTable();
+        oTable.fnDestroy();
 
-            var hash = toDataTablesFormat(json);
-
-            dmpTable = $('#dmpTable').DataTable( {
-                lengthMenu: [ 25, 50, 75, 100 ],
-                data: hash['data'],
-                dom: 'ClfrtipR', // drag n drop reorder
-                columns: [
-                    {
-                        data:           null,
-                        className:      'details-control',
-                        orderable:      false,                      
-                        defaultContent: ''
-                    }, 
-                    { data: 'project_name' },
-                    { data: 'lead_faculty_abbrev' },
-                    { data: 'lead_dept_name' },
-                    { data: 'dmp_id' },
-                    { data: 'has_dmp_been_reviewed' },
-                    { data: 'project_start' },
-                    { data: 'project_end' },
-                ]
-            });
+        noDmpTable = $('#noDmpTable').DataTable( {
+            lengthMenu: [ 25, 50, 75, 100 ],
+            data: hash['data'],
+            dom: 'ClfrtipR', // drag n drop reorder
+            columns: [
+                {
+                    data:           null,
+                    className:      'details-control',
+                    orderable:      false,                      
+                    defaultContent: ''
+                }, 
+                { data: 'project_name' },
+                { data: 'lead_faculty_abbrev' },
+                { data: 'lead_dept_name' },
+            ]
         });
     }
 
     function setupRowExpanderListener() {
-        $('#dmpTable tbody').on('click', 'td.details-control', function () {
+        $('#noDmpTable tbody').on('click', 'td.details-control', function () {
 
             var tr = $(this).closest('tr');
-            var row = dmpTable.row( tr );
+            var row = noDmpTable.row( tr );
 
             if ( row.child.isShown() ) {
                 // This row is already open - close it

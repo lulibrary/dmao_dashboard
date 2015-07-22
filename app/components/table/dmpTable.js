@@ -1,5 +1,5 @@
-var Datasets = function() {
-    var DatasetsTable;
+var DmpTable = function() {
+    var dmpTable;
 
     var init = function(data) {
         setupTable(data);
@@ -9,10 +9,10 @@ var Datasets = function() {
     function setupTable(data) {
         var hash = toDataTablesFormat(data);
 
-        var oTable = $( "#datasetsTable" ).dataTable();
+        var oTable = $( "#dmpTable" ).dataTable();
         oTable.fnDestroy();
 
-        datasetsTable = $('#datasetsTable').DataTable( {
+        dmpTable = $('#dmpTable').DataTable( {
             lengthMenu: [ 25, 50, 75, 100 ],
             data: hash['data'],
             dom: 'ClfrtipR', // drag n drop reorder
@@ -23,23 +23,22 @@ var Datasets = function() {
                     orderable:      false,                      
                     defaultContent: ''
                 }, 
-                { data: 'dataset_name' },
-                { data: 'funder_name' },
-                { data: 'dataset_pid' },
+                { data: 'project_name' },
                 { data: 'lead_faculty_abbrev' },
                 { data: 'lead_dept_name' },
-                { data: 'project_name' },
+                { data: 'dmp_id' },
+                { data: 'has_dmp_been_reviewed' },
                 { data: 'project_start' },
                 { data: 'project_end' },
             ]
-        });    
+        });
     }
 
     function setupRowExpanderListener() {
-        $('#datasetsTable tbody').on('click', 'td.details-control', function () {
+        $('#dmpTable tbody').on('click', 'td.details-control', function () {
 
             var tr = $(this).closest('tr');
-            var row = datasetsTable.row( tr );
+            var row = dmpTable.row( tr );
 
             if ( row.child.isShown() ) {
                 // This row is already open - close it
@@ -52,12 +51,12 @@ var Datasets = function() {
                 tr.addClass('shown');
             }
         });
-    }  
+    }
 
     /* Formatting function for row details - modify as you need */
     function format ( d ) {
         // `d` is the original data object for the row
-        return '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">'+
+        return '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">'+      
             '<tr>'+        
                 '<td>Project id:</td>'+
                 '<td>'+d.project_id+'</td>'+
@@ -73,43 +72,39 @@ var Datasets = function() {
             '<tr>'+        
                 '<td>Project end date:</td>'+
                 '<td>'+d.project_end+'</td>'+
-            '</tr>'+        
-            '<tr>'+        
-                '<td>Funder id:</td>'+
-                '<td>'+d.funder_id+'</td>'+
-            '</tr>'+         
-            '<tr>'+
-                '<td>Funder name:</td>'+
-                '<td>'+d.funder_name+'</td>'+
-            '</tr>'+ 
-            '<tr>'+        
-                '<td>Dataset id:</td>'+
-                '<td>'+d.dataset_id+'</td>'+
             '</tr>'+          
             '<tr>'+        
-                '<td>Dataset pid:</td>'+
-                '<td>'+d.dataset_pid+'</td>'+
+                '<td>Funder project code:</td>'+
+                '<td>'+d.funder_project_code+'</td>'+
+            '</tr>'+ 
+            '<tr>'+        
+                '<td>Is awarded:</td>'+
+                '<td>'+d.is_awarded+'</td>'+
+            '</tr>'+ 
+            '<tr>'+        
+                '<td>Institution id:</td>'+
+                '<td>'+d.inst_id+'</td>'+
+            '</tr>'+
+            '<tr>'+        
+                '<td>Institution project code:</td>'+
+                '<td>'+d.institution_project_code+'</td>'+
+            '</tr>'+
+            '<tr>'+        
+                '<td>Data management plan id:</td>'+
+                '<td>'+d.dmp_id+'</td>'+
+            '</tr>'+
+            '<tr>'+        
+                '<td>Has data management plan:</td>'+
+                '<td>'+d.has_dmp+'</td>'+
             '</tr>'+        
             '<tr>'+        
-                '<td>Dataset link:</td>'+
-                '<td>'+d.dataset_link+'</td>'+
+                '<td>Has data management plan been reviewed:</td>'+
+                '<td>'+d.has_dmp_been_reviewed+'</td>'+
             '</tr>'+
-            '<tr>'+        
-                '<td>Dataset size:</td>'+
-                '<td>'+d.dataset_size+'</td>'+
-            '</tr>'+
-            '<tr>'+        
-                '<td>Dataset name:</td>'+
-                '<td>'+d.dataset_name+'</td>'+
-            '</tr>'+
-            '<tr>'+        
-                '<td>Dataset notes:</td>'+
-                '<td>'+d.dataset_notes+'</td>'+
-            '</tr>'+
-            '<tr>'+        
-                '<td>Storage location:</td>'+
-                '<td>'+d.storage_location+'</td>'+
             '</tr>'+        
+                '<td>Expected storage:</td>'+
+                '<td>'+d.expected_storage+'</td>'+
+            '</tr>'+ 
             '<tr>'+        
                 '<td>Lead faculty id:</td>'+
                 '<td>'+d.lead_faculty_id+'</td>'+
@@ -133,9 +128,9 @@ var Datasets = function() {
             '<tr>'+        
                 '<td>Lead department name:</td>'+
                 '<td>'+d.lead_dept_name+'</td>'+
-            '</tr>'+  
+            '</tr>'+        
         '</table>';
-    }      
+    }
 
     return {
         init: init,

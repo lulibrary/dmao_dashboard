@@ -6,7 +6,7 @@ app.controller('noDmpProjectsCtrl', function($scope, $rootScope, $http, api, con
             });
     
     function update(message){
-        if(config.controllersInView.noDmpProjectsCtrl){ 
+        // if(config.inView.noDmpProjectsCtrl){ 
             var params = {  date:       'project_start',
                             sd:         message.startDate, 
                             ed:         message.endDate,
@@ -22,10 +22,15 @@ app.controller('noDmpProjectsCtrl', function($scope, $rootScope, $http, api, con
                     if (value !== $scope.value) $scope.value = value;
                 });
             });
-        }
+        // }
     }
 
-    $rootScope.$on("FilterEvent", function (event, message) {
+    $scope.filterEventListener = $rootScope.$on("FilterEvent", function (event, message) {
         update(message);
-    });
+    });  
+
+    $scope.$on('$destroy', function () {
+        // Remove the listener
+        $scope.filterEventListener();
+    }); 
 });
