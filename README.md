@@ -22,7 +22,7 @@ its sibling.
 
 Clone the repository into that directory:
 ```
-$ git clone --depth=1 <uri for this repository> dashboard
+$ git clone --depth=1 <uri for this repository> <target-directory>
 ```
 
 
