@@ -1,13 +1,12 @@
-var DMAOFilters = (function(){
-
+var DMAOFilters = (function(){    
     var config = {};
 
     var init = function(gConfig){
         config = gConfig;
     };
 
-    var DateRangePicker = function(){
-        $('#reportrange span').html(moment(config.startDate, "YYYYMMDD").format('MMMM D, YYYY') + ' - ' + moment(config.endDate, "YYYYMMDD").format('MMMM D, YYYY'));
+    var DateRangePicker = function(){        
+        $('#reportrange span').html(moment(config.startDate, "YYYYMMDD").format('MMMM D, YYYY') + ' - ' + moment(config.endDate, "YYYYMMDD").format('MMMM D, YYYY'));        
 
         $('#reportrange').daterangepicker({
             format: 'DD/MM/YYYY',
