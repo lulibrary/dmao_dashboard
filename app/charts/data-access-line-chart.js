@@ -1,5 +1,4 @@
 var DataAccessLineChart = function(data, options){
-
     var drawChart = true;
     // var dataAccessResponseDataOld = App.dataAccessResponseData;
     
