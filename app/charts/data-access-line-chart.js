@@ -15,7 +15,7 @@ var DataAccessLineChart = function(data, options){
     // }
 
     if (drawChart){
-        var margin = {top: 20, right: 20, bottom: 30, left: 50},
+        var margin = {top: 20, right: 20, bottom: 30, left: 100},
             width = options.width - margin.left - margin.right,
             height = options.height - margin.top - margin.bottom;
 

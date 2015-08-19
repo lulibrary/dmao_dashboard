@@ -3,5 +3,5 @@ td.details-control {
     cursor: pointer;
 }
 tr.shown td.details-control {
-    background: url('../../assets/img/details_close.png') no-repeat center center;
+    background: url('../../../assets/global/plugins/datatables/examples/resources/details_close.png') no-repeat center center;
 }

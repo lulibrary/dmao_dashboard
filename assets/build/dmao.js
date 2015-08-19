@@ -99,7 +99,7 @@ var DataAccessLineChart = function(data, options){
     // }
 
     if (drawChart){
-        var margin = {top: 20, right: 20, bottom: 30, left: 50},
+        var margin = {top: 20, right: 20, bottom: 30, left: 100},
             width = options.width - margin.left - margin.right,
             height = options.height - margin.top - margin.bottom;
 
@@ -218,7 +218,7 @@ var MetadataAccessLineChart = function(data, options){
     // }
 
     if (drawChart){
-        var margin = {top: 20, right: 20, bottom: 30, left: 50},
+        var margin = {top: 20, right: 20, bottom: 30, left: 100},
             width = options.width - margin.left - margin.right,
             height = options.height - margin.top - margin.bottom;
 
@@ -1651,7 +1651,7 @@ var DmpStatusTable = function() {
                 }, 
                 { data: 'project_name' },                    
                 { data: 'funder_id' },
-                { data: 'dmp_stage' },
+                { data: 'dmp_state' },
                 { data: 'dmp_status' },
                 { data: 'project_start' },
                 { data: 'project_end' },
@@ -1740,8 +1740,8 @@ var DmpStatusTable = function() {
                 '<td>'+d.dmp_source_system_id+'</td>'+
             '</tr>'+        
             '<tr>'+        
-                '<td>Data management plan stage:</td>'+
-                '<td>'+d.dmp_stage+'</td>'+
+                '<td>Data management plan state:</td>'+
+                '<td>'+d.dmp_state+'</td>'+
             '</tr>'+        
             '<tr>'+        
                 '<td>Data management plan status:</td>'+

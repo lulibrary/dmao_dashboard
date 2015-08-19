@@ -57,6 +57,9 @@ module.exports = function(grunt) {
 			options: {
         		livereload: true,
     		},
+    		templates: {
+    			files: 'app/**/*.html'
+    		},
 			css: {
 			    files: ['assets/**/*.*css'],
 			    tasks: ['sass'],
