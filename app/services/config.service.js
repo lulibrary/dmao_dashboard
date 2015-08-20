@@ -13,7 +13,7 @@ var App = {
         3: 'Faculty of Health and Medicine',
         4: 'Lancaster University Management School'
     },
-    updateDelay: 300000,
+    updateDelay: 30000,
     // dataAccessResponseData: {},
     // metadataAccessResponseData: {},
 };
