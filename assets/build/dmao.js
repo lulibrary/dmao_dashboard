@@ -749,10 +749,11 @@ var App = {
         3: 'Faculty of Health and Medicine',
         4: 'Lancaster University Management School'
     },
-    updateDelay: 30000,
+    updateDelay: 300000,
     // dataAccessResponseData: {},
     // metadataAccessResponseData: {},
 };
+
 var ApiService = {
     version:    'v0.2', 
     prefix: function() {
@@ -1651,7 +1652,7 @@ var DmpStatusTable = function() {
                 }, 
                 { data: 'project_name' },                    
                 { data: 'funder_id' },
-                { data: 'dmp_state' },
+                { data: 'dmp_stage' },
                 { data: 'dmp_status' },
                 { data: 'project_start' },
                 { data: 'project_end' },
@@ -1741,7 +1742,7 @@ var DmpStatusTable = function() {
             '</tr>'+        
             '<tr>'+        
                 '<td>Data management plan state:</td>'+
-                '<td>'+d.dmp_state+'</td>'+
+                '<td>'+d.dmp_stage+'</td>'+
             '</tr>'+        
             '<tr>'+        
                 '<td>Data management plan status:</td>'+
@@ -1754,6 +1755,7 @@ var DmpStatusTable = function() {
         init: init,
     };
 }();
+
 app.controller('dmpTableCtrl', ['$scope', '$rootScope', '$http', 'api', 'config', function($scope, $rootScope, $http, api, config) {  
     var params = {
                 startDate:          config.startDateDefault, 

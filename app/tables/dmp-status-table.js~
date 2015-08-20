@@ -25,7 +25,7 @@ var DmpStatusTable = function() {
                 }, 
                 { data: 'project_name' },                    
                 { data: 'funder_id' },
-                { data: 'dmp_stage' },
+                { data: 'dmp_state' },
                 { data: 'dmp_status' },
                 { data: 'project_start' },
                 { data: 'project_end' },
@@ -115,7 +115,7 @@ var DmpStatusTable = function() {
             '</tr>'+        
             '<tr>'+        
                 '<td>Data management plan state:</td>'+
-                '<td>'+d.dmp_stage+'</td>'+
+                '<td>'+d.dmp_state+'</td>'+
             '</tr>'+        
             '<tr>'+        
                 '<td>Data management plan status:</td>'+
