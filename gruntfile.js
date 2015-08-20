@@ -41,7 +41,7 @@ module.exports = function(grunt) {
 		            style: 'compressed'
 		        },
 		        files: {
-		            'assets/build/dmao.css': 'assets/build/dmao.scss'
+		            'assets/build/dmao.min.css': 'assets/build/dmao.scss'
 		        }
 		    } 
 		},
