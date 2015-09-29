@@ -2,7 +2,7 @@ Data Management Administration Online Dashboard
 ==
 About
 -
-Data Management Administration Online (DMAOnline) Dashboard is a Single Page Application<sup>[1](#developer)</sup> which consumes data obtained from a back-end data service. Both of these initiatives are part of a Jisc-funded project.
+Data Management Administration Online (DMAOnline) Dashboard is a Single Page Application which consumes data obtained from a back-end data service. Both of these initiatives are part of a Jisc-funded project.
 
 Interface components are populated with JSON data provided by a web service in response to AJAX calls. Summary statistics are visible on the dashboard, with further details available in tabular form via the highly flexible jQuery plugin DataTables, with its advanced interaction controls. 
 
@@ -21,21 +21,3 @@ For development and demonstration purposes, the user interface currently uses so
 var useThirdPartyStyling = false;
 ```
 within the jQuery document ready function in index.html. 
-
-
-
-Deployment instructions
--
-Initially, clone the repository to a local location:
-```
-$ git clone --depth=1 <uri for this repository> <target-directory>
-```
-
-For subsequent updates to the local repository, within the deploy directory:
-```
-$ git pull
-```
-
-
-
-<a name="developer">1</a>: Adrian Albin-Clark, June 2015.
