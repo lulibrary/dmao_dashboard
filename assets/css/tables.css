@@ -1,3 +1,21 @@
 .dataTables_filter input {
 	/*height: 25px;*/
 }
+
+.grid {
+	/*width: 500px;*/
+	height: 500px;
+}
+
+.ui-grid-header-cell {
+	white-space: normal !important;;
+	/*height: 200px !important;*/
+	/*background-color: green !important;*/
+}
+
+.columnEditableHeaderCell {
+	color: #428bca;
+}
+.columnEditableCellContents .ui-grid-cell-focus {
+	background-color: #428bca;
+}

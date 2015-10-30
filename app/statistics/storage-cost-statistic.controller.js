@@ -4,9 +4,9 @@ app.controller('storageCostCtrl', function($scope, $rootScope, $http, api, confi
     // $scope.currency = '';
 
     update({
-                startDate:      config.startDateDefault, 
-                endDate:        config.endDateDefault,
-                faculty:        config.facultyDefault,
+                startDate:      config.startDate,
+                endDate:        config.endDate,
+                faculty:        config.faculty,
             });
 
     function update(message){

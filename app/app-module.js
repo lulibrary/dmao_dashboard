@@ -1,4 +1,8 @@
-var app = angular.module('dmaoApp', ['ngRoute']);
+var app = angular.module('dmaoApp', ['ngRoute', 'ngTouch', 'ui.grid',
+                            'ui.grid.cellNav', 'ui.grid.edit', 'ui.grid.rowEdit',
+                            'ui.grid.selection', 'ui.grid.exporter',
+                            'ui.grid.resizeColumns'
+]);
 
 // This is a compromise. Factory is used to create an Angular service with dependency injection 
 // into the controllers to make it explicit that api is an external dependency. 

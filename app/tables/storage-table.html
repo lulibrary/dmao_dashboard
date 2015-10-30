@@ -2,26 +2,43 @@
 	<div class="portlet-title">
 		<div class="caption">
 			Storage requirements
- 		</div>
- 	</div>
+		</div>
+	</div>
 	<div class="portlet-body">
-		<table id="storageTable" class="display" cellspacing="0" width="100%">
-	        <thead>
-	            <tr>
-	                <th>Detail</th>
-					<th>Project</th>
-					<th>Expected Storage (GB)</th>
-					<th>Expected Storage Cost (GBP)</th>
-	                <th>Dataset Size (GB)</th>
-			        <th>Project Start</th>
-			        <th>Project End</th>
-			        <th>Dataset PID</th>
-	            </tr>
-	        </thead>	
-	        <div ng-controller="storageTableCtrl" ng-cloak>
-		  		<tbody>
-		  		</tbody>
-	  		</div>
-		</table>
+		<div ng-controller="uiGridStorageTableCtrl" ng-cloak>
+			<div id="grid2" ui-grid="gridOptions" ui-grid-cellNav ui-grid-edit
+				 ui-grid-row-edit ui-grid-selection ui-grid-exporter
+				 ui-grid-resize-columns
+				 class="grid">
+			</div>
+		</div>
 	</div>
 </div>
+
+<!--<div class="portlet box purple-plum">-->
+	<!--<div class="portlet-title">-->
+		<!--<div class="caption">-->
+			<!--Storage requirements-->
+ 		<!--</div>-->
+ 	<!--</div>-->
+	<!--<div class="portlet-body">-->
+		<!--<table id="storageTable" class="display" cellspacing="0" width="100%">-->
+	        <!--<thead>-->
+	            <!--<tr>-->
+	                <!--<th>Detail</th>-->
+					<!--<th>Project</th>-->
+					<!--<th>Expected Storage (GB)</th>-->
+					<!--<th>Expected Storage Cost (GBP)</th>-->
+	                <!--<th>Dataset Size (GB)</th>-->
+			        <!--<th>Project Start</th>-->
+			        <!--<th>Project End</th>-->
+			        <!--<th>Dataset PID</th>-->
+	            <!--</tr>-->
+	        <!--</thead>	-->
+	        <!--<div ng-controller="storageTableCtrl" ng-cloak>-->
+		  		<!--<tbody>-->
+		  		<!--</tbody>-->
+	  		<!--</div>-->
+		<!--</table>-->
+	<!--</div>-->
+<!--</div>-->

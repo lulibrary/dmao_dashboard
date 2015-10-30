@@ -5,7 +5,7 @@ module.exports = function(grunt) {
         pkg: grunt.file.readJSON('package.json'),
 
         concat: {
-            // 2. Configuration for concatinating files goes here.
+            // 2. Configuration for concatenating files goes here.
 		    dist: {
 		        src: [	
 		        	'app/**/*.js',	

@@ -47,7 +47,23 @@ var ApiService = {
                 uri = this.addParams(uri, params);
             }
             return $.getJSON(uri);
-        },    
+        },
+        project: function(params){
+            var uri = URI(ApiService.prefix() + '/storage' + '/'
+                        + params.project_id + '/' + App.institutionId);
+            if (params){
+                //uri = this.addParams(uri, params);
+                //var json = JSON.stringify (params)
+            }
+            return uri;
+            return $.ajax({
+                type: 'POST',
+                url: uri,
+                data: json,
+                contentType: "application/json",
+                dataType: 'json'
+            });
+        },
         rcukAccessCompliance: function(params){
             var uri = URI(ApiService.prefix() + '/rcuk_as' + '/' + App.institutionId);
             if (params){

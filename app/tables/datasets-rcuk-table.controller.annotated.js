@@ -1,8 +1,8 @@
 app.controller('datasetsRCUKTableCtrl', ['$scope', '$rootScope', '$http', 'api', 'config', function($scope, $rootScope, $http, api, config) {  
     var params = {
-                startDate:          config.startDateDefault, 
-                endDate:            config.endDateDefault,
-                faculty:            config.facultyDefault,
+                startDate:          config.startDate,
+                endDate:            config.endDate,
+                faculty:            config.faculty,
             };
     
     update(params);
