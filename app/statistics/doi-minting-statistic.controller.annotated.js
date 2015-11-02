@@ -26,9 +26,14 @@ app.controller('doiMintingCtrl', ['$scope', '$rootScope', '$http', 'api', 'confi
                     '[' + isoStartDate + 'T00:00:00Z/DAY' + '%20TO%20' +
                     isoEndDate + 'T23:59:59Z/DAY]';
         $http.get(uri).then(function(response) {
-                var value = response.data.response.numFound;
-                // only update if dirty
-                if (value !== $scope.value) $scope.value = value;
+            var value = response.data.response.numFound;
+            // only update if dirty
+            if (value !== $scope.value) $scope.value = value;
+        })
+            .catch(function(response) {
+            var value = 'Error';
+            // only update if dirty
+            if (value !== $scope.value) $scope.value = value;
         });
     }
 
