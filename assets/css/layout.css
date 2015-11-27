@@ -1,0 +1,14 @@
+.page-header-fixed .page-container {
+    margin-top: 0px;
+}
+
+.simple-header{
+    height: 50px;
+}
+
+/*quick hack to visually hide*/
+.page-bar .page-breadcrumb > li > i,
+.page-bar .page-breadcrumb > li > a,
+.page-bar .page-breadcrumb > li > span {
+    color: white;
+}

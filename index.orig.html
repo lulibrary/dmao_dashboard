@@ -19,7 +19,7 @@
 <link href="http://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700&subset=all" rel="stylesheet" type="text/css"/>
 
 <!-- <link href="../assets/global/plugins/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css"/>-->
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
   <!-- <link href="assets/css/font-awesome.min.css" rel="stylesheet" type="text/css"/> -->
 
 
@@ -58,9 +58,6 @@
 <link href="../assets/admin/layout/css/themes/darkblue.css" rel="stylesheet" type="text/css" id="style_color"/>
 <link href="../assets/admin/layout/css/custom.css" rel="stylesheet" type="text/css"/>
 
-<link href="assets/css/forms.css" rel="stylesheet" type="text/css"/>
-<link href="assets/css/images.css" rel="stylesheet" type="text/css"/>
-<link href="assets/css/filter.css" rel="stylesheet" type="text/css"/>
 <!-- END THEME STYLES -->
 
 <!-- dmao -->
@@ -77,6 +74,7 @@
 
 <!-- dmao tables -->
 
+
 <!-- <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.css" /> -->
 
 <link href="http://cdn.datatables.net/1.10.7/css/jquery.dataTables.css" rel="stylesheet" type="text/css"/>
@@ -90,9 +88,6 @@
 <link href="http://ui-grid.info/release/ui-grid-unstable.css" rel="stylesheet" type="text/css"/>
 	<!--<link href="assets/css/ui-grid-autumn.css" rel="stylesheet" type="text/css"/>-->
 	<link href="assets/css/tables.css" rel="stylesheet" type="text/css"/>
-
-	<link href="assets/css/simple-sidebar.css" rel="stylesheet" type="text/css"/>
-	<link href="assets/css/layout.css" rel="stylesheet" type="text/css"/>
 
 
 	<link href="assets/build/dmao.min.css" rel="stylesheet" type="text/css"/>
@@ -118,27 +113,246 @@
 
 
 <!-- BEGIN HEADER -->
-<div ng-include="'app/layout/simple-header.html'"></div>
+<div ng-include="'app/layout/header.html'"></div>
 <!-- END HEADER -->
 
 <div class="clearfix">
 </div>
-
-
-
 <!-- BEGIN CONTAINER -->
 <div class="page-container">
 	<!-- BEGIN SIDEBAR -->
+	<!-- <div ng-include="'app/layout/sidebar.html'"></div> -->
+<div class="page-sidebar-wrapper">
+	<div class="page-sidebar navbar-collapse collapse">
+		<!-- BEGIN SIDEBAR MENU -->
+		<!-- DOC: Apply "page-sidebar-menu-light" class right after "page-sidebar-menu" to enable light sidebar menu style(without borders) -->
+		<!-- DOC: Apply "page-sidebar-menu-hover-submenu" class right after "page-sidebar-menu" to enable hoverable(hover vs accordion) sub menu mode -->
+		<!-- DOC: Apply "page-sidebar-menu-closed" class right after "page-sidebar-menu" to collapse("page-sidebar-closed" class must be applied to the body element) the sidebar sub menu mode -->
+		<!-- DOC: Set data-auto-scroll="false" to disable the sidebar from auto scrolling/focusing -->
+		<!-- DOC: Set data-keep-expand="true" to keep the submenues expanded -->
+		<!-- DOC: Set data-auto-speed="200" to adjust the sub menu slide up/down speed -->
+		<ul class="page-sidebar-menu" data-keep-expanded="false" data-auto-scroll="true" data-slide-speed="200">
+			<!-- DOC: To remove the sidebar toggler from the sidebar you just need to completely remove the below "sidebar-toggler-wrapper" LI element -->
+			<li class="sidebar-toggler-wrapper">
+				<!-- BEGIN SIDEBAR TOGGLER BUTTON -->
+				<div class="sidebar-toggler">
+				</div>
+				<!-- END SIDEBAR TOGGLER BUTTON -->
+			</li>
+			<li class="start active">
+				<a href="javascript:;">
+				<!-- <i class="icon-home"></i> -->
+				<span class="title">Overview</span>
+				<span class="selected"></span>
+<!--					<span class="arrow"></span>-->
+				</a>
+			</li>
+			<li>
+				<a href="javascript:;">
+				<!-- <i class="icon-basket"></i> -->
+				<span class="title">Faculties</span>
+				<span class="arrow "></span>
+				</a>
+				<ul class="sub-menu">
+					<li>
+						<a href="javascript:DMAOFilters.setFaculty('')">
+						<!-- <i class="icon-home"></i> -->
+						All faculties</a>
+					</li>
+					<li>
+						<a href="javascript:DMAOFilters.setFaculty(2)">
+						<!-- <i class="icon-home"></i> -->
+						FST</a>
+					</li>
+					<li>
+						<a href="javascript:DMAOFilters.setFaculty(1)">
+						<!-- <i class="icon-basket"></i> -->
+						FASS</a>
+					</li>
+					<li>
+						<a href="javascript:DMAOFilters.setFaculty(3)">
+						<!-- <i class="icon-tag"></i> -->
+						FHM</a>
+					</li>
+					<li>
+						<a href="javascript:DMAOFilters.setFaculty(4)">
+						<!-- <i class="icon-handbag"></i> -->
+						LUMS</a>
+					</li>
+				</ul>
+			</li>
+			<li>
+				<a href="javascript:;">
+				<!-- <i class="icon-rocket"></i> -->
+				<span class="title">Departments</span>
+				<span class="arrow "></span>
+				</a>
+				<ul class="sub-menu">
+					<li>
+						<a href="#">
+						Library</a>
+					</li>
+					<li>
+						<a href="#">
+						Research Support Office</a>
+					</li>
+					<li>
+						<a href="#">
+						IT Services</a>
+					</li>
+				</ul>
+			</li>
+			<li class="heading">
+				<h3 class="uppercase">Detailed Views</h3>
+			</li>
+			<li>
+				<a href="javascript:;">
+				<!-- <i class="icon-hourglass"></i> -->
+				<span class="title">Compliance rates</span>
+                <span class="arrow "></span>
+				</a>
+                <ul class="sub-menu">
+					<li>
+						<a href="#">
+						Projects vs DMPs</a>
+					</li>
+					<li>
+						<a href="#">
+						Publications vs Acknowledgements</a>
+					</li>
+					<li>
+						<a href="#">
+						Datasets vs DOIs</a>
+					</li>
+                </ul>
 
+			</li>
+			<li>
+				<a href="javascript:;">
+				<!-- <i class="icon-settings"></i> -->
+				<span class="title">Data Management Plans</span>
+                <span class="arrow "></span>
+				</a>
+                <ul class="sub-menu">
+					<li>
+						<a href="#">
+						DMPOnline usage</a>
+					</li>
+					<li>
+						<a href="#">
+						DMPs per funding council</a>
+					</li>
+					<li>
+						<a href="#">
+						DMPs per faculty</a>
+					</li>
+                </ul>
 
-	 <!--<div ng-include="loggedInUser ? 'app/layout/simple-sidebar.html' : null"></div>-->
-
+			</li>
+            <li>
+				<a href="javascript:;">
+				<!-- <i class="icon-wallet"></i> -->
+				<span class="title">Funding Councils</span>
+				<span class="arrow "></span>
+				</a>
+				<ul class="sub-menu">
+					<li>
+						<a href="#">
+						AHRC</a>
+					</li>
+					<li>
+						<a href="#">
+						<span class="badge badge-roundless badge-danger">new</span>BBSRC</a>
+					</li>
+					<li>
+						<a href="#">
+						EPSRC</a>
+					</li>
+					<li>
+						<a href="#">
+						ESRC</a>
+					</li>
+                    <li>
+						<a href="#">
+						<span class="badge badge-roundless badge-danger">new</span>Horizon 2020</a>
+					</li>
+                    <li>
+						<a href="#">
+						MRC</a>
+					</li>
+                    <li>
+						<a href="#">
+						NERC</a>
+					</li>
+				</ul>
+			</li>
+			<li>
+				<a href="javascript:;">
+				<!-- <i class="icon-wrench"></i> -->
+				<span class="title">IT infrastructure</span>
+                <span class="arrow "></span>
+				</a>
+                <ul class="sub-menu">
+					<li>
+						<a href="#">
+						Active storage usage</a>
+					</li>
+					<li>
+						<a href="#">
+						Archival storage usage</a>
+					</li>
+					<li>
+						<a href="#">
+						Remote storage usage</a>
+					</li>
+                </ul>
+			</li>
+			<li>
+				<a href="javascript:;">
+				<!-- <i class="icon-bar-chart"></i> -->
+				<span class="title">Access statistics</span>
+				<span class="arrow "></span>
+				</a>
+				<ul class="sub-menu">
+					<li>
+						<a href="#">
+						Third party requests</a>
+					</li>
+					<li>
+						<a href="#">
+						Dataset downloads</a>
+					</li>
+				</ul>
+			</li>
+		</ul>
+		<!-- END SIDEBAR MENU -->
+	</div>
+</div>	
+	<!-- END SIDEBAR -->
 
 	<!-- BEGIN CONTENT -->
-
 	<div class="page-content-wrapper">
 		<div class="page-content">
 			<!-- BEGIN SAMPLE PORTLET CONFIGURATION MODAL FORM-->
+			<div class="modal fade" id="portlet-config" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+							<h4 class="modal-title">Modal title</h4>
+						</div>
+						<div class="modal-body">
+							 Widget settings form goes here
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn blue">Save changes</button>
+							<button type="button" class="btn default" data-dismiss="modal">Close</button>
+						</div>
+					</div>
+					<!-- /.modal-content -->
+				</div>
+				<!-- /.modal-dialog -->
+			</div>
 			<!-- /.modal -->
 			<!-- END SAMPLE PORTLET CONFIGURATION MODAL FORM-->
 			<!-- BEGIN PAGE HEADER-->
@@ -150,8 +364,19 @@
 					<li>
 						<i class="fa fa-home"></i>
 						<a href="index.html#/">Home</a>
+						<i class="fa fa-angle-right"></i>
+					</li>
+					<li>
+						<a href="#/">Dashboard</a>
 					</li>
 				</ul>
+				<div class="page-toolbar">
+					<!-- <div  ng-controller="datePickerCtrl"> -->
+<!-- 						<div id="dashboard-report-range" class="pull-right tooltips btn btn-fit-height grey-salt" data-placement="top" data-original-title="Change dashboard date range">
+							<i class="icon-calendar"></i>&nbsp; <span class="thin uppercase visible-lg-inline-block"></span>&nbsp; <i class="fa fa-angle-down"></i>
+						</div> -->
+					<!-- </div> -->
+				</div>			
 
 			<!-- dmao -->
 <!-- 				<div id="reportrange" class="pull-right" style="background: #fff; cursor: pointer; padding: 5px 10px; border: 1px solid #ccc">
@@ -160,22 +385,26 @@
 
 			</div>
 
-			<div ng-include="loggedInUser ? 'app/filter/calendar.html' : null"></div>
+				<div id="reportrange" class="pull-right" style="background: #fff; cursor: pointer; padding: 5px 10px; border: 1px solid #ccc">
+    			<i class="glyphicon glyphicon-calendar fa fa-calendar"></i>
+    			<span></span> <b class="caret"></b></div>
 
-			<div ng-include="loggedInUser ? 'app/filter/filter.html' : null"></div>
+    						<div class="clearfix"></div>
+
+						<div ng-include="'app/filter/filter.html'"></div>    	
+						
+						<div class="clearfix"></div>					
+
+
 
 			<!-- END PAGE HEADER-->
 
 
 			<!-- ANGULAR VIEW BEGIN -->
-			<div ng-view>
-
-			</div>
-
-
+			<div ng-view></div>
+	
 	</div>
 	<!-- END CONTENT -->
-
 
 	<!-- BEGIN QUICK SIDEBAR -->
 	<!-- <div ng-include="'app/shared/sidebar/quickSidebarView.html'"></div> -->
@@ -184,20 +413,15 @@
 </div>
 <!-- END CONTAINER -->
 
-</div>
-
-
-
 <!-- BEGIN FOOTER -->
 <div ng-include="'app/layout/footer.html'"></div>
 <!-- END FOOTER -->
-
 
 <!-- BEGIN JAVASCRIPTS(Load javascripts at bottom, this will reduce page load time) -->
 <!-- BEGIN CORE PLUGINS -->
 <!--[if lt IE 9]>
 <script src="../assets/global/plugins/respond.min.js"></script>
-<script src="../assets/global/plugins/excanvas.min.js"></script>
+<script src="../assets/global/plugins/excanvas.min.js"></script> 
 <![endif]-->
 
 <!-- <script src="../assets/global/plugins/jquery.min.js" type="text/javascript"></script> -->
@@ -269,8 +493,6 @@
 <script src="assets/libs/md5.min.js"></script>
 <script src="assets/libs/URI.min.js"></script>
 <script src="assets/libs/sha.js"></script>
-<script src="assets/libs/simple-sidebar.js"></script>
-<script src="assets/libs/spin.min.js"></script>
 
 	<!--<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.3/angular.js"></script>-->
 	<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.3/angular-touch.js"></script>
@@ -280,7 +502,6 @@
 	<script src="http://ui-grid.info/docs/grunt-scripts/vfs_fonts.js"></script>
 	<!--<script src="assets/libs/ui-grid.js"></script>-->
 	<script src="https://cdn.rawgit.com/angular-ui/bower-ui-grid/master/ui-grid.min.js"></script>
-	<!--<script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.14.3/ui-bootstrap-tpls.min.js"></script>-->
 
 
 
@@ -308,6 +529,7 @@
 <script src="app/charts/metadata-access-chart.controller.js"></script>
 <script src="app/charts/data-access-line-chart.js"></script>
 <script src="app/charts/metadata-access-line-chart.js"></script> -->
+
 <!-- <script src="app/tables/datasets-table.controller.js"></script>
 <script src="app/tables/datasets-rcuk-table.controller.js"></script>
 <script src="app/tables/dmp-table.controller.js"></script>
@@ -335,27 +557,21 @@ jQuery(document).ready(function() {
    		Layout.init(); // init layout
    	}
    // QuickSidebar.init(); // init quick sidebar
-   // Demo.init(); // init demo features
-   // Index.init();
+   // Demo.init(); // init demo features 
+   // Index.init();   
    // Index.initDashboardDaterange();
    // Index.initJQVMAP(); // init index page's custom scripts
    // Index.initCalendar(); // init index page's custom scripts
    // Index.initCharts(); // init index page's custom scripts
    // Index.initChat();
    // Index.initMiniCharts();
-   // Tasks.initDashboardWidget();
+   // Tasks.initDashboardWidget();  
 
-//   DMAOFilters.init(App);
-//   DMAOFilters.DateRangePicker();
-
-//	console.log('doc ready');
-//	console.log('hard coding credentials to bypass auth');
-//	ApiService.apiKey = 'BADC0FFEE';
-//	App.institutionId = 'luve_u';
- } );
+   DMAOFilters.init(App);
+   DMAOFilters.DateRangePicker();
+ } ); 
 
 </script>
-<div id='loader'></div>
 <!-- END JAVASCRIPTS -->
 </body>
 <!-- END BODY -->

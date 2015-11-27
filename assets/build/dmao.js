@@ -15,22 +15,112 @@ app.factory('api', function() {
 app.factory('config', function() { 
     return App;
 });
-app.config(['$routeProvider', function($routeProvider) {
-	$routeProvider
-	.when('/', { templateUrl: 'app/statistics/statistic-compilation.html' })
-	.when('/datasets', { templateUrl: 'app/tables/datasets-table.html' })
-	.when('/datasetsRCUK', { templateUrl: 'app/tables/datasets-rcuk-table.html' })	
-	.when('/dmp', { templateUrl: 'app/tables/dmp-table.html' })
-	.when('/nodmp', { templateUrl: 'app/tables/no-dmp-table.html' })
-	.when('/dmps', { templateUrl: 'app/tables/dmp-status-table.html' })
-	.when('/storage', { templateUrl: 'app/tables/storage-table.html' })
-	.when('/compliance', { templateUrl: 'app/tables/rcuk-access-compliance-table.html' })
-	// .when('/index.html', { templateUrl: 'app/components/statistic/statisticCompilationView.html' })
-  	.otherwise({ templateUrl: 'app/messages/error.html' });
 
+app.factory('ui', function() {
+    return UiService;
+});
+app.config(['$routeProvider', '$locationProvider', function($routeProvider, $locationProvider) {
+	$routeProvider
+		.when('/landing', { templateUrl: 'app/public/landing.html' })
+		//.when('/landing', { templateUrl: 'app/tables/storage-table.html' })
+		//.when('/landing', { templateUrl: 'app/tables/dmp-table.html' })
+		.when('/', { templateUrl: 'app/statistics/statistic-compilation.html' })
+		.when('/all', { templateUrl: 'app/public/landing.html' })
+		.when('/stats', { 	templateUrl: 'app/statistics/statistic-compilation.html'})
+		.when('/login', { templateUrl: 'app/auth/login.html' })
+		.when('/datasets', { templateUrl: 'app/tables/datasets-table.html' })
+		.when('/datasetsRCUK', { templateUrl: 'app/tables/datasets-rcuk-table.html' })
+		.when('/dmp', { templateUrl: 'app/tables/dmp-table.html' })
+		.when('/nodmp', { templateUrl: 'app/tables/no-dmp-table.html' })
+		.when('/dmps', { templateUrl: 'app/tables/dmp-status-table.html' })
+		.when('/storage', { templateUrl: 'app/tables/storage-table.html' })
+		.when('/compliance', { templateUrl: 'app/tables/rcuk-access-compliance-table.html' })
+		// .when('/index.html', { templateUrl: 'app/components/statistic/statisticCompilationView.html' })
+		.otherwise({ templateUrl: 'app/messages/error.html' });
+	}])
     // use the HTML5 History API to get clean URLs and remove the hashtag from the URL
     // $locationProvider.html5Mode(true);
+	.run(['$rootScope', '$location', function($rootScope, $location) {
+		$rootScope.$on( "$routeChangeStart", function(event, next, current) {
+			//console.log('apikey $routeChangeStart1', ApiService.apikey);
+
+
+			console.log('Current route name: ' + $location.path());
+			console.log('$rootScope.loggedInUser ', $rootScope.loggedInUser);
+
+			if ($rootScope.loggedInUser == null) {
+				// no logged user, redirect to /login
+				if ($location.path() === '/landing' ||
+					next.templateUrl === 'app/auth/login.html') {
+				} else {
+					$location.path("/landing");
+				}
+			}
+			//console.log('apikey $routeChangeStart2', ApiService.apikey);
+		});
+		//console.log('apikey $routeChangeStart3', ApiService.apikey);
+	}]);
+
+app.controller("loginCtrl", ['$scope', '$location', '$rootScope', 'api', 'config', function($scope, $location, $rootScope, api, config) {
+    // optionally prefill for testing
+    $scope.institution = '';
+    $scope.username = '';
+    $scope.password = '';
+    api.clearKey();
+
+    api.uri.o.institutions().then(function(response){
+
+        $scope.$apply(function(){
+            //console.log('response ', response);
+            $scope.institutions = response;
+            console.log('Institutions ', $scope.institutions);
+        });
+    });
+
+    $scope.login = function() {
+
+        console.log($scope.username + ' attempting to log in ' + ' with password ' +
+        $scope.password);
+        console.log('api.authenticated apiKey ', api.apiKey);
+        if (!api.authenticated()){
+            console.log('!api.authenticated apiKey ', api.apiKey);
+            api.authenticate($scope.institution, $scope.username, $scope.password).then(function(response){
+                console.log('api.authenticated apiKey ', api.apiKey);
+
+                config.institutionId = $scope.institution;
+
+                angular.forEach($scope.institutions, function(data){
+                    if (data.inst_id == $scope.institution) {
+                        //console.log('name ', data.name);
+                        config.institutionName = data.name;
+                    }
+                });
+
+                $scope.$apply(function() {
+                    $rootScope.loggedInUser = $scope.username;
+                    $location.path("/stats");
+                });
+            });
+            //} else {
+            //    console.log('apiKey ', api.apiKey);
+            //    $location.path("/all");
+            //}
+        }
+    };
+
+    $scope.logout = function() {
+        api.clearKey();
+        config.institutionId = '';
+        config.institutionName = '';
+        $rootScope.loggedInUser = '';
+        $scope.institution = '';
+        $scope.username = '';
+        $scope.password = '';
+        $location.path('/landing');
+    };
+
 }]);
+
 function reverseChronoChartData(monthData) {
     // put into labelled format for chart, with array in reverse chronological order
     // assumes chronological order as input
@@ -63,7 +153,7 @@ app.controller('dataAccessChartCtrl', ['$scope', '$rootScope', '$http', 'api', '
     update(params);
 
     function update(message){
-        var params = {  date:               'project_start',
+        var params = {  //date:               'project_start',
                         sd:                 message.startDate,
                         ed:                 message.endDate,
                         faculty:            message.faculty,
@@ -181,7 +271,7 @@ app.controller('metadataAccessChartCtrl', ['$scope', '$rootScope', '$http', 'api
     update(params);
 
     function update(message){
-        var params = {  date:               'project_start',
+        var params = {  //date:               'project_start',
                         sd:                 message.startDate,
                         ed:                 message.endDate,
                         faculty:            message.faculty,
@@ -510,6 +600,8 @@ app.controller('filterCtrl', ['$scope', '$rootScope', '$interval', 'config', fun
     $scope.faculty = config.facultyDefault;   
     $scope.facultyName = config.facultyMap[config.facultyDefault];
 
+    getInstitutionFaculties();
+
     function broadcastFilterChange(msg){
         // //console.log(msg);
         $rootScope.$broadcast("FilterEvent", {  
@@ -610,8 +702,30 @@ app.controller('filterCtrl', ['$scope', '$rootScope', '$interval', 'config', fun
             } 
         },
         true
-        );   
-  
+        );
+
+    function getInstitutionFaculties() {
+        //fetch data using api
+        //facultyMap = api....
+        //hardcode for now, until it makes its way into the api
+        var facultyMap = {
+            '': 'All faculties',
+            1: 'Faculty of Arts and Social Sciences',
+            2: 'Faculty of Science and Technology',
+            3: 'Faculty of Health and Medicine',
+            4: 'Lancaster University Management School'
+        };
+
+        $scope.facultyMap = facultyMap;
+
+        //not strictly needed but leave for now to keep legacy config synched
+        config.facultyMap = facultyMap;
+
+
+        console.log('$scope.facultyMap ', $scope.facultyMap);
+    }
+
+    $scope.institutionName = config.institutionName;
 
 }]);
 
@@ -622,9 +736,11 @@ var DMAOFilters = (function(){
         config = gConfig;
     };
 
-    var DateRangePicker = function(){        
-        $('#reportrange span').html(moment(config.startDate, "YYYYMMDD").format('MMMM D, YYYY') + ' - ' + moment(config.endDate, "YYYYMMDD").format('MMMM D, YYYY'));        
+    var DateRangePicker = function(){
+        console.log('DateRangePicker 1');
+        $('#reportrange span').html(moment(config.startDate, "YYYYMMDD").format('MMMM D, YYYY') + ' - ' + moment(config.endDate, "YYYYMMDD").format('MMMM D, YYYY'));
 
+        console.log('DateRangePicker 2');
         $('#reportrange').daterangepicker({
             format: 'DD/MM/YYYY',
             startDate: moment(config.startDateDefault, "YYYYMMDD").format('DD/MM/YYYY'),
@@ -682,6 +798,7 @@ var DMAOFilters = (function(){
             // console.log('after date selection ', config.startDate, config.endDate);
 
         });
+        console.log('DateRangePicker 3');
 
        $('.applyBtn').click(function() {
             // console.log( $('input[name="daterangepicker_start"]').val() );
@@ -700,6 +817,7 @@ var DMAOFilters = (function(){
                 scope.endDate = endDate;
             });         
         });
+        console.log('DateRangePicker 4');
     };
 
     var setFaculty = function(faculty){
@@ -717,10 +835,12 @@ var DMAOFilters = (function(){
         config.startDate = config.startDateDefault;
         config.endDate = config.endDateDefault;
 
+        console.log('DateRangePicker 5');
         // tell jQuery daterangepicker
         $('#reportrange').data('daterangepicker').setStartDate(moment(config.startDateDefault, "YYYYMMDD").format('DD/MM/YYYY'));
         $('#reportrange').data('daterangepicker').setEndDate(moment(config.endDateDefault, "YYYYMMDD").format('DD/MM/YYYY'));
         $('#reportrange span').html(moment(config.startDateDefault, "YYYYMMDD").format('MMMM D, YYYY') + ' - ' + moment(config.endDateDefault, "YYYYMMDD").format('MMMM D, YYYY'));
+        console.log('DateRangePicker 6');
 
         // tell Angular
         var scope = angular.element($("#filterController")).scope();
@@ -729,7 +849,7 @@ var DMAOFilters = (function(){
             scope.startDate = config.startDateDefault;
             scope.endDate = config.endDateDefault;
         });
-    }; 
+    };
 
     return {
         init: init,
@@ -739,7 +859,8 @@ var DMAOFilters = (function(){
     };
 })();
 var App = {
-    institutionId: 'lancaster',
+    institutionId: '',
+    institutionName: '',
     institutionDataCiteSymbol: 'BL.LANCS',
     startDateDefault: '20000101',
     endDateDefault: '20350101', //moment().add(20, 'years').format('YYYYMMDD'),       
@@ -747,63 +868,99 @@ var App = {
     endDate: '20350101', //moment().add(20, 'years').format('YYYYMMDD'),
     faculty: '',
     facultyDefault: '',
-    facultyMap: {
-       '': 'All faculties',
-        1: 'Faculty of Arts and Social Sciences',
-        2: 'Faculty of Science and Technology',
-        3: 'Faculty of Health and Medicine',
-        4: 'Lancaster University Management School'
-    },
-    updateDelay: 30000,
+    facultyMap: {},
+    departmentMap: {},
+    updateDelay: 10000,
     // dataAccessResponseData: {},
-    // metadataAccessResponseData: {},
+    // metadataAccessResponseData: {}
 };
 
 var ApiService = {
-    version:    'v0.2', 
+    version:    'v0.3',
+    apiKey:     '',
+    authenticated: function(){
+        if (this.apiKey){
+            return true;
+        }
+        return false;
+    },
     prefix: function() {
         // Prototype
         // http://lib-ldiv.lancs.ac.uk:8080/dmaonline/v0.2/use_case_1/lancaster?
         // date=<project_awarded|project_start|project_end>&sd=YYYYMMDD&ed=YYYYMMDD
         var uri = URI({
             protocol:   'http',
-            hostname:   'lib-ldiv.lancs.ac.uk',
-            port:       '8080',
+            hostname:   'lib-dmao.lancs.ac.uk',
+            port:       '8090',
             path:       'dmaonline',             
         });
         uri += '/' + this.version;
         return uri.toString();
     },
+    clearKey: function(){
+        this.apiKey = '';
+    },
+    authenticate: function(institutionID, username, password){
+        //console.log('this.apiKey ', this.apiKey);
+
+        var uri = URI(ApiService.prefix() + '/o/' + institutionID + '/o_get_api_key');
+        //console.log('uri ', uri);
+
+        var shaObj = new jsSHA("SHA-224", "TEXT");
+        shaObj.update(password);
+        var hash = shaObj.getHash("HEX");
+        //console.log('hash ', hash);
+
+            uri = this.uri.addParams(uri, {
+                    user: username,
+                    passwd: hash
+                });
+        //console.log('uri ', uri);
+        //console.log($.getJSON(uri));
+        return $.getJSON(uri)
+            .then(function( json ) {
+                //console.log('json response ', json);
+                ApiService.apiKey = json[0].api_key;
+                //ApiService.apiKey = 'BLADEBLA';
+            });
+
+    },
     uri: {
         addParams: function(uri, params){
             for (key in params) {
-                uri.addSearch(key, params[key]);
+                if (params[key]) {
+                    uri.addSearch(key, params[key]);
+                }
             }                    
             return uri;
         },
-        datasets: function(params){           
-            var uri = URI(ApiService.prefix() + '/datasets' + '/' + App.institutionId);
+        datasets: function(params){
+            var uri = URI(ApiService.prefix() + '/c/' + App.institutionId + '/' +
+            ApiService.apiKey + '/datasets');
             if (params){
                 uri = this.addParams(uri, params);
             }
             return $.getJSON(uri);
         },
         dmps: function(params){
-            var uri = URI(ApiService.prefix() + '/project_dmps' + '/' + App.institutionId);
+            var uri = URI(ApiService.prefix() + '/c/' + App.institutionId + '/' +
+            ApiService.apiKey + '/project_dmps');
             if (params){
                 uri = this.addParams(uri, params);
             }
              return $.getJSON(uri);
         },  
         dmpStatus: function(params){
-            var uri = URI(ApiService.prefix() + '/dmp_status' + '/' + App.institutionId);
+            var uri = URI(ApiService.prefix() + '/c/' + App.institutionId + '/' +
+            ApiService.apiKey + '/dmp_status');
             if (params){
                 uri = this.addParams(uri, params);
             }
              return $.getJSON(uri);
         }, 
         storage: function(params){
-            var uri = URI(ApiService.prefix() + '/storage' + '/' + App.institutionId);
+            var uri = URI(ApiService.prefix() + '/c/' + App.institutionId + '/' +
+            ApiService.apiKey + '/storage');
             if (params){
                 uri = this.addParams(uri, params);
             }
@@ -826,14 +983,17 @@ var ApiService = {
             });
         },
         rcukAccessCompliance: function(params){
-            var uri = URI(ApiService.prefix() + '/rcuk_as' + '/' + App.institutionId);
+            var uri = URI(ApiService.prefix() + '/c/' + App.institutionId + '/' +
+            ApiService.apiKey + '/rcuk_as');
             if (params){
                 uri = this.addParams(uri, params);
             }
              return $.getJSON(uri);
         },  
         datasetAccess: function(params){
-            var uri = URI(ApiService.prefix() + '/dataset_accesses' + '/' + App.institutionId);
+            var uri = URI(ApiService.prefix() + '/c/' + App.institutionId + '/' +
+            ApiService.apiKey + '/dataset_accesses');
+            //var uri = URI(ApiService.prefix() + '/dataset_accesses' + '/' + App.institutionId);
             if (params){
                 uri = this.addParams(uri, params);
             }
@@ -842,6 +1002,77 @@ var ApiService = {
         datasetAccessByDateRange: function(params){
             var uri = this.datasetAccess(params);
             // var uriWithDateRange = this.addDateRange(uri, params);
+            return $.getJSON(uri);
+        },
+        put: {
+            dmps: function (params) {
+                //alert('ApiService.uri.put.dmps called');
+                var uri = URI(ApiService.prefix() + '/c/' + App.institutionId + '/' + ApiService.apiKey + '/project_dmps');
+
+                if (params) {
+                    //uri = this.addParams(uri, params);
+                    uri = ApiService.uri.addParams(uri, params);
+                    console.log('uri ', uri);
+                }
+                return $.ajax(
+                    {
+                        url: uri,
+                        type: 'PUT',
+                        success: function(data, textStatus, jqXHR) {
+                            //alert('Thing updated successfully Status: '+textStatus); },
+                            console.log('Updated ');
+                            console.log('Data ', data);
+                        },
+                        error: function(jqXHR, textStatus, errorThrown) {
+                            console.log('jqXHR ', jqXHR);
+                            console.log('textStatus ', textStatus);
+                            console.log('Error ', errorThrown);
+                            //alert(errorThrown);
+                        }
+                    });
+            },
+            storage: function (params) {
+                //alert('ApiService.uri.put.storage called');
+                var uri = URI(ApiService.prefix() + '/c/' + App.institutionId + '/' + ApiService.apiKey + '/storage');
+
+                if (params) {
+                    //uri = this.addParams(uri, params);
+                    uri = ApiService.uri.addParams(uri, params);
+                    console.log('uri ', uri);
+                }
+                return $.ajax(
+                    {
+                        url: uri,
+                        type: 'PUT',
+                        success: function(data, textStatus, jqXHR) {
+                            //alert('Thing updated successfully Status: '+textStatus); },
+                            console.log('Updated ');
+                            console.log('Data ', data);
+                        },
+                        error: function(jqXHR, textStatus, errorThrown) {
+                            console.log('jqXHR ', jqXHR);
+                            console.log('textStatus ', textStatus);
+                            console.log('Error ', errorThrown);
+                            //alert(errorThrown);
+                        }
+                    });
+            }
+        },
+
+        //modifiable: {
+        //    dmps: function() {
+        //        var uri = URI(ApiService.prefix() + '/c/' + App.institutionId + '/' + ApiService.apiKey + '/project_dmps_modifiable');
+        //        return $.getJSON(uri);
+        //    },
+        //},
+        o: {
+            institutions: function () {
+                var uri = URI(ApiService.prefix() + '/o' + '/o_inst_list');
+                return $.getJSON(uri);
+            }
+        },
+        public: function(resource) {
+            var uri = URI(ApiService.prefix() + '/o' + '/' + resource);
             return $.getJSON(uri);
         },
     },
@@ -912,6 +1143,154 @@ var ApiService = {
         dr: '/dr/{institutionId}/{startDate}/{endDate}/{dateFilter}'
     },
 };
+var UiService = {
+  spinner: function(target){
+      var opts = {
+          lines: 13 // The number of lines to draw
+          , length: 28 // The length of each line
+          , width: 14 // The line thickness
+          , radius: 42 // The radius of the inner circle
+          , scale: 1 // Scales overall size of the spinner
+          , corners: 1 // Corner roundness (0..1)
+          , color: '#000' // #rgb or #rrggbb or array of colors
+          , opacity: 0.25 // Opacity of the lines
+          , rotate: 0 // The rotation offset
+          , direction: 1 // 1: clockwise, -1: counterclockwise
+          , speed: 1 // Rounds per second
+          , trail: 60 // Afterglow percentage
+          , fps: 20 // Frames per second when using setTimeout() as a fallback for CSS
+          , zIndex: 2e9 // The z-index (defaults to 2000000000)
+          , className: 'spinner' // The CSS class to assign to the spinner
+          , top: '50%' // Top position relative to parent
+          , left: '50%' // Left position relative to parent
+          , shadow: false // Whether to render a shadow
+          , hwaccel: false // Whether to use hardware acceleration
+          , position: 'absolute' // Element positioning
+      };
+      var target = document.getElementById(target);
+      return new Spinner(opts).spin(target);
+  }
+};
+
+app.directive('aggregate', function() {
+	return {
+		restrict: 		'E',
+		templateUrl: 	'app/statistics/aggregate-directive.html',
+		replace: 		'true',
+		scope: {
+        	value: 			"@",
+        	description: 	"@",
+        	icon: 			"@",
+        	colour:         "@",
+        	link:      		"@",
+        	units:      	"@",
+            currency:       "@", 
+        }
+    };
+});
+app.controller('aggregateStatisticCtrl', ['$scope', '$rootScope', '$http', 'api', 'config', function($scope, $rootScope, $http, api, config) {
+    // init
+    $scope.count_institutions = 0;
+    $scope.count_faculties = 0;
+    $scope.count_departments = 0;
+    $scope.count_dmps = 0;
+    $scope.count_publications = 0;
+    $scope.count_datasets = 0;
+    $scope.count_dataset_accesses = 0;
+
+    $scope.data = {};
+    $scope.data.institutions = false;
+
+
+    update({
+                //startDate:      config.startDate,
+                //endDate:        config.endDate,
+            });
+
+    function update(message){
+        // if(config.inView.datasetsRCUKCtrl){        
+            var params = {
+                            //sd:         message.startDate,
+                            //ed:         message.endDate,
+                            //count:      true
+                        };
+
+            //api.uri.datasets(params).then(function(response) {
+            //    $scope.$apply(function(){
+            //        var value = response[0].num_datasets;
+            //        // only update if dirty
+            //        if (value !== $scope.value) $scope.value = value;
+            //    });
+            //});
+
+        api.uri.public('o_count_institutions').then(function(response) {
+            $scope.$apply(function(){
+                $scope.data.institutions = true;
+                var value = response[0].count;
+                // only update if dirty
+                if (value !== $scope.count_institutions) $scope.count_institutions = value;
+            });
+        });
+        api.uri.public('o_count_faculties').then(function(response) {
+            $scope.$apply(function(){
+                var value = response[0].count;
+                // only update if dirty
+                if (value !== $scope.count_faculties) $scope.count_faculties = value;
+            });
+        });
+        api.uri.public('o_count_departments').then(function(response) {
+            $scope.$apply(function(){
+                var value = response[0].count;
+                // only update if dirty
+                if (value !== $scope.count_departments) $scope.count_departments = value;
+            });
+        });
+        api.uri.public('o_count_dmps').then(function(response) {
+            $scope.$apply(function(){
+                var value = response[0].count;
+                // only update if dirty
+                if (value !== $scope.count_dmps) $scope.count_dmps = value;
+            });
+        });
+        api.uri.public('o_count_publications').then(function(response) {
+            $scope.$apply(function(){
+                var value = response[0].count;
+                // only update if dirty
+                if (value !== $scope.count_publications) $scope.count_publications = value;
+            });
+        });
+        api.uri.public('o_count_datasets').then(function(response) {
+            $scope.$apply(function(){
+                var value = response[0].count;
+                // only update if dirty
+                if (value !== $scope.count_datasets) $scope.count_datasets = value;
+            });
+        });
+        api.uri.public('o_count_dataset_accesses').then(function(response) {
+            $scope.$apply(function(){
+                $scope.dataset_accesses = {};
+                for (var i=0; i < response.length; ++i){
+                    if (response[i].access_type === 'data_download'){
+                        $scope.dataset_accesses.data = response[i].count.toLocaleString();
+                    }
+                    if (response[i].access_type === 'metadata'){
+                        $scope.dataset_accesses.metadata = response[i].count.toLocaleString();
+                    }
+                }
+            });
+        });
+    //
+    }
+
+    $scope.filterEventListener = $rootScope.$on("FilterEvent", function (event, message) {
+        update(message);
+    });  
+
+    $scope.$on('$destroy', function () {
+        // Remove the listener
+        $scope.filterEventListener();
+    });        
+}]);
 app.controller('datasetsRCUKCtrl', ['$scope', '$rootScope', '$http', 'api', 'config', function($scope, $rootScope, $http, api, config) {
     // init
     $scope.value = 0;
@@ -952,6 +1331,10 @@ app.controller('datasetsRCUKCtrl', ['$scope', '$rootScope', '$http', 'api', 'con
     });        
 }]);
 app.controller('datasetsCtrl', ['$scope', '$rootScope', '$http', 'api', 'config', function($scope, $rootScope, $http, api, config) {
+
+    //console.log('hard coding $rootScope.loggedInUser credentials in datasetsCtrl to bypass auth');
+    //$rootScope.loggedInUser = 'luve_u';
+
     // init
     $scope.value = 0;
     
@@ -1179,7 +1562,7 @@ app.controller('rcukAccessComplianceCtrl', ['$scope', '$rootScope', '$http', 'ap
                 $scope.$apply(function(){
                     var count = 0;
                     for(i=0;i<response.length;++i) {
-                        if (response[i].data_access_statement === 'exists with persistent link') ++count;
+                        if (response[i].rcuk_funder_compliant === 'y') ++count;
                     }
 
                     // only update if dirty
@@ -1721,7 +2104,7 @@ var DmpStatusTable = function() {
                 }, 
                 { data: 'project_name' },                    
                 { data: 'funder_id' },
-                { data: 'dmp_stage' },
+                { data: 'dmp_state' },
                 { data: 'dmp_status' },
                 { data: 'project_start' },
                 { data: 'project_end' },
@@ -1811,7 +2194,7 @@ var DmpStatusTable = function() {
             '</tr>'+        
             '<tr>'+        
                 '<td>Data management plan state:</td>'+
-                '<td>'+d.dmp_stage+'</td>'+
+                '<td>'+d.dmp_state+'</td>'+
             '</tr>'+        
             '<tr>'+        
                 '<td>Data management plan status:</td>'+
@@ -2448,7 +2831,9 @@ function toDataTablesFormat(data) {
 	hash['data'] = data;
 	return hash;
 }
-app.controller('uiGridStorageTableCtrl', ['$scope', '$rootScope', 'api', 'config', '$q', '$interval', function($scope, $rootScope, api, config, $q, $interval){
+app.controller('uiGridDmpTableCtrl', ['$scope', '$rootScope', '$http', 'api', 'ui', 'config', '$q', '$interval', function($scope, $rootScope, $http, api, ui, config, $q, $interval){
+    $scope.dataLoaded = false;
+
     var params = {
         startDate:          config.startDate,
         endDate:            config.endDate,
@@ -2458,6 +2843,304 @@ app.controller('uiGridStorageTableCtrl', ['$scope', '$rootScope', 'api', 'config
     $scope.gridOptions = {};
 
     $scope.gridOptions = {
+        rowEditWaitInterval: 1,  // ms before row is 'saved'
+        enableGridMenu: true,
+        //showGridFooter: true,
+        rowHeight: 35,
+        enableColumnResizing: true,
+        //enableCellEditOnFocus: true,
+        enableFiltering: true,
+        //rowHeight: 70,
+
+        //exporting begin
+        enableSelectAll: true,
+        exporterCsvFilename: 'dmp.csv',
+        exporterPdfDefaultStyle: {fontSize: 8},
+        exporterPdfTableStyle: {margin: [0, 15, 0, 5]},
+        exporterPdfTableHeaderStyle: {fontSize: 10, bold: true, italics: true, color: 'black'},
+        exporterPdfHeader: { text: "Data management plans produced", style: 'headerStyle' },
+        exporterPdfFooter: function ( currentPage, pageCount ) {
+            return { text: currentPage.toString() + ' of ' + pageCount.toString(), style: 'footerStyle' };
+        },
+        exporterPdfCustomFormatter: function ( docDefinition ) {
+            docDefinition.styles.headerStyle = { fontSize: 22, bold: true, margin: [340, 0, 20, 0] };
+            docDefinition.styles.footerStyle = { fontSize: 10, bold: true, margin: [400, 0, 20, 0] };
+            return docDefinition;
+        },
+        exporterPdfOrientation: 'landscape',
+        exporterPdfPageSize: 'A4',
+        exporterPdfMaxGridWidth: 700,
+        exporterCsvLinkElement: angular.element(document.querySelectorAll(".custom-csv-link-location")),
+        //exporting end
+    };
+
+    $scope.gridOptions.columnDefs = [
+        {
+            name: 'project_name',
+            displayName: 'Project',
+            width: 250,
+            enableCellEdit: false
+        },
+        {
+            name: 'lead_faculty_id',
+            displayName: 'Lead Faculty',
+            width: 110,
+            enableCellEdit: false,
+            enableFiltering: false
+        },
+        {
+            name: 'lead_dept_name',
+            displayName: 'Lead Dept',
+            width: 140,
+            enableCellEdit: false,
+            enableFiltering: false
+        },
+        {
+            name: 'dmp_id',
+            displayName: 'DMP ID',
+            width: 80,
+            enableCellEdit: false,
+            enableFiltering: false
+        },
+        //{
+        //    name: 'has_dmp_been_reviewed',
+        //    displayName: 'DMP Reviewed',
+        //    width: 120,
+        //    //type: 'number',
+        //    enableFiltering: false,
+        //    headerCellClass: 'columnEditableHeaderCell',
+        //    cellClass: 'columnEditableCellContents'
+        //},
+        {
+            name: 'has_dmp_been_reviewed',
+            displayName: 'DMP Reviewed',
+            width: 130,
+            headerCellClass: 'columnEditableHeaderCell',
+            //cellClass: 'columnEditableCellContents',
+            enableCellEdit: true,
+            enableFiltering: false,
+            editDropdownIdLabel: 'value',
+            editDropdownValueLabel: 'value',
+            editableCellTemplate: 'ui-grid/dropdownEditor',
+            editDropdownOptionsArray: [
+                {id: 1, value: 'yes'},
+                {id: 2, value: 'no'},
+                {id: 3, value: 'unknown'}
+            ]
+        },
+        {
+            name: 'project_start',
+            displayName: 'Project Start',
+            width: 110,
+            enableCellEdit: false,
+            enableFiltering: false
+        },
+        {
+            name: 'project_end',
+            displayName: 'Project End',
+            width: 110,
+            enableCellEdit: false,
+            enableFiltering: false
+        }
+    ];
+
+    console.log('$scope.gridOptions.columnDefs ', $scope.gridOptions.columnDefs);
+
+    update(params);
+
+    function update(message){
+        var params = {
+            date:               'project_start',
+            sd:                 message.startDate,
+            ed:                 message.endDate,
+            faculty:            message.faculty,
+        };
+        api.uri.dmps(params).then(function(data){
+            //console.log('Datasets ' + uri);
+            //console.log(data);
+            $scope.dataLoaded = true;
+            $scope.gridOptions.data = data;
+            $scope.$apply();
+        });
+    }
+
+    api.uri.dmps({modifiable: true}).success(function (data) {
+        console.log('modifiables ', data);
+        $scope.modifiable_column_constraints = {};
+        for (var i in data){
+            $scope.modifiable_column_constraints[data[i].c_name] = data[i].c_vals;
+        }
+        console.log('modifiable_column_constraints ', $scope.modifiable_column_constraints);
+    });
+
+    $scope.gridOptions.onRegisterApi = function(gridApi) {
+        //set gridApi on scope
+        $scope.gridApi = gridApi;
+        gridApi.rowEdit.on.saveRow($scope, $scope.saveRow);
+        //gridApi.edit.on.afterCellEdit($scope, function(rowEntity, colDef, newValue, oldValue) {
+            //Do your REST call here via $http.get or $http.post
+            //if (newValue != oldValue){
+            //    var params = {
+            //        project_id: rowEntity.project_id,
+            //        has_dmp_been_reviewed: rowEntity.has_dmp_been_reviewed
+            //    };
+            //    api.uri.put.dmps(params);
+            //}
+                // assumes a particular cell!
+                //response = api.uri.project(rowEntity);
+                //alert("POST (mock) to " + response);
+                //console.log('Going to update ', rowEntity); //
+            //curl -X PUT -s 'http://lib-dmao.lancs.ac.uk:8090/dmaonline/v0.3/c/d_lancaster/f8071b41d994e4557591bb3d3a148707820d7ee1e0310196e70ae8aa/project_dmps_view_put?project_id=1&has_dmp_been_reviewed=yes'
+            //var request = 'http://lib-dmao.lancs.ac.uk:8090/dmaonline/v0.3/c/d_lancaster/f8071b41d994e4557591bb3d3a148707820d7ee1e0310196e70ae8aa/project_dmps_view_put?';
+            //var data = {
+            //  project_id: rowEntity.project_id,
+            //  has_dmp_been_reviewed: newValue
+            //};
+            //request += 'project_id=' + rowEntity.project_id;
+            //request += '&has_dmp_been_reviewed=yes';
+            //console.log(request, data);
+
+            //console.log(api.getKey('d_lancaster', 'letmein'));
+
+            //response = api.uri.put.dmps(data);
+            //console.log('response ' , response);
+
+
+            //$http.put(request + data).
+            //    success(function (data, status, headers) {
+            //        console.log('SUCCESS', status, data);
+            //    })
+            //    .error(function (data, status, header, config) {
+            //        console.log('FAILURE', status, data);
+            //    });
+            //Alert to show what info about the edit is available
+            //alert('Project ' + rowEntity.project_name + '. You changed ' +
+            //' column ' + colDef.name + ' from ' + oldValue + ' to ' + newValue + '.');
+        //});
+    };
+
+
+    // saving begin
+    //$scope.saveRow = function( rowEntity ) {
+    //    //rowEntity.expected_storage = abs(rowEntity.expected_storage) // prevent negative
+    //    console.log('Look ma I is faking a save!', rowEntity);
+    //    // create a fake promise - normally you'd use the promise returned by $http or $resource
+    //    var promise = $q.defer();
+    //
+    //    $scope.gridApi.rowEdit.setSavePromise( rowEntity, promise.promise );
+    //
+    //    // fake a delay of 3 seconds whilst the save occurs, return error if length <=0
+    //    $interval( function() {
+    //        if (rowEntity.has_dmp_been_reviewed.length > 0){ // need to use constraints
+    //            promise.reject();
+    //                    } else {
+    //            promise.resolve();
+    //        }
+    //    }, 3000, 1);
+    //};
+
+    $scope.saveRow = function( rowEntity ) {
+
+        var spinner = ui.spinner('loader');
+
+        var params = {
+            project_id: rowEntity.project_id,
+            has_dmp_been_reviewed: rowEntity.has_dmp_been_reviewed
+        };
+
+        // create a fake promise - normally you'd use the promise returned by $http or $resource
+        //var promise = $q.defer();
+        var promise = api.uri.put.dmps(params);
+        console.log('promise ', promise);
+        //Cannot use promise.promise with exernal jquery api call
+        $scope.gridApi.rowEdit.setSavePromise( rowEntity, promise );
+
+        // fake a delay of 3 seconds
+        //$interval( function() {
+            //Cannot use promise.reject() and promise.resolve() with exernal jquery api call
+            promise.success(function(data){
+                console.log('promise SUCCESS');
+
+                //needed as promise is not an angular promise and there is no promise.resolve()
+                $scope.gridApi.rowEdit.flushDirtyRows($scope.gridApi.grid);
+                spinner.stop();
+            });
+
+            promise.error(function(data){
+                alert('Error whilst saving data to server');
+                //console.log('promise ERROR');
+                //alert('Invalid input data:   ' + rowEntity.has_dmp_been_reviewed +
+                //'\n\nPermitted values:   ' + $scope.modifiable_column_constraints.has_dmp_been_reviewed.replace(/\|/g, ', '));
+                spinner.stop();
+            });
+            $scope.savingData = false;
+
+        //}, 3000, 1);
+    };
+    // saving end
+
+
+
+
+    //cell navigation begin
+    $scope.currentFocused = "";
+
+    $scope.getCurrentFocus = function(){
+        var rowCol = $scope.gridApi.cellNav.getFocusedCell();
+        if(rowCol !== null) {
+            $scope.currentFocused = 'Row Id:' + rowCol.row.entity.id + ' col:' + rowCol.col.colDef.name;
+        }
+    };
+
+    $scope.getCurrentSelection = function() {
+        var values = [];
+        var currentSelection = $scope.gridApi.cellNav.getCurrentSelection();
+        for (var i = 0; i < currentSelection.length; i++) {
+            values.push(currentSelection[i].row.entity[currentSelection[i].col.name])
+        }
+        $scope.printSelection = values.toString();
+    };
+
+    $scope.scrollTo = function( rowIndex, colIndex ) {
+        $scope.gridApi.core.scrollTo( $scope.gridOptions.data[rowIndex], $scope.gridOptions.columnDefs[colIndex]);
+    };
+
+    $scope.scrollToFocus = function( rowIndex, colIndex ) {
+        $scope.gridApi.cellNav.scrollToFocus( $scope.gridOptions.data[rowIndex], $scope.gridOptions.columnDefs[colIndex]);
+    };
+    //cell navigation end
+
+
+
+    $scope.filterEventListener = $rootScope.$on("FilterEvent", function (event, message) {
+        //update(message);
+    });
+
+    $scope.$on('$destroy', function () {
+        // Remove the listener
+        $scope.filterEventListener();
+    });
+
+
+}]);
+
+
+
+
+
+
+app.controller('uiGridStorageTableCtrl', ['$scope', '$rootScope', 'api', 'ui', 'config', '$q', '$interval', function($scope, $rootScope, api, ui, config, $q, $interval){
+    var params = {
+        startDate:          config.startDate,
+        endDate:            config.endDate,
+        faculty:            config.faculty,
+    };
+
+    $scope.gridOptions = {};
+    $scope.modifications = {};
+
+    $scope.gridOptions = {
+        rowEditWaitInterval: 1,  // ms before row is 'saved'
         enableGridMenu: true,
         //showGridFooter: true,
         rowHeight: 35,
@@ -2491,21 +3174,32 @@ app.controller('uiGridStorageTableCtrl', ['$scope', '$rootScope', 'api', 'config
         {
             name: 'project_name',
             displayName: 'Project',
+            width: 250,
+            sort: { direction: 'asc' },
             enableCellEdit: false
+        },
+        {
+            name: 'inst_storage_platform_id',
+            displayName: 'Platform ID',
+            sort: { direction: 'asc' },
+            width: 120,
+            enableCellEdit: false,
         },
         {
             name: 'expected_storage',
             displayName: 'Expected (GB)',
             width: 120,
             type: 'number',
-            enableFiltering: false,
             headerCellClass: 'columnEditableHeaderCell',
-            cellClass: 'columnEditableCellContents'
+            cellClass: 'columnEditableCellContents',
+            enableCellEdit: true,
+            enableFiltering: false
         },
         {
             name: 'expected_storage_cost',
             displayName: 'Expected Cost',
             width: 120,
+            cellFilter: 'number: 2',
             enableCellEdit: false,
             enableFiltering: false
         },
@@ -2526,7 +3220,7 @@ app.controller('uiGridStorageTableCtrl', ['$scope', '$rootScope', 'api', 'config
         {
             name: 'project_end',
             displayName: 'Project End',
-            width: 100,
+            width: 110,
             enableCellEdit: false,
             enableFiltering: false
         },
@@ -2550,45 +3244,86 @@ app.controller('uiGridStorageTableCtrl', ['$scope', '$rootScope', 'api', 'config
         };
         api.uri.storage(params).then(function(data){
             //console.log('Datasets ' + uri);
-            //console.log(data);
+            //console.log('Data ', data);
+            //$scope.modifications[colDef.name] = {old: oldValue, new: newValue};
             $scope.gridOptions.data = data;
             $scope.$apply();
         });
     }
 
+    api.uri.storage({modifiable: true}).success(function (data) {
+        //console.log('modifiables ', data);
+        $scope.modifiable_column_constraints = {};
+        for (var i in data){
+            $scope.modifiable_column_constraints[data[i].c_name] = data[i].c_vals;
+        }
+        //console.log('modifiable_column_constraints ', $scope.modifiable_column_constraints);
+    });
+
     $scope.gridOptions.onRegisterApi = function(gridApi) {
         //set gridApi on scope
         $scope.gridApi = gridApi;
         gridApi.rowEdit.on.saveRow($scope, $scope.saveRow);
+
         gridApi.edit.on.afterCellEdit($scope, function(rowEntity, colDef, newValue, oldValue) {
-            //Do your REST call here via $http.get or $http.post
-            if (newValue != oldValue)
-                // assumes a particular cell!
-                response = api.uri.project(rowEntity);
-                alert("POST (mock) to " + response);
-                console.log(rowEntity); //
-            //Alert to show what info about the edit is available
-            //alert('Project ' + rowEntity.project_name + '. You changed ' +
-            //' column ' + colDef.name + ' from ' + oldValue + ' to ' + newValue + '.');
+            //console.log('Changing ', colDef, newValue, oldValue);
+            $scope.modifications[colDef.name] = {old: oldValue, new: newValue};
+            //console.log('$scope.modifications', $scope.modifications);
+            console.log('rowEntity afterCellEdit ', rowEntity );
         });
     };
 
     // saving begin
     $scope.saveRow = function( rowEntity ) {
-        //rowEntity.expected_storage = abs(rowEntity.expected_storage) // prevent negative
-        console.log('Look ma I is faking a save!');
-        // create a fake promise - normally you'd use the promise returned by $http or $resource
-        var promise = $q.defer();
-        $scope.gridApi.rowEdit.setSavePromise( rowEntity, promise.promise );
+        var spinner = ui.spinner('loader');
 
-        // fake a delay of 3 seconds whilst the save occurs, return error if gender is "male"
-        $interval( function() {
-            if (rowEntity.expected_storage < 0 ){
-                promise.reject();
-            } else {
-                promise.resolve();
-            }
-        }, 3000, 1);
+        //console.log('rowEntity ', rowEntity);
+        var old_inst_storage_platform_id = '';
+        if ($scope.modifications['inst_storage_platform_id']) {
+            old_inst_storage_platform_id = $scope.modifications['inst_storage_platform_id'].old;
+        }
+        else {
+            old_inst_storage_platform_id = rowEntity.inst_storage_platform_id;
+        }
+
+        var params = {
+            old_inst_storage_platform_id: old_inst_storage_platform_id,
+            inst_storage_platform_id: rowEntity.inst_storage_platform_id,
+            expected_storage: rowEntity.expected_storage.toString(),
+            project_id: rowEntity.project_id
+        };
+
+        //console.log('params ', params);
+
+        // create a fake promise - normally you'd use the promise returned by $http or $resource
+        //var promise = $q.defer();
+        var promise = api.uri.put.storage(params);
+        console.log('promise ', promise);
+        //Cannot use promise.promise with exernal jquery api call
+        $scope.gridApi.rowEdit.setSavePromise( rowEntity, promise );
+        console.log('after setSavePromise ');
+        // fake a delay of 3 seconds
+        //$interval( function() {
+            //Cannot use promise.reject() and promise.resolve() with external jquery api call
+            promise.success(function(data){
+                console.log('promise SUCCESS');
+                $scope.modifications = {};
+                rowEntity.expected_storage_cost = data[1][0].expected_storage_cost;
+                //console.log('rowEntity ', rowEntity );
+
+                //needed as promise is not an angular promise and there is no promise.resolve()
+                $scope.gridApi.rowEdit.flushDirtyRows($scope.gridApi.grid);
+
+                spinner.stop();
+            });
+            promise.error(function(data){
+                alert('Error whilst saving data to server');
+                //console.log('promise ERROR');
+                //alert('Invalid input data:   ' + rowEntity.expected_storage +
+                //'\n\nPermitted values:   ' + $scope.modifiable_column_constraints.expected_storage.replace(/\|/g, ', '));
+                spinner.stop();
+            });
+        //}, 10, 1);
     };
     // saving end
 
@@ -2620,6 +3355,17 @@ app.controller('uiGridStorageTableCtrl', ['$scope', '$rootScope', 'api', 'config
     };
     //cell navigation end
 
+    // editing begin
+    //$scope.addData = function() {
+    //    var n = $scope.gridOptions.data.length + 1;
+    //    $scope.gridOptions.data.push({
+    //        "project_name": "a new project " + n,
+    //        "inst_storage_platform_id": "Storage Platform ",
+    //        "expected_storage": 0,
+    //        "project_id": n
+    //    });
+    //};
+    // editing end
 
 
     $scope.filterEventListener = $rootScope.$on("FilterEvent", function (event, message) {

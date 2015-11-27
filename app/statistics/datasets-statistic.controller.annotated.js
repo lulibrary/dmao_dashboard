@@ -1,4 +1,8 @@
 app.controller('datasetsCtrl', ['$scope', '$rootScope', '$http', 'api', 'config', function($scope, $rootScope, $http, api, config) {
+
+    //console.log('hard coding $rootScope.loggedInUser credentials in datasetsCtrl to bypass auth');
+    //$rootScope.loggedInUser = 'luve_u';
+
     // init
     $scope.value = 0;
     

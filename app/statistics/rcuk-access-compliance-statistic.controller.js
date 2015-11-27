@@ -18,7 +18,7 @@ app.controller('rcukAccessComplianceCtrl', function($scope, $rootScope, $http, a
                 $scope.$apply(function(){
                     var count = 0;
                     for(i=0;i<response.length;++i) {
-                        if (response[i].data_access_statement === 'exists with persistent link') ++count;
+                        if (response[i].rcuk_funder_compliant === 'y') ++count;
                     }
 
                     // only update if dirty

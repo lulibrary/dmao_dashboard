@@ -1,5 +1,6 @@
 var App = {
-    institutionId: 'lancaster',
+    institutionId: '',
+    institutionName: '',
     institutionDataCiteSymbol: 'BL.LANCS',
     startDateDefault: '20000101',
     endDateDefault: '20350101', //moment().add(20, 'years').format('YYYYMMDD'),       
@@ -7,14 +8,9 @@ var App = {
     endDate: '20350101', //moment().add(20, 'years').format('YYYYMMDD'),
     faculty: '',
     facultyDefault: '',
-    facultyMap: {
-       '': 'All faculties',
-        1: 'Faculty of Arts and Social Sciences',
-        2: 'Faculty of Science and Technology',
-        3: 'Faculty of Health and Medicine',
-        4: 'Lancaster University Management School'
-    },
-    updateDelay: 30000,
+    facultyMap: {},
+    departmentMap: {},
+    updateDelay: 10000,
     // dataAccessResponseData: {},
-    // metadataAccessResponseData: {},
+    // metadataAccessResponseData: {}
 };

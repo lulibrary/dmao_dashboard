@@ -1,0 +1,10 @@
+.preloader {
+    padding: 50px;
+    background: url('../img/preloader.gif') no-repeat 50% 50% transparent;
+}
+
+.app-logo{
+    margin-top: 5px;
+    margin-left: 15px;
+}
+

@@ -5,9 +5,11 @@ var DMAOFilters = (function(){
         config = gConfig;
     };
 
-    var DateRangePicker = function(){        
-        $('#reportrange span').html(moment(config.startDate, "YYYYMMDD").format('MMMM D, YYYY') + ' - ' + moment(config.endDate, "YYYYMMDD").format('MMMM D, YYYY'));        
+    var DateRangePicker = function(){
+        console.log('DateRangePicker 1');
+        $('#reportrange span').html(moment(config.startDate, "YYYYMMDD").format('MMMM D, YYYY') + ' - ' + moment(config.endDate, "YYYYMMDD").format('MMMM D, YYYY'));
 
+        console.log('DateRangePicker 2');
         $('#reportrange').daterangepicker({
             format: 'DD/MM/YYYY',
             startDate: moment(config.startDateDefault, "YYYYMMDD").format('DD/MM/YYYY'),
@@ -65,6 +67,7 @@ var DMAOFilters = (function(){
             // console.log('after date selection ', config.startDate, config.endDate);
 
         });
+        console.log('DateRangePicker 3');
 
        $('.applyBtn').click(function() {
             // console.log( $('input[name="daterangepicker_start"]').val() );
@@ -83,6 +86,7 @@ var DMAOFilters = (function(){
                 scope.endDate = endDate;
             });         
         });
+        console.log('DateRangePicker 4');
     };
 
     var setFaculty = function(faculty){
@@ -100,10 +104,12 @@ var DMAOFilters = (function(){
         config.startDate = config.startDateDefault;
         config.endDate = config.endDateDefault;
 
+        console.log('DateRangePicker 5');
         // tell jQuery daterangepicker
         $('#reportrange').data('daterangepicker').setStartDate(moment(config.startDateDefault, "YYYYMMDD").format('DD/MM/YYYY'));
         $('#reportrange').data('daterangepicker').setEndDate(moment(config.endDateDefault, "YYYYMMDD").format('DD/MM/YYYY'));
         $('#reportrange span').html(moment(config.startDateDefault, "YYYYMMDD").format('MMMM D, YYYY') + ' - ' + moment(config.endDateDefault, "YYYYMMDD").format('MMMM D, YYYY'));
+        console.log('DateRangePicker 6');
 
         // tell Angular
         var scope = angular.element($("#filterController")).scope();
@@ -112,7 +118,7 @@ var DMAOFilters = (function(){
             scope.startDate = config.startDateDefault;
             scope.endDate = config.endDateDefault;
         });
-    }; 
+    };
 
     return {
         init: init,

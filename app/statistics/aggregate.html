@@ -1,0 +1,80 @@
+<!--<h3>DMAOnline Aggregate information APIs</h3>-->
+
+<!--<div class="preloader"></div>-->
+<!--colour="grey-salt"-->
+<!--colour="grey-salsa"-->
+<!--colour="grey-silver"-->
+<!--colour="grey-cascade"-->
+<!--colour="grey-carrara"-->
+<!--colour="grey-steel"-->
+<!--colour="grey-gallery"-->
+<!--colour="green-mint"-->
+
+
+<div ng-controller="aggregateStatisticCtrl">
+    <div ng-hide="data.institutions" class="preloader"></div>
+    <div ng-show="data.institutions">
+        <aggregate 	value="{{count_institutions}}"
+                      description="Institutions"
+                      icon="building"
+                      colour="grey-gallery"
+                      link="#/"
+                >
+        </aggregate>
+    </div>
+    <aggregate 	value="{{count_faculties}}"
+                  description="Faculties"
+                  icon="sitemap"
+                  colour="grey-gallery"
+                  link="#/"
+            >
+    </aggregate>
+    <aggregate 	value="{{count_departments}}"
+                  description="Departments"
+                  icon="sitemap"
+                  colour="grey-gallery"
+                  link="#/"
+            >
+    </aggregate>
+    <aggregate 	value="{{count_dmps}}"
+                  description="DMPs"
+                  icon="th-list"
+                  colour="grey-gallery"
+                  link="#/"
+            >
+    </aggregate>
+    <aggregate 	value="{{count_publications}}"
+                  description="Publications"
+                  icon="book"
+                  colour="grey-gallery"
+                  link="#/"
+            >
+    </aggregate>
+    <aggregate 	value="{{count_datasets}}"
+                  description="Datasets"
+                  icon="file"
+                  colour="grey-gallery"
+                  link="#/"
+            >
+    </aggregate>
+    <aggregate 	value="{{dataset_accesses.data}}"
+                  description="Data downloads"
+                  icon="cloud-download"
+                  colour="grey-gallery"
+                  link="#/"
+            >
+    </aggregate>
+    <aggregate 	value="{{dataset_accesses.metadata}}"
+                  description="Metadata accesses"
+                  icon="cloud-download"
+                  colour="grey-gallery"
+                  link="#/"
+            >
+    </aggregate>
+
+</div>
+
+<br>
+<br>
+
+<!--<a href="#/login" target="_self">Sign in</a>-->

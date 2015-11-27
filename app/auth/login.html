@@ -1,0 +1,101 @@
+<div ng-controller="loginCtrl">
+
+    <!--<script type="text/ng-template" id="myModalContent.html">-->
+        <!--<div class="modal-header">-->
+            <!--<h3 class="modal-title">I'm a modal!</h3>-->
+        <!--</div>-->
+        <!--<div class="modal-body">-->
+            <!--<ul>-->
+                <!--<li ng-repeat="item in items">-->
+                    <!--<a href="#" ng-click="$event.preventDefault(); selected.item = item">{{ item }}</a>-->
+                <!--</li>-->
+            <!--</ul>-->
+            <!--Selected: <b>{{ selected.item }}</b>-->
+        <!--</div>-->
+        <!--<div class="modal-footer">-->
+            <!--<button class="btn btn-primary" type="button" ng-click="ok()">OK</button>-->
+            <!--<button class="btn btn-warning" type="button" ng-click="cancel()">Cancel</button>-->
+        <!--</div>-->
+    <!--</script>-->
+
+    <!--<button type="button" class="btn btn-default" ng-click="open()">Open me!</button>-->
+
+
+<div class="loggedInZone">
+    <div class="loggedInUserName" ng-show="loggedInUser">Signed in as {{loggedInUser}}
+    </div>
+
+    <div ng-show="loggedInUser" class="pull-right">
+        <button type="button" class="btn btn-sm" ng-click="logout()">Sign out</button>
+    </div>
+
+    <div ng-hide="loggedInUser" class="pull-right">
+        <button type="button" class="btn btn-sm btn-success" data-toggle="modal" data-target="#myModal">Sign in</button>
+    </div>
+</div>
+
+<div ng-hide="loggedInUser">
+    <div class="modal fade" id="myModal" role="dialog">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Access institutional data</h4>
+                </div>
+                <div class="modal-body">
+                        <form role="form" ng-submit="login()">
+                            <div class="form-group">
+                                <label class="control-label">Institution</label>
+                                <select class="form-control" ng-model="institution">
+                                    <option ng-repeat="i in institutions" value="{{i.inst_id}}">{{i.name}}</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Username</label>
+                                <input type="text" class="form-control" ng-model="username">
+                            </div>
+                            <div class="form-group">
+                                <label>Password</label>
+                                <input type="password" class="form-control" ng-model="password">
+                            </div>
+                            <button type="submit" class="btn btn-primary">Sign in</button>
+                        </form>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> <!--hide-->
+
+    <!--<div class="loggedInUserName" ng-hide="loggedInUser">-->
+        <!--Nobody is logged in-->
+        <!--<script>-->
+            <!--$('#myModal').hide();-->
+        <!--</script>-->
+    <!--</div>-->
+
+    <!--<form role="form" ng-submit="login()">-->
+        <!--<div class="form-group">-->
+            <!--<label class="control-label">Institution</label>-->
+            <!--<select class="form-control" ng-model="institution">-->
+                <!--<option ng-repeat="i in institutions" value="{{i.inst_id}}">{{i.name}}</option>-->
+            <!--</select>-->
+        <!--</div>-->
+        <!--<div class="form-group">-->
+            <!--<label>Username</label>-->
+            <!--<input type="text" class="form-control" ng-model="username">-->
+        <!--</div>-->
+        <!--<div class="form-group">-->
+            <!--<label>Password</label>-->
+            <!--<input type="password" class="form-control" ng-model="password">-->
+        <!--</div>-->
+        <!--<button type="submit" class="btn btn-primary">Login</button>-->
+    <!--</form>-->
+</div>
+
+    <script>
+        console.log('login.html included');
+    </script>

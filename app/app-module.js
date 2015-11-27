@@ -15,3 +15,7 @@ app.factory('api', function() {
 app.factory('config', function() { 
     return App;
 });
+
+app.factory('ui', function() {
+    return UiService;
+});

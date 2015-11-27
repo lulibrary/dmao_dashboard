@@ -1,48 +1,89 @@
 var ApiService = {
-    version:    'v0.2', 
+    version:    'v0.3',
+    apiKey:     '',
+    authenticated: function(){
+        if (this.apiKey){
+            return true;
+        }
+        return false;
+    },
     prefix: function() {
         // Prototype
         // http://lib-ldiv.lancs.ac.uk:8080/dmaonline/v0.2/use_case_1/lancaster?
         // date=<project_awarded|project_start|project_end>&sd=YYYYMMDD&ed=YYYYMMDD
         var uri = URI({
             protocol:   'http',
-            hostname:   'lib-ldiv.lancs.ac.uk',
-            port:       '8080',
+            hostname:   'lib-dmao.lancs.ac.uk',
+            port:       '8090',
             path:       'dmaonline',             
         });
         uri += '/' + this.version;
         return uri.toString();
     },
+    clearKey: function(){
+        this.apiKey = '';
+    },
+    authenticate: function(institutionID, username, password){
+        //console.log('this.apiKey ', this.apiKey);
+
+        var uri = URI(ApiService.prefix() + '/o/' + institutionID + '/o_get_api_key');
+        //console.log('uri ', uri);
+
+        var shaObj = new jsSHA("SHA-224", "TEXT");
+        shaObj.update(password);
+        var hash = shaObj.getHash("HEX");
+        //console.log('hash ', hash);
+
+            uri = this.uri.addParams(uri, {
+                    user: username,
+                    passwd: hash
+                });
+        //console.log('uri ', uri);
+        //console.log($.getJSON(uri));
+        return $.getJSON(uri)
+            .then(function( json ) {
+                //console.log('json response ', json);
+                ApiService.apiKey = json[0].api_key;
+                //ApiService.apiKey = 'BLADEBLA';
+            });
+
+    },
     uri: {
         addParams: function(uri, params){
             for (key in params) {
-                uri.addSearch(key, params[key]);
+                if (params[key]) {
+                    uri.addSearch(key, params[key]);
+                }
             }                    
             return uri;
         },
-        datasets: function(params){           
-            var uri = URI(ApiService.prefix() + '/datasets' + '/' + App.institutionId);
+        datasets: function(params){
+            var uri = URI(ApiService.prefix() + '/c/' + App.institutionId + '/' +
+            ApiService.apiKey + '/datasets');
             if (params){
                 uri = this.addParams(uri, params);
             }
             return $.getJSON(uri);
         },
         dmps: function(params){
-            var uri = URI(ApiService.prefix() + '/project_dmps' + '/' + App.institutionId);
+            var uri = URI(ApiService.prefix() + '/c/' + App.institutionId + '/' +
+            ApiService.apiKey + '/project_dmps');
             if (params){
                 uri = this.addParams(uri, params);
             }
              return $.getJSON(uri);
         },  
         dmpStatus: function(params){
-            var uri = URI(ApiService.prefix() + '/dmp_status' + '/' + App.institutionId);
+            var uri = URI(ApiService.prefix() + '/c/' + App.institutionId + '/' +
+            ApiService.apiKey + '/dmp_status');
             if (params){
                 uri = this.addParams(uri, params);
             }
              return $.getJSON(uri);
         }, 
         storage: function(params){
-            var uri = URI(ApiService.prefix() + '/storage' + '/' + App.institutionId);
+            var uri = URI(ApiService.prefix() + '/c/' + App.institutionId + '/' +
+            ApiService.apiKey + '/storage');
             if (params){
                 uri = this.addParams(uri, params);
             }
@@ -65,14 +106,17 @@ var ApiService = {
             });
         },
         rcukAccessCompliance: function(params){
-            var uri = URI(ApiService.prefix() + '/rcuk_as' + '/' + App.institutionId);
+            var uri = URI(ApiService.prefix() + '/c/' + App.institutionId + '/' +
+            ApiService.apiKey + '/rcuk_as');
             if (params){
                 uri = this.addParams(uri, params);
             }
              return $.getJSON(uri);
         },  
         datasetAccess: function(params){
-            var uri = URI(ApiService.prefix() + '/dataset_accesses' + '/' + App.institutionId);
+            var uri = URI(ApiService.prefix() + '/c/' + App.institutionId + '/' +
+            ApiService.apiKey + '/dataset_accesses');
+            //var uri = URI(ApiService.prefix() + '/dataset_accesses' + '/' + App.institutionId);
             if (params){
                 uri = this.addParams(uri, params);
             }
@@ -81,6 +125,77 @@ var ApiService = {
         datasetAccessByDateRange: function(params){
             var uri = this.datasetAccess(params);
             // var uriWithDateRange = this.addDateRange(uri, params);
+            return $.getJSON(uri);
+        },
+        put: {
+            dmps: function (params) {
+                //alert('ApiService.uri.put.dmps called');
+                var uri = URI(ApiService.prefix() + '/c/' + App.institutionId + '/' + ApiService.apiKey + '/project_dmps');
+
+                if (params) {
+                    //uri = this.addParams(uri, params);
+                    uri = ApiService.uri.addParams(uri, params);
+                    console.log('uri ', uri);
+                }
+                return $.ajax(
+                    {
+                        url: uri,
+                        type: 'PUT',
+                        success: function(data, textStatus, jqXHR) {
+                            //alert('Thing updated successfully Status: '+textStatus); },
+                            console.log('Updated ');
+                            console.log('Data ', data);
+                        },
+                        error: function(jqXHR, textStatus, errorThrown) {
+                            console.log('jqXHR ', jqXHR);
+                            console.log('textStatus ', textStatus);
+                            console.log('Error ', errorThrown);
+                            //alert(errorThrown);
+                        }
+                    });
+            },
+            storage: function (params) {
+                //alert('ApiService.uri.put.storage called');
+                var uri = URI(ApiService.prefix() + '/c/' + App.institutionId + '/' + ApiService.apiKey + '/storage');
+
+                if (params) {
+                    //uri = this.addParams(uri, params);
+                    uri = ApiService.uri.addParams(uri, params);
+                    console.log('uri ', uri);
+                }
+                return $.ajax(
+                    {
+                        url: uri,
+                        type: 'PUT',
+                        success: function(data, textStatus, jqXHR) {
+                            //alert('Thing updated successfully Status: '+textStatus); },
+                            console.log('Updated ');
+                            console.log('Data ', data);
+                        },
+                        error: function(jqXHR, textStatus, errorThrown) {
+                            console.log('jqXHR ', jqXHR);
+                            console.log('textStatus ', textStatus);
+                            console.log('Error ', errorThrown);
+                            //alert(errorThrown);
+                        }
+                    });
+            }
+        },
+
+        //modifiable: {
+        //    dmps: function() {
+        //        var uri = URI(ApiService.prefix() + '/c/' + App.institutionId + '/' + ApiService.apiKey + '/project_dmps_modifiable');
+        //        return $.getJSON(uri);
+        //    },
+        //},
+        o: {
+            institutions: function () {
+                var uri = URI(ApiService.prefix() + '/o' + '/o_inst_list');
+                return $.getJSON(uri);
+            }
+        },
+        public: function(resource) {
+            var uri = URI(ApiService.prefix() + '/o' + '/' + resource);
             return $.getJSON(uri);
         },
     },

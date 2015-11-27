@@ -1,4 +1,6 @@
-app.controller('uiGridStorageTableCtrl', ['$scope', '$rootScope', 'api', 'ui', 'config', '$q', '$interval', function($scope, $rootScope, api, ui, config, $q, $interval){
+app.controller('uiGridDmpTableCtrl', function($scope, $rootScope, $http, api, ui, config, $q, $interval){
+    $scope.dataLoaded = false;
+
     var params = {
         startDate:          config.startDate,
         endDate:            config.endDate,
@@ -6,7 +8,6 @@ app.controller('uiGridStorageTableCtrl', ['$scope', '$rootScope', 'api', 'ui', '
     };
 
     $scope.gridOptions = {};
-    $scope.modifications = {};
 
     $scope.gridOptions = {
         rowEditWaitInterval: 1,  // ms before row is 'saved'
@@ -20,11 +21,11 @@ app.controller('uiGridStorageTableCtrl', ['$scope', '$rootScope', 'api', 'ui', '
 
         //exporting begin
         enableSelectAll: true,
-        exporterCsvFilename: 'storage.csv',
+        exporterCsvFilename: 'dmp.csv',
         exporterPdfDefaultStyle: {fontSize: 8},
         exporterPdfTableStyle: {margin: [0, 15, 0, 5]},
         exporterPdfTableHeaderStyle: {fontSize: 10, bold: true, italics: true, color: 'black'},
-        exporterPdfHeader: { text: "Storage", style: 'headerStyle' },
+        exporterPdfHeader: { text: "Data management plans produced", style: 'headerStyle' },
         exporterPdfFooter: function ( currentPage, pageCount ) {
             return { text: currentPage.toString() + ' of ' + pageCount.toString(), style: 'footerStyle' };
         },
@@ -39,45 +40,60 @@ app.controller('uiGridStorageTableCtrl', ['$scope', '$rootScope', 'api', 'ui', '
         exporterCsvLinkElement: angular.element(document.querySelectorAll(".custom-csv-link-location")),
         //exporting end
     };
+
     $scope.gridOptions.columnDefs = [
         {
             name: 'project_name',
             displayName: 'Project',
             width: 250,
-            sort: { direction: 'asc' },
             enableCellEdit: false
         },
         {
-            name: 'inst_storage_platform_id',
-            displayName: 'Platform ID',
-            sort: { direction: 'asc' },
-            width: 120,
-            enableCellEdit: false,
-        },
-        {
-            name: 'expected_storage',
-            displayName: 'Expected (GB)',
-            width: 120,
-            type: 'number',
-            headerCellClass: 'columnEditableHeaderCell',
-            cellClass: 'columnEditableCellContents',
-            enableCellEdit: true,
-            enableFiltering: false
-        },
-        {
-            name: 'expected_storage_cost',
-            displayName: 'Expected Cost',
-            width: 120,
-            cellFilter: 'number: 2',
+            name: 'lead_faculty_id',
+            displayName: 'Lead Faculty',
+            width: 110,
             enableCellEdit: false,
             enableFiltering: false
         },
         {
-            name: 'dataset_size',
-            displayName: 'Dataset Size (GB)',
+            name: 'lead_dept_name',
+            displayName: 'Lead Dept',
             width: 140,
             enableCellEdit: false,
             enableFiltering: false
+        },
+        {
+            name: 'dmp_id',
+            displayName: 'DMP ID',
+            width: 80,
+            enableCellEdit: false,
+            enableFiltering: false
+        },
+        //{
+        //    name: 'has_dmp_been_reviewed',
+        //    displayName: 'DMP Reviewed',
+        //    width: 120,
+        //    //type: 'number',
+        //    enableFiltering: false,
+        //    headerCellClass: 'columnEditableHeaderCell',
+        //    cellClass: 'columnEditableCellContents'
+        //},
+        {
+            name: 'has_dmp_been_reviewed',
+            displayName: 'DMP Reviewed',
+            width: 130,
+            headerCellClass: 'columnEditableHeaderCell',
+            //cellClass: 'columnEditableCellContents',
+            enableCellEdit: true,
+            enableFiltering: false,
+            editDropdownIdLabel: 'value',
+            editDropdownValueLabel: 'value',
+            editableCellTemplate: 'ui-grid/dropdownEditor',
+            editDropdownOptionsArray: [
+                {id: 1, value: 'yes'},
+                {id: 2, value: 'no'},
+                {id: 3, value: 'unknown'}
+            ]
         },
         {
             name: 'project_start',
@@ -92,15 +108,10 @@ app.controller('uiGridStorageTableCtrl', ['$scope', '$rootScope', 'api', 'ui', '
             width: 110,
             enableCellEdit: false,
             enableFiltering: false
-        },
-        {
-            name: 'dataset_pid',
-            displayName: 'Dataset PID',
-            width: 300,
-            enableCellEdit: false,
-            enableFiltering: false
         }
     ];
+
+    console.log('$scope.gridOptions.columnDefs ', $scope.gridOptions.columnDefs);
 
     update(params);
 
@@ -111,90 +122,132 @@ app.controller('uiGridStorageTableCtrl', ['$scope', '$rootScope', 'api', 'ui', '
             ed:                 message.endDate,
             faculty:            message.faculty,
         };
-        api.uri.storage(params).then(function(data){
+        api.uri.dmps(params).then(function(data){
             //console.log('Datasets ' + uri);
-            //console.log('Data ', data);
-            //$scope.modifications[colDef.name] = {old: oldValue, new: newValue};
+            //console.log(data);
+            $scope.dataLoaded = true;
             $scope.gridOptions.data = data;
             $scope.$apply();
         });
     }
 
-    api.uri.storage({modifiable: true}).success(function (data) {
-        //console.log('modifiables ', data);
+    api.uri.dmps({modifiable: true}).success(function (data) {
+        console.log('modifiables ', data);
         $scope.modifiable_column_constraints = {};
         for (var i in data){
             $scope.modifiable_column_constraints[data[i].c_name] = data[i].c_vals;
         }
-        //console.log('modifiable_column_constraints ', $scope.modifiable_column_constraints);
+        console.log('modifiable_column_constraints ', $scope.modifiable_column_constraints);
     });
 
     $scope.gridOptions.onRegisterApi = function(gridApi) {
         //set gridApi on scope
         $scope.gridApi = gridApi;
         gridApi.rowEdit.on.saveRow($scope, $scope.saveRow);
+        //gridApi.edit.on.afterCellEdit($scope, function(rowEntity, colDef, newValue, oldValue) {
+            //Do your REST call here via $http.get or $http.post
+            //if (newValue != oldValue){
+            //    var params = {
+            //        project_id: rowEntity.project_id,
+            //        has_dmp_been_reviewed: rowEntity.has_dmp_been_reviewed
+            //    };
+            //    api.uri.put.dmps(params);
+            //}
+                // assumes a particular cell!
+                //response = api.uri.project(rowEntity);
+                //alert("POST (mock) to " + response);
+                //console.log('Going to update ', rowEntity); //
+            //curl -X PUT -s 'http://lib-dmao.lancs.ac.uk:8090/dmaonline/v0.3/c/d_lancaster/f8071b41d994e4557591bb3d3a148707820d7ee1e0310196e70ae8aa/project_dmps_view_put?project_id=1&has_dmp_been_reviewed=yes'
+            //var request = 'http://lib-dmao.lancs.ac.uk:8090/dmaonline/v0.3/c/d_lancaster/f8071b41d994e4557591bb3d3a148707820d7ee1e0310196e70ae8aa/project_dmps_view_put?';
+            //var data = {
+            //  project_id: rowEntity.project_id,
+            //  has_dmp_been_reviewed: newValue
+            //};
+            //request += 'project_id=' + rowEntity.project_id;
+            //request += '&has_dmp_been_reviewed=yes';
+            //console.log(request, data);
 
-        gridApi.edit.on.afterCellEdit($scope, function(rowEntity, colDef, newValue, oldValue) {
-            //console.log('Changing ', colDef, newValue, oldValue);
-            $scope.modifications[colDef.name] = {old: oldValue, new: newValue};
-            //console.log('$scope.modifications', $scope.modifications);
-            console.log('rowEntity afterCellEdit ', rowEntity );
-        });
+            //console.log(api.getKey('d_lancaster', 'letmein'));
+
+            //response = api.uri.put.dmps(data);
+            //console.log('response ' , response);
+
+
+            //$http.put(request + data).
+            //    success(function (data, status, headers) {
+            //        console.log('SUCCESS', status, data);
+            //    })
+            //    .error(function (data, status, header, config) {
+            //        console.log('FAILURE', status, data);
+            //    });
+            //Alert to show what info about the edit is available
+            //alert('Project ' + rowEntity.project_name + '. You changed ' +
+            //' column ' + colDef.name + ' from ' + oldValue + ' to ' + newValue + '.');
+        //});
     };
 
+
     // saving begin
+    //$scope.saveRow = function( rowEntity ) {
+    //    //rowEntity.expected_storage = abs(rowEntity.expected_storage) // prevent negative
+    //    console.log('Look ma I is faking a save!', rowEntity);
+    //    // create a fake promise - normally you'd use the promise returned by $http or $resource
+    //    var promise = $q.defer();
+    //
+    //    $scope.gridApi.rowEdit.setSavePromise( rowEntity, promise.promise );
+    //
+    //    // fake a delay of 3 seconds whilst the save occurs, return error if length <=0
+    //    $interval( function() {
+    //        if (rowEntity.has_dmp_been_reviewed.length > 0){ // need to use constraints
+    //            promise.reject();
+    //                    } else {
+    //            promise.resolve();
+    //        }
+    //    }, 3000, 1);
+    //};
+
     $scope.saveRow = function( rowEntity ) {
+
         var spinner = ui.spinner('loader');
 
-        //console.log('rowEntity ', rowEntity);
-        var old_inst_storage_platform_id = '';
-        if ($scope.modifications['inst_storage_platform_id']) {
-            old_inst_storage_platform_id = $scope.modifications['inst_storage_platform_id'].old;
-        }
-        else {
-            old_inst_storage_platform_id = rowEntity.inst_storage_platform_id;
-        }
-
         var params = {
-            old_inst_storage_platform_id: old_inst_storage_platform_id,
-            inst_storage_platform_id: rowEntity.inst_storage_platform_id,
-            expected_storage: rowEntity.expected_storage.toString(),
-            project_id: rowEntity.project_id
+            project_id: rowEntity.project_id,
+            has_dmp_been_reviewed: rowEntity.has_dmp_been_reviewed
         };
-
-        //console.log('params ', params);
 
         // create a fake promise - normally you'd use the promise returned by $http or $resource
         //var promise = $q.defer();
-        var promise = api.uri.put.storage(params);
+        var promise = api.uri.put.dmps(params);
         console.log('promise ', promise);
         //Cannot use promise.promise with exernal jquery api call
         $scope.gridApi.rowEdit.setSavePromise( rowEntity, promise );
-        console.log('after setSavePromise ');
+
         // fake a delay of 3 seconds
         //$interval( function() {
-            //Cannot use promise.reject() and promise.resolve() with external jquery api call
+            //Cannot use promise.reject() and promise.resolve() with exernal jquery api call
             promise.success(function(data){
                 console.log('promise SUCCESS');
-                $scope.modifications = {};
-                rowEntity.expected_storage_cost = data[1][0].expected_storage_cost;
-                //console.log('rowEntity ', rowEntity );
 
                 //needed as promise is not an angular promise and there is no promise.resolve()
                 $scope.gridApi.rowEdit.flushDirtyRows($scope.gridApi.grid);
-
                 spinner.stop();
             });
+
             promise.error(function(data){
                 alert('Error whilst saving data to server');
                 //console.log('promise ERROR');
-                //alert('Invalid input data:   ' + rowEntity.expected_storage +
-                //'\n\nPermitted values:   ' + $scope.modifiable_column_constraints.expected_storage.replace(/\|/g, ', '));
+                //alert('Invalid input data:   ' + rowEntity.has_dmp_been_reviewed +
+                //'\n\nPermitted values:   ' + $scope.modifiable_column_constraints.has_dmp_been_reviewed.replace(/\|/g, ', '));
                 spinner.stop();
             });
-        //}, 10, 1);
+            $scope.savingData = false;
+
+        //}, 3000, 1);
     };
     // saving end
+
+
+
 
     //cell navigation begin
     $scope.currentFocused = "";
@@ -224,17 +277,6 @@ app.controller('uiGridStorageTableCtrl', ['$scope', '$rootScope', 'api', 'ui', '
     };
     //cell navigation end
 
-    // editing begin
-    //$scope.addData = function() {
-    //    var n = $scope.gridOptions.data.length + 1;
-    //    $scope.gridOptions.data.push({
-    //        "project_name": "a new project " + n,
-    //        "inst_storage_platform_id": "Storage Platform ",
-    //        "expected_storage": 0,
-    //        "project_id": n
-    //    });
-    //};
-    // editing end
 
 
     $scope.filterEventListener = $rootScope.$on("FilterEvent", function (event, message) {
@@ -245,5 +287,11 @@ app.controller('uiGridStorageTableCtrl', ['$scope', '$rootScope', 'api', 'ui', '
         // Remove the listener
         $scope.filterEventListener();
     });
-}]);
+
+
+});
+
+
+
+
 

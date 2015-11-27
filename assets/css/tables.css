@@ -18,4 +18,6 @@
 }
 .columnEditableCellContents .ui-grid-cell-focus {
 	background-color: #428bca;
+	color: white;
+	font-weight: 900;
 }

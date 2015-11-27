@@ -4,3 +4,9 @@
 		font-size: 100% !important;	
 		}
 }
+
+@media (min-width: 992px) {
+	.page-content-wrapper .page-content {
+		margin-left: 0px;
+	}
+}

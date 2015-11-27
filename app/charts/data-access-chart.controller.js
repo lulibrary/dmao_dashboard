@@ -9,7 +9,7 @@ app.controller('dataAccessChartCtrl', function($scope, $rootScope, $http, api, c
     update(params);
 
     function update(message){
-        var params = {  date:               'project_start',
+        var params = {  //date:               'project_start',
                         sd:                 message.startDate,
                         ed:                 message.endDate,
                         faculty:            message.faculty,

@@ -1,14 +1,66 @@
 <div id="filterController" ng-controller="filterCtrl">
-	<div id="searchFilters">
-		<div id="searchFiltersButton">
-			<a class="btn btn-primary" href="javascript:DMAOFilters.initUserSelections();">
-				Remove filters
-			</a>
-		</div>
-		<div  ng-cloak id="searchFiltersText">
-			{{facultyName}}
-		</div>
-		<br/>
-		<br/>
-	</div>
+
+
+
+<div>
+	<button id="filterToggleButton" type="button" class="btn btn-lg" data-toggle="collapse" data-target="#searchFilters">
+		<i class="fa fa-filter fa-lg"> Filters</strong></i>
+	</button>
+
+	<div class="institutionName">{{institutionName}}</div>
 </div>
+	<!--<div id="demo" class="collapse out">-->
+	<!--</div>-->
+	<!--<div class="clearfix"></div>-->
+
+	<!--<div class="container">-->
+	<!--<i class="fa fa-filter fa-3x"></i>-->
+
+
+
+		<div id="searchFilters" class="collapse in">
+			<!--<h3>Filters</h3>-->
+
+
+			<!--<div class="clearfix"></div>-->
+
+
+			<div id="reportrange" class="filterElement" style="background: #fff; cursor: pointer; padding: 5px 10px; border: 1px solid #ccc">
+				<i class="glyphicon glyphicon-calendar fa fa-calendar"></i>
+				<span></span> <b class="caret"></b></div>
+
+			<!--<div class="clearfix"></div>-->
+		<!--<i class="fa fa-filter fa-2x"></i>-->
+		<!--<div class="form-group">-->
+			<!--<label class="control-label">Faculty</label>-->
+			<select class="form-control filterElement" ng-model="faculty">
+				<option ng-repeat="(key, value) in facultyMap" value="{{key}}">{{value}}</option>
+			</select>
+
+				<div id="searchFiltersButton" class="filterElement">
+					<a class="btn btn-default" href="javascript:DMAOFilters.initUserSelections();">
+						Clear
+					</a>
+				</div>
+		<!--</div>-->
+			<!--<div class="clearfix"></div>-->
+		</div>
+
+			<!--<div  ng-cloak id="searchFiltersText">-->
+				<!--{{facultyName}}-->
+			<!--</div>-->
+		</div>
+	<!--</div>-->
+
+
+<div class="clearfix"></div>
+
+<script>
+	console.log('filter loaded');
+</script>
+
+<script>
+	DMAOFilters.init(App);
+	console.log('calendar loaded');
+	DMAOFilters.DateRangePicker();
+</script>

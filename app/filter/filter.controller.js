@@ -4,6 +4,8 @@ app.controller('filterCtrl', function($scope, $rootScope, $interval, config) {
     $scope.faculty = config.facultyDefault;   
     $scope.facultyName = config.facultyMap[config.facultyDefault];
 
+    getInstitutionFaculties();
+
     function broadcastFilterChange(msg){
         // //console.log(msg);
         $rootScope.$broadcast("FilterEvent", {  
@@ -104,7 +106,29 @@ app.controller('filterCtrl', function($scope, $rootScope, $interval, config) {
             } 
         },
         true
-        );   
-  
+        );
+
+    function getInstitutionFaculties() {
+        //fetch data using api
+        //facultyMap = api....
+        //hardcode for now, until it makes its way into the api
+        var facultyMap = {
+            '': 'All faculties',
+            1: 'Faculty of Arts and Social Sciences',
+            2: 'Faculty of Science and Technology',
+            3: 'Faculty of Health and Medicine',
+            4: 'Lancaster University Management School'
+        };
+
+        $scope.facultyMap = facultyMap;
+
+        //not strictly needed but leave for now to keep legacy config synched
+        config.facultyMap = facultyMap;
+
+
+        console.log('$scope.facultyMap ', $scope.facultyMap);
+    }
+
+    $scope.institutionName = config.institutionName;
 
 });
