@@ -3,6 +3,7 @@ app.config(['$routeProvider', '$locationProvider', function($routeProvider, $loc
 		.when('/landing', { templateUrl: 'app/public/landing.html' })
 		//.when('/landing', { templateUrl: 'app/tables/storage-table.html' })
 		//.when('/landing', { templateUrl: 'app/tables/dmp-table.html' })
+		//.when('/landing', { templateUrl: 'app/statistics/statistic-compilation.html' })
 		.when('/', { templateUrl: 'app/statistics/statistic-compilation.html' })
 		.when('/all', { templateUrl: 'app/public/landing.html' })
 		.when('/stats', { 	templateUrl: 'app/statistics/statistic-compilation.html'})
@@ -14,6 +15,8 @@ app.config(['$routeProvider', '$locationProvider', function($routeProvider, $loc
 		.when('/dmps', { templateUrl: 'app/tables/dmp-status-table.html' })
 		.when('/storage', { templateUrl: 'app/tables/storage-table.html' })
 		.when('/compliance', { templateUrl: 'app/tables/rcuk-access-compliance-table.html' })
+		.when('/data', { templateUrl: 'app/charts/data-access-chart.html' })
+		.when('/metadata', { templateUrl: 'app/charts/metadata-access-chart.html' })
 		// .when('/index.html', { templateUrl: 'app/components/statistic/statisticCompilationView.html' })
 		.otherwise({ templateUrl: 'app/messages/error.html' });
 	}])
@@ -24,8 +27,8 @@ app.config(['$routeProvider', '$locationProvider', function($routeProvider, $loc
 			//console.log('apikey $routeChangeStart1', ApiService.apikey);
 
 
-			console.log('Current route name: ' + $location.path());
-			console.log('$rootScope.loggedInUser ', $rootScope.loggedInUser);
+			//console.log('Current route name: ' + $location.path());
+			//console.log('$rootScope.loggedInUser ', $rootScope.loggedInUser);
 
 			if ($rootScope.loggedInUser == null) {
 				// no logged user, redirect to /login

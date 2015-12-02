@@ -10,19 +10,19 @@ app.controller("loginCtrl", ['$scope', '$location', '$rootScope', 'api', 'config
         $scope.$apply(function(){
             //console.log('response ', response);
             $scope.institutions = response;
-            console.log('Institutions ', $scope.institutions);
+            //console.log('Institutions ', $scope.institutions);
         });
     });
 
     $scope.login = function() {
 
-        console.log($scope.username + ' attempting to log in ' + ' with password ' +
-        $scope.password);
-        console.log('api.authenticated apiKey ', api.apiKey);
+        //console.log($scope.username + ' attempting to log in ' + ' with password ' +
+        //$scope.password);
+        //console.log('api.authenticated apiKey ', api.apiKey);
         if (!api.authenticated()){
-            console.log('!api.authenticated apiKey ', api.apiKey);
+            //console.log('!api.authenticated apiKey ', api.apiKey);
             api.authenticate($scope.institution, $scope.username, $scope.password).then(function(response){
-                console.log('api.authenticated apiKey ', api.apiKey);
+                //console.log('api.authenticated apiKey ', api.apiKey);
 
                 config.institutionId = $scope.institution;
 

@@ -1,4 +1,6 @@
-var app = angular.module('dmaoApp', ['ngRoute', 'ngTouch', 'ui.grid',
+var app = angular.module('dmaoApp', ['ngRoute',
+                            'ngTouch',
+                            'ui.grid',
                             'ui.grid.cellNav', 'ui.grid.edit', 'ui.grid.rowEdit',
                             'ui.grid.selection', 'ui.grid.exporter',
                             'ui.grid.resizeColumns'

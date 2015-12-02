@@ -30,10 +30,10 @@ app.controller('dmpStatusCtrl', ['$scope', '$rootScope', '$http', 'api', 'config
             //     if (response.length !== $scope.fraction.denominator)
             //         $scope.fraction.denominator = response.length;
             // });
-            $scope.$apply(function(){
+            //$scope.$apply(function(){
                 var value = response[0].num_dmp_status;
                 if (value !== $scope.value) $scope.value = value;
-                });
+                //});
             });
         // }
     }

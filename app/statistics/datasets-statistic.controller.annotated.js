@@ -20,13 +20,15 @@ app.controller('datasetsCtrl', ['$scope', '$rootScope', '$http', 'api', 'config'
                             faculty:    message.faculty,
                             count:      true 
                         };
-
+            //console.log('before datasetsCtrl request');
             api.uri.datasets(params).then(function(response) {
-                $scope.$apply(function(){
+                //$scope.$apply(function(){
+                    var oldValue = $scope.value;
                     var value = response[0].num_datasets;
                     // only update if dirty
                     if (value !== $scope.value) $scope.value = value;
-                });
+                    //console.log('after datasetsCtrl update ', 'old ', oldValue, 'new ', $scope.value);
+                //});
             });
         // }
     }

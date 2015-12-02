@@ -6,10 +6,10 @@ var DMAOFilters = (function(){
     };
 
     var DateRangePicker = function(){
-        console.log('DateRangePicker 1');
+        //console.log('DateRangePicker 1');
         $('#reportrange span').html(moment(config.startDate, "YYYYMMDD").format('MMMM D, YYYY') + ' - ' + moment(config.endDate, "YYYYMMDD").format('MMMM D, YYYY'));
 
-        console.log('DateRangePicker 2');
+        //console.log('DateRangePicker 2');
         $('#reportrange').daterangepicker({
             format: 'DD/MM/YYYY',
             startDate: moment(config.startDateDefault, "YYYYMMDD").format('DD/MM/YYYY'),
@@ -54,6 +54,7 @@ var DMAOFilters = (function(){
             var endDate = end.format('YYYYMMDD');
 
             // console.log(startDate, endDate);
+            //console.log('There has been a change by selecting a value');
                
             config.startDate = startDate;
             config.endDate = endDate;
@@ -64,29 +65,35 @@ var DMAOFilters = (function(){
                 scope.endDate = endDate;
             });
 
-            // console.log('after date selection ', config.startDate, config.endDate);
+            //console.log('after date selection ', config.startDate, config.endDate);
 
         });
-        console.log('DateRangePicker 3');
+        //console.log('DateRangePicker 3');
 
        $('.applyBtn').click(function() {
+           //console.log('datepicker applyBtn clicked');
             // console.log( $('input[name="daterangepicker_start"]').val() );
             // console.log( 'ado format ' + $('input[name="daterangepicker_start"]').format('YYYYMMDD').val() );
-            var startDateUI = $('input[name="daterangepicker_start"]').val();
-            var startDate = moment(startDateUI, "DD/MM/YYYY").format('YYYYMMDD')
-            var endDateUI = $('input[name="daterangepicker_end"]').val();
-            var endDate = moment(endDateUI, "DD/MM/YYYY").format('YYYYMMDD')
+            //var startDateUI = $('input[name="daterangepicker_start"]').val();
+            //var startDate = moment(startDateUI, "DD/MM/YYYY").format('YYYYMMDD')
+            //var endDateUI = $('input[name="daterangepicker_end"]').val();
+            //var endDate = moment(endDateUI, "DD/MM/YYYY").format('YYYYMMDD')
             // console.log('Button click formatted startDate ' + startDate );
-            // console.log(startDate, endDate);  
-            config.startDate = startDate;
-            config.endDate = endDate;
-            var scope = angular.element($("#filterController")).scope();
-            scope.$apply(function(){
-                scope.startDate = startDate;
-                scope.endDate = endDate;
-            });         
+            // console.log(startDate, endDate);
+           //console.log('There has been a change by clicking the button');
+
+           // config.startDate = startDate;
+           // config.endDate = endDate;
+           //console.log('before angular update with date range');
+           // var scope = angular.element($("#filterController")).scope();
+           // scope.$apply(function(){
+           //     scope.startDate = startDate;
+           //     scope.endDate = endDate;
+           //     console.log('scope.$apply ', scope.startDate, scope.endDate);
+           // });
+           //console.log('after angular update with date range');
         });
-        console.log('DateRangePicker 4');
+        //console.log('DateRangePicker 4');
     };
 
     var setFaculty = function(faculty){
@@ -104,12 +111,12 @@ var DMAOFilters = (function(){
         config.startDate = config.startDateDefault;
         config.endDate = config.endDateDefault;
 
-        console.log('DateRangePicker 5');
+        //console.log('DateRangePicker 5');
         // tell jQuery daterangepicker
         $('#reportrange').data('daterangepicker').setStartDate(moment(config.startDateDefault, "YYYYMMDD").format('DD/MM/YYYY'));
         $('#reportrange').data('daterangepicker').setEndDate(moment(config.endDateDefault, "YYYYMMDD").format('DD/MM/YYYY'));
         $('#reportrange span').html(moment(config.startDateDefault, "YYYYMMDD").format('MMMM D, YYYY') + ' - ' + moment(config.endDateDefault, "YYYYMMDD").format('MMMM D, YYYY'));
-        console.log('DateRangePicker 6');
+        //console.log('DateRangePicker 6');
 
         // tell Angular
         var scope = angular.element($("#filterController")).scope();

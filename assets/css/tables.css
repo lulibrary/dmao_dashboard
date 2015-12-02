@@ -21,3 +21,23 @@
 	color: white;
 	font-weight: 900;
 }
+
+.watermark {
+	position: absolute;
+	top : 150px;
+	opacity: 0.25;
+	font-size: 3em;
+	width: 100%;
+	text-align: center;
+	z-index: 1000;
+}
+
+.watermark-chart {
+	position: absolute;
+	top : 400px;
+	opacity: 0.25;
+	font-size: 3em;
+	width: 100%;
+	text-align: center;
+	z-index: 1000;
+}

@@ -49,15 +49,15 @@ app.controller('uiGridStorageTableCtrl', function($scope, $rootScope, api, ui, c
         },
         {
             name: 'inst_storage_platform_id',
-            displayName: 'Platform ID',
+            displayName: 'Platform',
             sort: { direction: 'asc' },
-            width: 120,
+            width: 100,
             enableCellEdit: false,
         },
         {
             name: 'expected_storage',
             displayName: 'Expected (GB)',
-            width: 120,
+            width: 110,
             type: 'number',
             headerCellClass: 'columnEditableHeaderCell',
             cellClass: 'columnEditableCellContents',
@@ -238,7 +238,7 @@ app.controller('uiGridStorageTableCtrl', function($scope, $rootScope, api, ui, c
 
 
     $scope.filterEventListener = $rootScope.$on("FilterEvent", function (event, message) {
-        //update(message);
+        update(message);
     });
 
     $scope.$on('$destroy', function () {

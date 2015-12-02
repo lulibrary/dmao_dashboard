@@ -1,26 +1,44 @@
 <div class="portlet box blue-steel">
 	<div class="portlet-title">
 		<div class="caption">
-			All DMPs
- 		</div>
- 	</div>
+			All data management plans
+		</div>
+	</div>
 	<div class="portlet-body">
-		<table id="dmpStatusTable" class="display" cellspacing="0" width="100%">
-	        <thead>
-	            <tr>
-	            	<th>Detail</th>
-			        <th>Project</th>
-			        <th>Funder ID</th>
-				    <th>DMP State</th>
-				    <th>DMP Status</th>
-			        <th>Project Start</th>
-			        <th>Project End</th>
-	            </tr>
-	        </thead>	
-	        <div ng-controller="dmpStatusTableCtrl" ng-cloak>
-		  		<tbody>
-		  		</tbody>
-	  		</div>
-		</table>
+		<div ng-controller="uiGridDmpStatusTableCtrl" ng-cloak>
+			<div id="grid2" ui-grid="gridOptions" ui-grid-cellNav ui-grid-edit
+				 ui-grid-row-edit ui-grid-selection ui-grid-exporter
+				 ui-grid-resize-columns
+				 class="grid">
+				<div class="watermark" ng-show="!gridOptions.data.length">No data available</div>
+			</div>
+		</div>
 	</div>
 </div>
+
+<!--<div class="portlet box blue-steel">-->
+	<!--<div class="portlet-title">-->
+		<!--<div class="caption">-->
+			<!--All DMPs-->
+ 		<!--</div>-->
+ 	<!--</div>-->
+	<!--<div class="portlet-body">-->
+		<!--<table id="dmpStatusTable" class="display" cellspacing="0" width="100%">-->
+	        <!--<thead>-->
+	            <!--<tr>-->
+	            	<!--<th>Detail</th>-->
+			        <!--<th>Project</th>-->
+			        <!--<th>Funder ID</th>-->
+				    <!--<th>DMP State</th>-->
+				    <!--<th>DMP Status</th>-->
+			        <!--<th>Project Start</th>-->
+			        <!--<th>Project End</th>-->
+	            <!--</tr>-->
+	        <!--</thead>	-->
+	        <!--<div ng-controller="dmpStatusTableCtrl" ng-cloak>-->
+		  		<!--<tbody>-->
+		  		<!--</tbody>-->
+	  		<!--</div>-->
+		<!--</table>-->
+	<!--</div>-->
+<!--</div>-->

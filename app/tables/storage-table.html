@@ -1,7 +1,7 @@
 <div class="portlet box purple-plum">
 	<div class="portlet-title">
 		<div class="caption">
-			Storage requirements
+			Storage
 		</div>
 	</div>
 	<div class="portlet-body">
@@ -11,6 +11,7 @@
 				 ui-grid-row-edit ui-grid-selection ui-grid-exporter
 				 ui-grid-resize-columns
 				 class="grid">
+				<div class="watermark" ng-show="!gridOptions.data.length">No data available</div>
 			</div>
 		</div>
 	</div>

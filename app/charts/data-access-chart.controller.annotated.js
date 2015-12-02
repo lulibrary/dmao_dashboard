@@ -1,4 +1,6 @@
-app.controller('dataAccessChartCtrl', ['$scope', '$rootScope', '$http', 'api', 'config', function($scope, $rootScope, $http, api, config) {  
+app.controller('dataAccessChartCtrl', ['$scope', '$rootScope', '$http', 'api', 'config', function($scope, $rootScope, $http, api, config) {
+    $scope.dataAvailable = false;
+
     var params = {
                 startDate:          config.startDate,
                 endDate:            config.endDate,
@@ -14,11 +16,18 @@ app.controller('dataAccessChartCtrl', ['$scope', '$rootScope', '$http', 'api', '
                         ed:                 message.endDate,
                         faculty:            message.faculty,
                         summary_by_date:    true
-                    };        
+                    };
         api.uri.datasetAccess(params).then(function(data){
             //console.log('data access ' + uri);
+            $scope.dataAvailable = false;
             data = api.filter.datasetAccess(data, 'data_download');
-            DataAccessLineChart(data, {width:700, height:300});    
+            if (data.length) {
+                $scope.dataAvailable = true;
+                //console.log('data length ', data.length);
+            }
+            $scope.$apply();
+            DataAccessLineChart(data, {width:700, height:300});
+
             // console.log('DataAccessLineChart(');        
         });
     }

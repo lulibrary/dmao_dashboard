@@ -48,8 +48,15 @@ app.controller('uiGridDmpTableCtrl', ['$scope', '$rootScope', '$http', 'api', 'u
             width: 250,
             enableCellEdit: false
         },
+        //{
+        //    name: 'lead_faculty_id',
+        //    displayName: 'Lead Faculty ID',
+        //    width: 110,
+        //    enableCellEdit: false,
+        //    enableFiltering: false
+        //},
         {
-            name: 'lead_faculty_id',
+            name: 'lead_faculty_abbrev',
             displayName: 'Lead Faculty',
             width: 110,
             enableCellEdit: false,
@@ -111,7 +118,7 @@ app.controller('uiGridDmpTableCtrl', ['$scope', '$rootScope', '$http', 'api', 'u
         }
     ];
 
-    console.log('$scope.gridOptions.columnDefs ', $scope.gridOptions.columnDefs);
+    //console.log('$scope.gridOptions.columnDefs ', $scope.gridOptions.columnDefs);
 
     update(params);
 
@@ -137,7 +144,7 @@ app.controller('uiGridDmpTableCtrl', ['$scope', '$rootScope', '$http', 'api', 'u
         for (var i in data){
             $scope.modifiable_column_constraints[data[i].c_name] = data[i].c_vals;
         }
-        console.log('modifiable_column_constraints ', $scope.modifiable_column_constraints);
+        //console.log('modifiable_column_constraints ', $scope.modifiable_column_constraints);
     });
 
     $scope.gridOptions.onRegisterApi = function(gridApi) {
@@ -280,7 +287,7 @@ app.controller('uiGridDmpTableCtrl', ['$scope', '$rootScope', '$http', 'api', 'u
 
 
     $scope.filterEventListener = $rootScope.$on("FilterEvent", function (event, message) {
-        //update(message);
+        update(message);
     });
 
     $scope.$on('$destroy', function () {

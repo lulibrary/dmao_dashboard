@@ -1,4 +1,6 @@
-app.controller('metadataAccessChartCtrl', ['$scope', '$rootScope', '$http', 'api', 'config', function($scope, $rootScope, $http, api, config) {  
+app.controller('metadataAccessChartCtrl', ['$scope', '$rootScope', '$http', 'api', 'config', function($scope, $rootScope, $http, api, config) {
+    $scope.dataAvailable = false;
+
     var params = {
                 startDate:          config.startDate,
                 endDate:            config.endDate,
@@ -17,7 +19,13 @@ app.controller('metadataAccessChartCtrl', ['$scope', '$rootScope', '$http', 'api
                     };        
         api.uri.datasetAccess(params).then(function(data){
             //console.log('data access ' + uri);
+            $scope.dataAvailable = false;
             data = api.filter.datasetAccess(data, 'metadata');
+            if (data.length) {
+                $scope.dataAvailable = true;
+                //console.log('data length ', data.length);
+            }
+            $scope.$apply();
             MetadataAccessLineChart(data, {width:700, height:300});    
             // console.log('MetadataAccessLineChart(');        
         });

@@ -53,7 +53,7 @@ var DataAccessLineChart = function(data, options){
           
           data.forEach(function(d) {
             d.access_date = parseDate(d.access_date);
-            d.counter = +d.sum;
+            d.counter = +d.count;
           });
           // //console.table(data);
 

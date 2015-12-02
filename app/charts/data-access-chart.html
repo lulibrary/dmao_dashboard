@@ -1,0 +1,16 @@
+	<div class="portlet box yellow-casablanca">
+		<div class="portlet-title">
+			<div class="caption">
+				Data downloads
+			</div>
+		</div>
+		<div class="portlet-body">
+			<!-- 							<div id="data_access_loading">
+                                            <img src="../assets/admin/layout/img/loading.gif" alt="loading"/>
+                                        </div>	 -->
+			<div ng-controller="dataAccessChartCtrl">
+				<div class="watermark-chart" ng-show="!dataAvailable">No data available</div>
+				<div id="dataAccessChart"></div>
+			</div>
+		</div>
+	</div>

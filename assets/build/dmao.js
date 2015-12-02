@@ -1,4 +1,6 @@
-var app = angular.module('dmaoApp', ['ngRoute', 'ngTouch', 'ui.grid',
+var app = angular.module('dmaoApp', ['ngRoute',
+                            'ngTouch',
+                            'ui.grid',
                             'ui.grid.cellNav', 'ui.grid.edit', 'ui.grid.rowEdit',
                             'ui.grid.selection', 'ui.grid.exporter',
                             'ui.grid.resizeColumns'
@@ -24,6 +26,7 @@ app.config(['$routeProvider', '$locationProvider', function($routeProvider, $loc
 		.when('/landing', { templateUrl: 'app/public/landing.html' })
 		//.when('/landing', { templateUrl: 'app/tables/storage-table.html' })
 		//.when('/landing', { templateUrl: 'app/tables/dmp-table.html' })
+		//.when('/landing', { templateUrl: 'app/statistics/statistic-compilation.html' })
 		.when('/', { templateUrl: 'app/statistics/statistic-compilation.html' })
 		.when('/all', { templateUrl: 'app/public/landing.html' })
 		.when('/stats', { 	templateUrl: 'app/statistics/statistic-compilation.html'})
@@ -35,6 +38,8 @@ app.config(['$routeProvider', '$locationProvider', function($routeProvider, $loc
 		.when('/dmps', { templateUrl: 'app/tables/dmp-status-table.html' })
 		.when('/storage', { templateUrl: 'app/tables/storage-table.html' })
 		.when('/compliance', { templateUrl: 'app/tables/rcuk-access-compliance-table.html' })
+		.when('/data', { templateUrl: 'app/charts/data-access-chart.html' })
+		.when('/metadata', { templateUrl: 'app/charts/metadata-access-chart.html' })
 		// .when('/index.html', { templateUrl: 'app/components/statistic/statisticCompilationView.html' })
 		.otherwise({ templateUrl: 'app/messages/error.html' });
 	}])
@@ -45,8 +50,8 @@ app.config(['$routeProvider', '$locationProvider', function($routeProvider, $loc
 			//console.log('apikey $routeChangeStart1', ApiService.apikey);
 
 
-			console.log('Current route name: ' + $location.path());
-			console.log('$rootScope.loggedInUser ', $rootScope.loggedInUser);
+			//console.log('Current route name: ' + $location.path());
+			//console.log('$rootScope.loggedInUser ', $rootScope.loggedInUser);
 
 			if ($rootScope.loggedInUser == null) {
 				// no logged user, redirect to /login
@@ -73,19 +78,19 @@ app.controller("loginCtrl", ['$scope', '$location', '$rootScope', 'api', 'config
         $scope.$apply(function(){
             //console.log('response ', response);
             $scope.institutions = response;
-            console.log('Institutions ', $scope.institutions);
+            //console.log('Institutions ', $scope.institutions);
         });
     });
 
     $scope.login = function() {
 
-        console.log($scope.username + ' attempting to log in ' + ' with password ' +
-        $scope.password);
-        console.log('api.authenticated apiKey ', api.apiKey);
+        //console.log($scope.username + ' attempting to log in ' + ' with password ' +
+        //$scope.password);
+        //console.log('api.authenticated apiKey ', api.apiKey);
         if (!api.authenticated()){
-            console.log('!api.authenticated apiKey ', api.apiKey);
+            //console.log('!api.authenticated apiKey ', api.apiKey);
             api.authenticate($scope.institution, $scope.username, $scope.password).then(function(response){
-                console.log('api.authenticated apiKey ', api.apiKey);
+                //console.log('api.authenticated apiKey ', api.apiKey);
 
                 config.institutionId = $scope.institution;
 
@@ -142,7 +147,9 @@ function reverseChronoChartData(monthData) {
 }
 
 
-app.controller('dataAccessChartCtrl', ['$scope', '$rootScope', '$http', 'api', 'config', function($scope, $rootScope, $http, api, config) {  
+app.controller('dataAccessChartCtrl', ['$scope', '$rootScope', '$http', 'api', 'config', function($scope, $rootScope, $http, api, config) {
+    $scope.dataAvailable = false;
+
     var params = {
                 startDate:          config.startDate,
                 endDate:            config.endDate,
@@ -158,11 +165,18 @@ app.controller('dataAccessChartCtrl', ['$scope', '$rootScope', '$http', 'api', '
                         ed:                 message.endDate,
                         faculty:            message.faculty,
                         summary_by_date:    true
-                    };        
+                    };
         api.uri.datasetAccess(params).then(function(data){
             //console.log('data access ' + uri);
+            $scope.dataAvailable = false;
             data = api.filter.datasetAccess(data, 'data_download');
-            DataAccessLineChart(data, {width:700, height:300});    
+            if (data.length) {
+                $scope.dataAvailable = true;
+                //console.log('data length ', data.length);
+            }
+            $scope.$apply();
+            DataAccessLineChart(data, {width:700, height:300});
+
             // console.log('DataAccessLineChart(');        
         });
     }
@@ -231,7 +245,7 @@ var DataAccessLineChart = function(data, options){
           
           data.forEach(function(d) {
             d.access_date = parseDate(d.access_date);
-            d.counter = +d.sum;
+            d.counter = +d.count;
           });
           // //console.table(data);
 
@@ -260,7 +274,9 @@ var DataAccessLineChart = function(data, options){
     }
 };
 
-app.controller('metadataAccessChartCtrl', ['$scope', '$rootScope', '$http', 'api', 'config', function($scope, $rootScope, $http, api, config) {  
+app.controller('metadataAccessChartCtrl', ['$scope', '$rootScope', '$http', 'api', 'config', function($scope, $rootScope, $http, api, config) {
+    $scope.dataAvailable = false;
+
     var params = {
                 startDate:          config.startDate,
                 endDate:            config.endDate,
@@ -279,7 +295,13 @@ app.controller('metadataAccessChartCtrl', ['$scope', '$rootScope', '$http', 'api
                     };        
         api.uri.datasetAccess(params).then(function(data){
             //console.log('data access ' + uri);
+            $scope.dataAvailable = false;
             data = api.filter.datasetAccess(data, 'metadata');
+            if (data.length) {
+                $scope.dataAvailable = true;
+                //console.log('data length ', data.length);
+            }
+            $scope.$apply();
             MetadataAccessLineChart(data, {width:700, height:300});    
             // console.log('MetadataAccessLineChart(');        
         });
@@ -350,7 +372,7 @@ var MetadataAccessLineChart = function(data, options){
           
           data.forEach(function(d) {
             d.access_date = parseDate(d.access_date);
-            d.counter = +d.sum;
+            d.counter = +d.count;
           });
           // //console.table(data);
 
@@ -594,16 +616,18 @@ var MetadataAccessChart = {
         });
     }
 }
-app.controller('filterCtrl', ['$scope', '$rootScope', '$interval', 'config', function($scope, $rootScope, $interval, config) {
+app.controller('filterCtrl', ['$scope', '$rootScope', '$interval', 'api', 'config', function($scope, $rootScope, $interval, api, config) {
     $scope.startDate = config.startDateDefault;
     $scope.endDate = config.endDateDefault;
-    $scope.faculty = config.facultyDefault;   
+    $scope.faculty = config.facultyDefault;
     $scope.facultyName = config.facultyMap[config.facultyDefault];
 
     getInstitutionFaculties();
+    //getDataCitePrefix();
 
-    function broadcastFilterChange(msg){
-        // //console.log(msg);
+     function broadcastFilterChange(msg){
+        //console.log(msg);
+        //console.log('$scope.startDate: ', $scope.startDate, '$scope.endDate: ', $scope.endDate, '$scope.faculty: ' , $scope.faculty);
         $rootScope.$broadcast("FilterEvent", {  
                                                     msg: msg,
                                                     startDate: $scope.startDate,
@@ -618,8 +642,8 @@ app.controller('filterCtrl', ['$scope', '$rootScope', '$interval', 'config', fun
         // console.log("TIMED UPDATE at " + Date());
         // //console.table(config);
     }
-    var timeout = config.updateDelay;
-    $interval(update, timeout); 
+    //var timeout = config.updateDelay;
+    //$interval(update, timeout);
 
     /****************
         startDate
@@ -633,7 +657,7 @@ app.controller('filterCtrl', ['$scope', '$rootScope', '$interval', 'config', fun
             // if(angular.equals(newValue, oldValue)){
             //     return; 
             // }
-            //console.log('old ', oldValue, 'new ', newValue);
+            //console.log('old startDate', oldValue, 'new ', newValue);
             $scope.startDate = newValue;                
             // broadcastDate("New date range");
         }); 
@@ -650,7 +674,7 @@ app.controller('filterCtrl', ['$scope', '$rootScope', '$interval', 'config', fun
             // if(angular.equals(newValue, oldValue)){
             //     return;
             // }    
-            //console.log('old ', oldValue, 'new ', newValue);
+            //console.log('old endDate', oldValue, 'new ', newValue);
             $scope.endDate = newValue;
         });  
 
@@ -666,7 +690,7 @@ app.controller('filterCtrl', ['$scope', '$rootScope', '$interval', 'config', fun
             // if(angular.equals(newValue, oldValue)){
             //     return;
             // }    
-            // console.log('old ', oldValue, 'new ', newValue);
+            //console.log('old faculty', oldValue, 'new ', newValue);
             $scope.faculty = newValue;
             $scope.facultyName = config.facultyMap[newValue];       
         });     
@@ -679,7 +703,7 @@ app.controller('filterCtrl', ['$scope', '$rootScope', '$interval', 'config', fun
     *****************/
     $scope.$watch(
         function() {
-            return {startDate: $scope.startDate, 
+            return {startDate: $scope.startDate,
                     endDate: $scope.endDate,
                     faculty: $scope.faculty
                     }
@@ -707,22 +731,45 @@ app.controller('filterCtrl', ['$scope', '$rootScope', '$interval', 'config', fun
     function getInstitutionFaculties() {
         //fetch data using api
         //facultyMap = api....
-        //hardcode for now, until it makes its way into the api
-        var facultyMap = {
-            '': 'All faculties',
-            1: 'Faculty of Arts and Social Sciences',
-            2: 'Faculty of Science and Technology',
-            3: 'Faculty of Health and Medicine',
-            4: 'Lancaster University Management School'
-        };
+        var facultyMap = {};
+        api.uri.divisions().then(function(response) {
+            //console.log('Divisions ', response);
+            facultyMap[''] = 'All divisions';
+            for (var i=0; i<response.length; ++i){
+                facultyMap[response[i].faculty_id] = response[i].name;
+            }
+            //console.log('MY Divisions ', facultyMap);
+            $scope.facultyMap = facultyMap;
+            $scope.$apply();
+        });
 
-        $scope.facultyMap = facultyMap;
+        //hardcode for now, until it makes its way into the api
+        //var facultyMap = {
+        //    '': 'All divisions',
+        //    1: 'Faculty of Arts and Social Sciences',
+        //    2: 'Faculty of Science and Technology',
+        //    3: 'Faculty of Health and Medicine',
+        //    4: 'Lancaster University Management School'
+        //};
 
         //not strictly needed but leave for now to keep legacy config synched
         config.facultyMap = facultyMap;
 
 
-        console.log('$scope.facultyMap ', $scope.facultyMap);
+        //console.log('$scope.facultyMap ', $scope.facultyMap);
+
+    }
+
+    function getDataCitePrefix(){
+        api.uri.public('o_datacite_id').then(function(response) {
+            //console.log('Datacite prefix response', response);
+            for (var i=0; i<response.length; ++i){
+                if (response[i].inst_id === config.institutionId){
+                    config.institutionDataCiteSymbol = response[i].datacite_id;
+                    break;
+                }
+            }
+        });
     }
 
     $scope.institutionName = config.institutionName;
@@ -737,10 +784,10 @@ var DMAOFilters = (function(){
     };
 
     var DateRangePicker = function(){
-        console.log('DateRangePicker 1');
+        //console.log('DateRangePicker 1');
         $('#reportrange span').html(moment(config.startDate, "YYYYMMDD").format('MMMM D, YYYY') + ' - ' + moment(config.endDate, "YYYYMMDD").format('MMMM D, YYYY'));
 
-        console.log('DateRangePicker 2');
+        //console.log('DateRangePicker 2');
         $('#reportrange').daterangepicker({
             format: 'DD/MM/YYYY',
             startDate: moment(config.startDateDefault, "YYYYMMDD").format('DD/MM/YYYY'),
@@ -785,6 +832,7 @@ var DMAOFilters = (function(){
             var endDate = end.format('YYYYMMDD');
 
             // console.log(startDate, endDate);
+            //console.log('There has been a change by selecting a value');
                
             config.startDate = startDate;
             config.endDate = endDate;
@@ -795,29 +843,35 @@ var DMAOFilters = (function(){
                 scope.endDate = endDate;
             });
 
-            // console.log('after date selection ', config.startDate, config.endDate);
+            //console.log('after date selection ', config.startDate, config.endDate);
 
         });
-        console.log('DateRangePicker 3');
+        //console.log('DateRangePicker 3');
 
        $('.applyBtn').click(function() {
+           //console.log('datepicker applyBtn clicked');
             // console.log( $('input[name="daterangepicker_start"]').val() );
             // console.log( 'ado format ' + $('input[name="daterangepicker_start"]').format('YYYYMMDD').val() );
-            var startDateUI = $('input[name="daterangepicker_start"]').val();
-            var startDate = moment(startDateUI, "DD/MM/YYYY").format('YYYYMMDD')
-            var endDateUI = $('input[name="daterangepicker_end"]').val();
-            var endDate = moment(endDateUI, "DD/MM/YYYY").format('YYYYMMDD')
+            //var startDateUI = $('input[name="daterangepicker_start"]').val();
+            //var startDate = moment(startDateUI, "DD/MM/YYYY").format('YYYYMMDD')
+            //var endDateUI = $('input[name="daterangepicker_end"]').val();
+            //var endDate = moment(endDateUI, "DD/MM/YYYY").format('YYYYMMDD')
             // console.log('Button click formatted startDate ' + startDate );
-            // console.log(startDate, endDate);  
-            config.startDate = startDate;
-            config.endDate = endDate;
-            var scope = angular.element($("#filterController")).scope();
-            scope.$apply(function(){
-                scope.startDate = startDate;
-                scope.endDate = endDate;
-            });         
+            // console.log(startDate, endDate);
+           //console.log('There has been a change by clicking the button');
+
+           // config.startDate = startDate;
+           // config.endDate = endDate;
+           //console.log('before angular update with date range');
+           // var scope = angular.element($("#filterController")).scope();
+           // scope.$apply(function(){
+           //     scope.startDate = startDate;
+           //     scope.endDate = endDate;
+           //     console.log('scope.$apply ', scope.startDate, scope.endDate);
+           // });
+           //console.log('after angular update with date range');
         });
-        console.log('DateRangePicker 4');
+        //console.log('DateRangePicker 4');
     };
 
     var setFaculty = function(faculty){
@@ -835,12 +889,12 @@ var DMAOFilters = (function(){
         config.startDate = config.startDateDefault;
         config.endDate = config.endDateDefault;
 
-        console.log('DateRangePicker 5');
+        //console.log('DateRangePicker 5');
         // tell jQuery daterangepicker
         $('#reportrange').data('daterangepicker').setStartDate(moment(config.startDateDefault, "YYYYMMDD").format('DD/MM/YYYY'));
         $('#reportrange').data('daterangepicker').setEndDate(moment(config.endDateDefault, "YYYYMMDD").format('DD/MM/YYYY'));
         $('#reportrange span').html(moment(config.startDateDefault, "YYYYMMDD").format('MMMM D, YYYY') + ' - ' + moment(config.endDateDefault, "YYYYMMDD").format('MMMM D, YYYY'));
-        console.log('DateRangePicker 6');
+        //console.log('DateRangePicker 6');
 
         // tell Angular
         var scope = angular.element($("#filterController")).scope();
@@ -861,7 +915,7 @@ var DMAOFilters = (function(){
 var App = {
     institutionId: '',
     institutionName: '',
-    institutionDataCiteSymbol: 'BL.LANCS',
+    institutionDataCiteSymbol: '',
     startDateDefault: '20000101',
     endDateDefault: '20350101', //moment().add(20, 'years').format('YYYYMMDD'),       
     startDate: '20000101',
@@ -870,7 +924,7 @@ var App = {
     facultyDefault: '',
     facultyMap: {},
     departmentMap: {},
-    updateDelay: 10000,
+    updateDelay: 600000
     // dataAccessResponseData: {},
     // metadataAccessResponseData: {}
 };
@@ -1004,6 +1058,22 @@ var ApiService = {
             // var uriWithDateRange = this.addDateRange(uri, params);
             return $.getJSON(uri);
         },
+        rcukAccessCompliance: function(params){
+            var uri = URI(ApiService.prefix() + '/c/' + App.institutionId + '/' +
+            ApiService.apiKey + '/rcuk_as');
+            if (params){
+                uri = this.addParams(uri, params);
+            }
+            return $.getJSON(uri);
+        },
+        divisions: function(params){
+            var uri = URI(ApiService.prefix() + '/c/' + App.institutionId + '/' +
+            ApiService.apiKey + '/faculties_departments');
+            if (params){
+                uri = this.addParams(uri, params);
+            }
+            return $.getJSON(uri);
+        },
         put: {
             dmps: function (params) {
                 //alert('ApiService.uri.put.dmps called');
@@ -1075,6 +1145,12 @@ var ApiService = {
             var uri = URI(ApiService.prefix() + '/o' + '/' + resource);
             return $.getJSON(uri);
         },
+    },
+    datacite: {
+        minted: function (queryString) {
+            var uri = URI(queryString);
+            return $.getJSON(uri);
+        }
     },
     filter: {
         datasetAccess: function(data, accessType){
@@ -1224,50 +1300,50 @@ app.controller('aggregateStatisticCtrl', ['$scope', '$rootScope', '$http', 'api'
             //});
 
         api.uri.public('o_count_institutions').then(function(response) {
-            $scope.$apply(function(){
+            //$scope.$apply(function(){
                 $scope.data.institutions = true;
                 var value = response[0].count;
                 // only update if dirty
                 if (value !== $scope.count_institutions) $scope.count_institutions = value;
-            });
+            //});
         });
         api.uri.public('o_count_faculties').then(function(response) {
-            $scope.$apply(function(){
+            //$scope.$apply(function(){
                 var value = response[0].count;
                 // only update if dirty
                 if (value !== $scope.count_faculties) $scope.count_faculties = value;
-            });
+            //});
         });
         api.uri.public('o_count_departments').then(function(response) {
-            $scope.$apply(function(){
+            //$scope.$apply(function(){
                 var value = response[0].count;
                 // only update if dirty
                 if (value !== $scope.count_departments) $scope.count_departments = value;
-            });
+            //});
         });
         api.uri.public('o_count_dmps').then(function(response) {
-            $scope.$apply(function(){
+            //$scope.$apply(function(){
                 var value = response[0].count;
                 // only update if dirty
                 if (value !== $scope.count_dmps) $scope.count_dmps = value;
-            });
+            //});
         });
         api.uri.public('o_count_publications').then(function(response) {
-            $scope.$apply(function(){
+            //$scope.$apply(function(){
                 var value = response[0].count;
                 // only update if dirty
                 if (value !== $scope.count_publications) $scope.count_publications = value;
-            });
+            //});
         });
         api.uri.public('o_count_datasets').then(function(response) {
-            $scope.$apply(function(){
+            //$scope.$apply(function(){
                 var value = response[0].count;
                 // only update if dirty
                 if (value !== $scope.count_datasets) $scope.count_datasets = value;
-            });
+            //});
         });
         api.uri.public('o_count_dataset_accesses').then(function(response) {
-            $scope.$apply(function(){
+            $scope.$apply(function(){ //not sure why this is needed for values to stick in this controller
                 $scope.dataset_accesses = {};
                 for (var i=0; i < response.length; ++i){
                     if (response[i].access_type === 'data_download'){
@@ -1279,7 +1355,6 @@ app.controller('aggregateStatisticCtrl', ['$scope', '$rootScope', '$http', 'api'
                 }
             });
         });
-    //
     }
 
     $scope.filterEventListener = $rootScope.$on("FilterEvent", function (event, message) {
@@ -1290,6 +1365,50 @@ app.controller('aggregateStatisticCtrl', ['$scope', '$rootScope', '$http', 'api'
         // Remove the listener
         $scope.filterEventListener();
     });        
+}]);
+app.controller('dataCtrl', ['$scope', '$rootScope', '$http', 'api', 'config', function($scope, $rootScope, $http, api, config) {
+    // init
+    update({
+                startDate:      config.startDate,
+                endDate:        config.endDate,
+                faculty:        config.faculty,
+            });
+
+    function update(message){
+        var params = {
+                        sd:         message.startDate,
+                        ed:         message.endDate,
+                        faculty:    message.faculty,
+                        summary_totals:    'true'
+                    };
+
+        api.uri.datasetAccess(params).then(function(response) {
+            //$scope.$apply(function(){
+            //    console.log('api.uri.datasetAccess ', response);
+
+            $scope.dataset_accesses = {};
+            $scope.dataset_accesses.data = 0;
+            $scope.dataset_accesses.metadata = 0;
+            for (var i=0; i < response.length; ++i){
+                if (response[i].access_type === 'data_download'){
+                    $scope.dataset_accesses.data = response[i].count.toLocaleString();
+                }
+                if (response[i].access_type === 'metadata'){
+                    $scope.dataset_accesses.metadata = response[i].count.toLocaleString();
+                }
+            }
+            //});
+        });
+    }
+
+    $scope.filterEventListener = $rootScope.$on("FilterEvent", function (event, message) {
+        update(message);
+    });  
+
+    $scope.$on('$destroy', function () {
+        // Remove the listener
+        $scope.filterEventListener();
+    });    
 }]);
 app.controller('datasetsRCUKCtrl', ['$scope', '$rootScope', '$http', 'api', 'config', function($scope, $rootScope, $http, api, config) {
     // init
@@ -1311,12 +1430,13 @@ app.controller('datasetsRCUKCtrl', ['$scope', '$rootScope', '$http', 'api', 'con
                             count:      true
                         };
 
+            //console.log('before datasetsRCUKCtrl request');
             api.uri.datasets(params).then(function(response) {
-                $scope.$apply(function(){            
+                //$scope.$apply(function(){
                     var value = response[0].num_datasets;
                     // only update if dirty
                     if (value !== $scope.value) $scope.value = value;
-                });
+                //});
             });
         // }
     }
@@ -1352,13 +1472,15 @@ app.controller('datasetsCtrl', ['$scope', '$rootScope', '$http', 'api', 'config'
                             faculty:    message.faculty,
                             count:      true 
                         };
-
+            //console.log('before datasetsCtrl request');
             api.uri.datasets(params).then(function(response) {
-                $scope.$apply(function(){
+                //$scope.$apply(function(){
+                    var oldValue = $scope.value;
                     var value = response[0].num_datasets;
                     // only update if dirty
                     if (value !== $scope.value) $scope.value = value;
-                });
+                    //console.log('after datasetsCtrl update ', 'old ', oldValue, 'new ', $scope.value);
+                //});
             });
         // }
     }
@@ -1392,11 +1514,11 @@ app.controller('dmpsCreatedCtrl', ['$scope', '$rootScope', '$http', 'api', 'conf
                     };
         
         api.uri.dmps(params).then(function(response) {
-            $scope.$apply(function(){ 
+            //$scope.$apply(function(){
                 var value = response[0].num_project_dmps;
                 // only update if dirty
                 if (value !== $scope.value) $scope.value = value;
-            });
+            //});
         });
     }
 
@@ -1441,10 +1563,10 @@ app.controller('dmpStatusCtrl', ['$scope', '$rootScope', '$http', 'api', 'config
             //     if (response.length !== $scope.fraction.denominator)
             //         $scope.fraction.denominator = response.length;
             // });
-            $scope.$apply(function(){
+            //$scope.$apply(function(){
                 var value = response[0].num_dmp_status;
                 if (value !== $scope.value) $scope.value = value;
-                });
+                //});
             });
         // }
     }
@@ -1458,13 +1580,13 @@ app.controller('dmpStatusCtrl', ['$scope', '$rootScope', '$http', 'api', 'config
         $scope.filterEventListener();
     });  
 }]);
-app.controller('doiMintingCtrl', ['$scope', '$rootScope', '$http', 'api', 'config', function($scope, $rootScope, $http, api, config) {
+app.controller('doiMintingCtrl', ['$scope', '$rootScope', 'api', 'config', function($scope, $rootScope, api, config) {
     // init
     $scope.value = 0;
+
     update({
                 startDate:      config.startDate,
-                endDate:        config.endDate,
-                faculty:        config.faculty,
+                endDate:        config.endDate
             });
 
     function update(message){
@@ -1479,22 +1601,52 @@ app.controller('doiMintingCtrl', ['$scope', '$rootScope', '$http', 'api', 'confi
         var isoEndDate =    message.endDate.substr(0,4) + '-' +
                             message.endDate.substr(4,2) + '-' +
                             message.endDate.substr(6,2);
-        var uri = 'http://search.datacite.org/api?q=*&wt=json&fq=datacentre_symbol:' +
-                    config.institutionDataCiteSymbol +
-                    '&rows=0' +
-                    '&fq=minted:' +
-                    '[' + isoStartDate + 'T00:00:00Z/DAY' + '%20TO%20' +
-                    isoEndDate + 'T23:59:59Z/DAY]';
-        $http.get(uri).then(function(response) {
-            var value = response.data.response.numFound;
-            // only update if dirty
-            if (value !== $scope.value) $scope.value = value;
-        })
-            .catch(function(response) {
-            var value = 'Error';
-            // only update if dirty
-            if (value !== $scope.value) $scope.value = value;
+
+        //symbol
+        //var uri = 'http://search.datacite.org/api?q=*&wt=json&fq=datacentre_symbol:' +
+        //            config.institutionDataCiteSymbol +
+        //            '&rows=0' +
+        //            '&fq=minted:' +
+        //            '[' + isoStartDate + 'T00:00:00Z/DAY' + '%20TO%20' +
+        //            isoEndDate + 'T23:59:59Z/DAY]';
+
+        //console.log('App ', App);
+        //console.log('Making a querystring with ', config.institutionDataCiteSymbol);
+
+
+        var prefix = '10.17635';
+        //fudge for now (should use config.institutionDataCiteSymbol)
+        if (config.institutionId === 'birmingham'){
+            prefix = '10.13140';
+        }
+
+        //prefix
+        var uri = 'http://search.datacite.org/api?q=*&wt=json&fq=prefix:' +
+            prefix +
+            '&rows=0' +
+            '&fq=minted:' +
+            '[' + isoStartDate + 'T00:00:00Z/DAY' + '%20TO%20' +
+            isoEndDate + 'T23:59:59Z/DAY]';
+
+        //$http.get(uri).then(function(response) {
+        //    var value = response.data.response.numFound;
+        //    // only update if dirty
+        //    if (value !== $scope.value) $scope.value = value;
+        //})
+        //    .catch(function(response) {
+        //    var value = 'Error';
+        //    // only update if dirty
+        //    if (value !== $scope.value) $scope.value = value;
+        //});
+        api.datacite.minted(uri).then(function(response) {
+            $scope.$apply(function(){ // why needed?
+                var value = response.response.numFound;
+                //console.log('minted ', value);
+                // only update if dirty
+                if (value !== $scope.value) $scope.value = value;
+            });
         });
+
     }
 
     $scope.filterEventListener = $rootScope.$on("FilterEvent", function (event, message) {
@@ -1505,7 +1657,13 @@ app.controller('doiMintingCtrl', ['$scope', '$rootScope', '$http', 'api', 'confi
         // Remove the listener
         $scope.filterEventListener();
     });
+
+
 }]);
+
+
+
+
 app.controller('noDmpProjectsCtrl', ['$scope', '$rootScope', '$http', 'api', 'config', function($scope, $rootScope, $http, api, config) {
     update({
                 startDate:      config.startDate,
@@ -1524,11 +1682,11 @@ app.controller('noDmpProjectsCtrl', ['$scope', '$rootScope', '$http', 'api', 'co
                         };
             
             api.uri.dmps(params).then(function(response) {
-                $scope.$apply(function(){
+                //$scope.$apply(function(){
                     var value = response[0].num_project_dmps;
                     // only update if dirty
                     if (value !== $scope.value) $scope.value = value;
-                });
+                //});
             });
         // }
     }
@@ -1559,7 +1717,7 @@ app.controller('rcukAccessComplianceCtrl', ['$scope', '$rootScope', '$http', 'ap
                             faculty: message.faculty
                         };
             api.uri.rcukAccessCompliance(params).then(function(response) {
-                $scope.$apply(function(){
+                //$scope.$apply(function(){
                     var count = 0;
                     for(i=0;i<response.length;++i) {
                         if (response[i].rcuk_funder_compliant === 'y') ++count;
@@ -1571,7 +1729,7 @@ app.controller('rcukAccessComplianceCtrl', ['$scope', '$rootScope', '$http', 'ap
                         value = (count / response.length) * 100;
                         $scope.value = Math.round(value);
                     }
-                });
+                //});
             });
         // }
     }
@@ -1621,7 +1779,7 @@ app.controller('storageCostCtrl', ['$scope', '$rootScope', '$http', 'api', 'conf
                         };
             
             api.uri.storage(params).then(function(response) {
-                $scope.$apply(function(){
+                //$scope.$apply(function(){
                     var total = 0;
                     var previous_project_id = -1;
                     // if (response.length){
@@ -1637,7 +1795,7 @@ app.controller('storageCostCtrl', ['$scope', '$rootScope', '$http', 'api', 'conf
 
                     // only update if dirty
                     if (value !== $scope.value) $scope.value = value;
-                });
+                //});
             });
         // }
     }
@@ -1669,7 +1827,7 @@ app.controller('storageUnitCtrl', ['$scope', '$rootScope', '$http', 'api', 'conf
                         };
             
             api.uri.storage(params).then(function(response) {
-                $scope.$apply(function(){
+                //$scope.$apply(function(){
                     var total = 0;
                     var previous_project_id = -1;
                     for(i=0;i<response.length;++i) {            
@@ -1682,7 +1840,7 @@ app.controller('storageUnitCtrl', ['$scope', '$rootScope', '$http', 'api', 'conf
 
                     // only update if dirty
                     if (value !== $scope.value) $scope.value = value;
-                });
+                //});
             });
         // }
     }
@@ -2831,7 +2989,7 @@ function toDataTablesFormat(data) {
 	hash['data'] = data;
 	return hash;
 }
-app.controller('uiGridDmpTableCtrl', ['$scope', '$rootScope', '$http', 'api', 'ui', 'config', '$q', '$interval', function($scope, $rootScope, $http, api, ui, config, $q, $interval){
+app.controller('uiGridDatasetsRcukTableCtrl', ['$scope', '$rootScope', '$http', 'api', 'ui', 'config', '$q', '$interval', function($scope, $rootScope, $http, api, ui, config, $q, $interval){
     $scope.dataLoaded = false;
 
     var params = {
@@ -2854,11 +3012,353 @@ app.controller('uiGridDmpTableCtrl', ['$scope', '$rootScope', '$http', 'api', 'u
 
         //exporting begin
         enableSelectAll: true,
-        exporterCsvFilename: 'dmp.csv',
+        exporterCsvFilename: 'datasetsRcuk.csv',
         exporterPdfDefaultStyle: {fontSize: 8},
         exporterPdfTableStyle: {margin: [0, 15, 0, 5]},
         exporterPdfTableHeaderStyle: {fontSize: 10, bold: true, italics: true, color: 'black'},
-        exporterPdfHeader: { text: "Data management plans produced", style: 'headerStyle' },
+        exporterPdfHeader: { text: "RCUK datasets", style: 'headerStyle' },
+        exporterPdfFooter: function ( currentPage, pageCount ) {
+            return { text: currentPage.toString() + ' of ' + pageCount.toString(), style: 'footerStyle' };
+        },
+        exporterPdfCustomFormatter: function ( docDefinition ) {
+            docDefinition.styles.headerStyle = { fontSize: 22, bold: true, margin: [340, 0, 20, 0] };
+            docDefinition.styles.footerStyle = { fontSize: 10, bold: true, margin: [400, 0, 20, 0] };
+            return docDefinition;
+        },
+        exporterPdfOrientation: 'landscape',
+        exporterPdfPageSize: 'A4',
+        exporterPdfMaxGridWidth: 700,
+        exporterCsvLinkElement: angular.element(document.querySelectorAll(".custom-csv-link-location")),
+        //exporting end
+    };
+
+    $scope.gridOptions.columnDefs = [
+        {
+            name: 'dataset_name',
+            displayName: 'Dataset',
+            width: 250,
+            enableCellEdit: false
+        },
+        {
+            name: 'funder_name',
+            displayName: 'Funder',
+            width: 250,
+            enableCellEdit: false
+        },
+        {
+            name: 'dataset_pid',
+            displayName: 'Dataset PID',
+            width: 80,
+            enableCellEdit: false,
+            enableFiltering: false
+        },
+        {
+            name: 'lead_faculty_abbrev',
+            displayName: 'Lead Faculty',
+            width: 110,
+            enableCellEdit: false,
+            enableFiltering: false
+        },
+        {
+            name: 'lead_dept_name',
+            displayName: 'Lead Dept',
+            width: 140,
+            enableCellEdit: false,
+            enableFiltering: false
+        },
+        {
+            name: 'project_name',
+            displayName: 'Project',
+            width: 250,
+            enableCellEdit: false
+        },
+        {
+            name: 'project_start',
+            displayName: 'Project Start',
+            width: 110,
+            enableCellEdit: false,
+            enableFiltering: false
+        },
+        {
+            name: 'project_end',
+            displayName: 'Project End',
+            width: 110,
+            enableCellEdit: false,
+            enableFiltering: false
+        }
+    ];
+
+    //console.log('$scope.gridOptions.columnDefs ', $scope.gridOptions.columnDefs);
+
+    update(params);
+
+    function update(message){
+        var params = {
+            date:               'project_start',
+            sd:                 message.startDate,
+            ed:                 message.endDate,
+            faculty:            message.faculty,
+        };
+        api.uri.datasets(params).then(function(data){
+            //console.log('Datasets ' + uri);
+            //console.log(data);
+            $scope.dataLoaded = true;
+            $scope.gridOptions.data = data;
+            $scope.$apply();
+        });
+    }
+
+    $scope.gridOptions.onRegisterApi = function(gridApi) {
+        //set gridApi on scope
+        $scope.gridApi = gridApi;
+    };
+
+    //cell navigation begin
+    $scope.currentFocused = "";
+
+    $scope.getCurrentFocus = function(){
+        var rowCol = $scope.gridApi.cellNav.getFocusedCell();
+        if(rowCol !== null) {
+            $scope.currentFocused = 'Row Id:' + rowCol.row.entity.id + ' col:' + rowCol.col.colDef.name;
+        }
+    };
+
+    $scope.getCurrentSelection = function() {
+        var values = [];
+        var currentSelection = $scope.gridApi.cellNav.getCurrentSelection();
+        for (var i = 0; i < currentSelection.length; i++) {
+            values.push(currentSelection[i].row.entity[currentSelection[i].col.name])
+        }
+        $scope.printSelection = values.toString();
+    };
+
+    $scope.scrollTo = function( rowIndex, colIndex ) {
+        $scope.gridApi.core.scrollTo( $scope.gridOptions.data[rowIndex], $scope.gridOptions.columnDefs[colIndex]);
+    };
+
+    $scope.scrollToFocus = function( rowIndex, colIndex ) {
+        $scope.gridApi.cellNav.scrollToFocus( $scope.gridOptions.data[rowIndex], $scope.gridOptions.columnDefs[colIndex]);
+    };
+    //cell navigation end
+
+
+
+    $scope.filterEventListener = $rootScope.$on("FilterEvent", function (event, message) {
+        update(message);
+    });
+
+    $scope.$on('$destroy', function () {
+        // Remove the listener
+        $scope.filterEventListener();
+    });
+
+
+}]);
+
+
+
+
+
+
+app.controller('uiGridDatasetsTableCtrl', ['$scope', '$rootScope', '$http', 'api', 'ui', 'config', '$q', '$interval', function($scope, $rootScope, $http, api, ui, config, $q, $interval){
+    $scope.dataLoaded = false;
+
+    var params = {
+        startDate:          config.startDate,
+        endDate:            config.endDate,
+        faculty:            config.faculty,
+    };
+
+    $scope.gridOptions = {};
+
+    $scope.gridOptions = {
+        rowEditWaitInterval: 1,  // ms before row is 'saved'
+        enableGridMenu: true,
+        //showGridFooter: true,
+        rowHeight: 35,
+        enableColumnResizing: true,
+        //enableCellEditOnFocus: true,
+        enableFiltering: true,
+        //rowHeight: 70,
+
+        //exporting begin
+        enableSelectAll: true,
+        exporterCsvFilename: 'datasets.csv',
+        exporterPdfDefaultStyle: {fontSize: 8},
+        exporterPdfTableStyle: {margin: [0, 15, 0, 5]},
+        exporterPdfTableHeaderStyle: {fontSize: 10, bold: true, italics: true, color: 'black'},
+        exporterPdfHeader: { text: "All datasets", style: 'headerStyle' },
+        exporterPdfFooter: function ( currentPage, pageCount ) {
+            return { text: currentPage.toString() + ' of ' + pageCount.toString(), style: 'footerStyle' };
+        },
+        exporterPdfCustomFormatter: function ( docDefinition ) {
+            docDefinition.styles.headerStyle = { fontSize: 22, bold: true, margin: [340, 0, 20, 0] };
+            docDefinition.styles.footerStyle = { fontSize: 10, bold: true, margin: [400, 0, 20, 0] };
+            return docDefinition;
+        },
+        exporterPdfOrientation: 'landscape',
+        exporterPdfPageSize: 'A4',
+        exporterPdfMaxGridWidth: 700,
+        exporterCsvLinkElement: angular.element(document.querySelectorAll(".custom-csv-link-location")),
+        //exporting end
+    };
+
+    $scope.gridOptions.columnDefs = [
+        {
+            name: 'dataset_name',
+            displayName: 'Dataset',
+            width: 250,
+            enableCellEdit: false
+        },
+        {
+            name: 'funder_name',
+            displayName: 'Funder',
+            width: 250,
+            enableCellEdit: false
+        },
+        {
+            name: 'dataset_pid',
+            displayName: 'Dataset PID',
+            width: 80,
+            enableCellEdit: false,
+            enableFiltering: false
+        },
+        {
+            name: 'lead_faculty_abbrev',
+            displayName: 'Lead Faculty',
+            width: 110,
+            enableCellEdit: false,
+            enableFiltering: false
+        },
+        {
+            name: 'lead_dept_name',
+            displayName: 'Lead Dept',
+            width: 140,
+            enableCellEdit: false,
+            enableFiltering: false
+        },
+        {
+            name: 'project_name',
+            displayName: 'Project',
+            width: 250,
+            enableCellEdit: false
+        },
+        {
+            name: 'project_start',
+            displayName: 'Project Start',
+            width: 110,
+            enableCellEdit: false,
+            enableFiltering: false
+        },
+        {
+            name: 'project_end',
+            displayName: 'Project End',
+            width: 110,
+            enableCellEdit: false,
+            enableFiltering: false
+        }
+    ];
+
+    //console.log('$scope.gridOptions.columnDefs ', $scope.gridOptions.columnDefs);
+
+    update(params);
+
+    function update(message){
+        var params = {
+            date:               'project_start',
+            sd:                 message.startDate,
+            ed:                 message.endDate,
+            faculty:            message.faculty,
+        };
+        api.uri.datasets(params).then(function(data){
+            //console.log('Datasets ' + uri);
+            //console.log(data);
+            $scope.dataLoaded = true;
+            $scope.gridOptions.data = data;
+            $scope.$apply();
+        });
+    }
+
+    $scope.gridOptions.onRegisterApi = function(gridApi) {
+        //set gridApi on scope
+        $scope.gridApi = gridApi;
+    };
+
+    //cell navigation begin
+    $scope.currentFocused = "";
+
+    $scope.getCurrentFocus = function(){
+        var rowCol = $scope.gridApi.cellNav.getFocusedCell();
+        if(rowCol !== null) {
+            $scope.currentFocused = 'Row Id:' + rowCol.row.entity.id + ' col:' + rowCol.col.colDef.name;
+        }
+    };
+
+    $scope.getCurrentSelection = function() {
+        var values = [];
+        var currentSelection = $scope.gridApi.cellNav.getCurrentSelection();
+        for (var i = 0; i < currentSelection.length; i++) {
+            values.push(currentSelection[i].row.entity[currentSelection[i].col.name])
+        }
+        $scope.printSelection = values.toString();
+    };
+
+    $scope.scrollTo = function( rowIndex, colIndex ) {
+        $scope.gridApi.core.scrollTo( $scope.gridOptions.data[rowIndex], $scope.gridOptions.columnDefs[colIndex]);
+    };
+
+    $scope.scrollToFocus = function( rowIndex, colIndex ) {
+        $scope.gridApi.cellNav.scrollToFocus( $scope.gridOptions.data[rowIndex], $scope.gridOptions.columnDefs[colIndex]);
+    };
+    //cell navigation end
+
+
+
+    $scope.filterEventListener = $rootScope.$on("FilterEvent", function (event, message) {
+        update(message);
+    });
+
+    $scope.$on('$destroy', function () {
+        // Remove the listener
+        $scope.filterEventListener();
+    });
+
+
+}]);
+
+
+
+
+
+
+app.controller('uiGridDmpStatusTableCtrl', ['$scope', '$rootScope', '$http', 'api', 'ui', 'config', '$q', '$interval', function($scope, $rootScope, $http, api, ui, config, $q, $interval){
+    $scope.dataLoaded = false;
+
+    var params = {
+        startDate:          config.startDate,
+        endDate:            config.endDate,
+        faculty:            config.faculty,
+    };
+
+    $scope.gridOptions = {};
+
+    $scope.gridOptions = {
+        rowEditWaitInterval: 1,  // ms before row is 'saved'
+        enableGridMenu: true,
+        //showGridFooter: true,
+        rowHeight: 35,
+        enableColumnResizing: true,
+        //enableCellEditOnFocus: true,
+        enableFiltering: true,
+        //rowHeight: 70,
+
+        //exporting begin
+        enableSelectAll: true,
+        exporterCsvFilename: 'dmpStatus.csv',
+        exporterPdfDefaultStyle: {fontSize: 8},
+        exporterPdfTableStyle: {margin: [0, 15, 0, 5]},
+        exporterPdfTableHeaderStyle: {fontSize: 10, bold: true, italics: true, color: 'black'},
+        exporterPdfHeader: { text: "All data management plans", style: 'headerStyle' },
         exporterPdfFooter: function ( currentPage, pageCount ) {
             return { text: currentPage.toString() + ' of ' + pageCount.toString(), style: 'footerStyle' };
         },
@@ -2882,51 +3382,24 @@ app.controller('uiGridDmpTableCtrl', ['$scope', '$rootScope', '$http', 'api', 'u
             enableCellEdit: false
         },
         {
-            name: 'lead_faculty_id',
-            displayName: 'Lead Faculty',
+            name: 'funder_name',
+            displayName: 'Funder',
+            width: 150,
+            enableCellEdit: false
+        },
+        {
+            name: 'dmp_state',
+            displayName: 'DMP State',
             width: 110,
             enableCellEdit: false,
             enableFiltering: false
         },
         {
-            name: 'lead_dept_name',
-            displayName: 'Lead Dept',
+            name: 'dmp_status',
+            displayName: 'DMP Status',
             width: 140,
             enableCellEdit: false,
             enableFiltering: false
-        },
-        {
-            name: 'dmp_id',
-            displayName: 'DMP ID',
-            width: 80,
-            enableCellEdit: false,
-            enableFiltering: false
-        },
-        //{
-        //    name: 'has_dmp_been_reviewed',
-        //    displayName: 'DMP Reviewed',
-        //    width: 120,
-        //    //type: 'number',
-        //    enableFiltering: false,
-        //    headerCellClass: 'columnEditableHeaderCell',
-        //    cellClass: 'columnEditableCellContents'
-        //},
-        {
-            name: 'has_dmp_been_reviewed',
-            displayName: 'DMP Reviewed',
-            width: 130,
-            headerCellClass: 'columnEditableHeaderCell',
-            //cellClass: 'columnEditableCellContents',
-            enableCellEdit: true,
-            enableFiltering: false,
-            editDropdownIdLabel: 'value',
-            editDropdownValueLabel: 'value',
-            editableCellTemplate: 'ui-grid/dropdownEditor',
-            editDropdownOptionsArray: [
-                {id: 1, value: 'yes'},
-                {id: 2, value: 'no'},
-                {id: 3, value: 'unknown'}
-            ]
         },
         {
             name: 'project_start',
@@ -2944,7 +3417,7 @@ app.controller('uiGridDmpTableCtrl', ['$scope', '$rootScope', '$http', 'api', 'u
         }
     ];
 
-    console.log('$scope.gridOptions.columnDefs ', $scope.gridOptions.columnDefs);
+    //console.log('$scope.gridOptions.columnDefs ', $scope.gridOptions.columnDefs);
 
     update(params);
 
@@ -2954,8 +3427,9 @@ app.controller('uiGridDmpTableCtrl', ['$scope', '$rootScope', '$http', 'api', 'u
             sd:                 message.startDate,
             ed:                 message.endDate,
             faculty:            message.faculty,
+            has_dmp:            true
         };
-        api.uri.dmps(params).then(function(data){
+        api.uri.dmpStatus(params).then(function(data){
             //console.log('Datasets ' + uri);
             //console.log(data);
             $scope.dataLoaded = true;
@@ -2970,7 +3444,7 @@ app.controller('uiGridDmpTableCtrl', ['$scope', '$rootScope', '$http', 'api', 'u
         for (var i in data){
             $scope.modifiable_column_constraints[data[i].c_name] = data[i].c_vals;
         }
-        console.log('modifiable_column_constraints ', $scope.modifiable_column_constraints);
+        //console.log('modifiable_column_constraints ', $scope.modifiable_column_constraints);
     });
 
     $scope.gridOptions.onRegisterApi = function(gridApi) {
@@ -3113,7 +3587,620 @@ app.controller('uiGridDmpTableCtrl', ['$scope', '$rootScope', '$http', 'api', 'u
 
 
     $scope.filterEventListener = $rootScope.$on("FilterEvent", function (event, message) {
-        //update(message);
+        update(message);
+    });
+
+    $scope.$on('$destroy', function () {
+        // Remove the listener
+        $scope.filterEventListener();
+    });
+
+
+}]);
+
+
+
+
+
+
+app.controller('uiGridDmpTableCtrl', ['$scope', '$rootScope', '$http', 'api', 'ui', 'config', '$q', '$interval', function($scope, $rootScope, $http, api, ui, config, $q, $interval){
+    $scope.dataLoaded = false;
+
+    var params = {
+        startDate:          config.startDate,
+        endDate:            config.endDate,
+        faculty:            config.faculty,
+    };
+
+    $scope.gridOptions = {};
+
+    $scope.gridOptions = {
+        rowEditWaitInterval: 1,  // ms before row is 'saved'
+        enableGridMenu: true,
+        //showGridFooter: true,
+        rowHeight: 35,
+        enableColumnResizing: true,
+        //enableCellEditOnFocus: true,
+        enableFiltering: true,
+        //rowHeight: 70,
+
+        //exporting begin
+        enableSelectAll: true,
+        exporterCsvFilename: 'dmp.csv',
+        exporterPdfDefaultStyle: {fontSize: 8},
+        exporterPdfTableStyle: {margin: [0, 15, 0, 5]},
+        exporterPdfTableHeaderStyle: {fontSize: 10, bold: true, italics: true, color: 'black'},
+        exporterPdfHeader: { text: "Data management plans produced", style: 'headerStyle' },
+        exporterPdfFooter: function ( currentPage, pageCount ) {
+            return { text: currentPage.toString() + ' of ' + pageCount.toString(), style: 'footerStyle' };
+        },
+        exporterPdfCustomFormatter: function ( docDefinition ) {
+            docDefinition.styles.headerStyle = { fontSize: 22, bold: true, margin: [340, 0, 20, 0] };
+            docDefinition.styles.footerStyle = { fontSize: 10, bold: true, margin: [400, 0, 20, 0] };
+            return docDefinition;
+        },
+        exporterPdfOrientation: 'landscape',
+        exporterPdfPageSize: 'A4',
+        exporterPdfMaxGridWidth: 700,
+        exporterCsvLinkElement: angular.element(document.querySelectorAll(".custom-csv-link-location")),
+        //exporting end
+    };
+
+    $scope.gridOptions.columnDefs = [
+        {
+            name: 'project_name',
+            displayName: 'Project',
+            width: 250,
+            enableCellEdit: false
+        },
+        //{
+        //    name: 'lead_faculty_id',
+        //    displayName: 'Lead Faculty ID',
+        //    width: 110,
+        //    enableCellEdit: false,
+        //    enableFiltering: false
+        //},
+        {
+            name: 'lead_faculty_abbrev',
+            displayName: 'Lead Faculty',
+            width: 110,
+            enableCellEdit: false,
+            enableFiltering: false
+        },
+        {
+            name: 'lead_dept_name',
+            displayName: 'Lead Dept',
+            width: 140,
+            enableCellEdit: false,
+            enableFiltering: false
+        },
+        {
+            name: 'dmp_id',
+            displayName: 'DMP ID',
+            width: 80,
+            enableCellEdit: false,
+            enableFiltering: false
+        },
+        //{
+        //    name: 'has_dmp_been_reviewed',
+        //    displayName: 'DMP Reviewed',
+        //    width: 120,
+        //    //type: 'number',
+        //    enableFiltering: false,
+        //    headerCellClass: 'columnEditableHeaderCell',
+        //    cellClass: 'columnEditableCellContents'
+        //},
+        {
+            name: 'has_dmp_been_reviewed',
+            displayName: 'DMP Reviewed',
+            width: 130,
+            headerCellClass: 'columnEditableHeaderCell',
+            //cellClass: 'columnEditableCellContents',
+            enableCellEdit: true,
+            enableFiltering: false,
+            editDropdownIdLabel: 'value',
+            editDropdownValueLabel: 'value',
+            editableCellTemplate: 'ui-grid/dropdownEditor',
+            editDropdownOptionsArray: [
+                {id: 1, value: 'yes'},
+                {id: 2, value: 'no'},
+                {id: 3, value: 'unknown'}
+            ]
+        },
+        {
+            name: 'project_start',
+            displayName: 'Project Start',
+            width: 110,
+            enableCellEdit: false,
+            enableFiltering: false
+        },
+        {
+            name: 'project_end',
+            displayName: 'Project End',
+            width: 110,
+            enableCellEdit: false,
+            enableFiltering: false
+        }
+    ];
+
+    //console.log('$scope.gridOptions.columnDefs ', $scope.gridOptions.columnDefs);
+
+    update(params);
+
+    function update(message){
+        var params = {
+            date:               'project_start',
+            sd:                 message.startDate,
+            ed:                 message.endDate,
+            faculty:            message.faculty,
+        };
+        api.uri.dmps(params).then(function(data){
+            //console.log('Datasets ' + uri);
+            //console.log(data);
+            $scope.dataLoaded = true;
+            $scope.gridOptions.data = data;
+            $scope.$apply();
+        });
+    }
+
+    api.uri.dmps({modifiable: true}).success(function (data) {
+        console.log('modifiables ', data);
+        $scope.modifiable_column_constraints = {};
+        for (var i in data){
+            $scope.modifiable_column_constraints[data[i].c_name] = data[i].c_vals;
+        }
+        //console.log('modifiable_column_constraints ', $scope.modifiable_column_constraints);
+    });
+
+    $scope.gridOptions.onRegisterApi = function(gridApi) {
+        //set gridApi on scope
+        $scope.gridApi = gridApi;
+        gridApi.rowEdit.on.saveRow($scope, $scope.saveRow);
+        //gridApi.edit.on.afterCellEdit($scope, function(rowEntity, colDef, newValue, oldValue) {
+            //Do your REST call here via $http.get or $http.post
+            //if (newValue != oldValue){
+            //    var params = {
+            //        project_id: rowEntity.project_id,
+            //        has_dmp_been_reviewed: rowEntity.has_dmp_been_reviewed
+            //    };
+            //    api.uri.put.dmps(params);
+            //}
+                // assumes a particular cell!
+                //response = api.uri.project(rowEntity);
+                //alert("POST (mock) to " + response);
+                //console.log('Going to update ', rowEntity); //
+            //curl -X PUT -s 'http://lib-dmao.lancs.ac.uk:8090/dmaonline/v0.3/c/d_lancaster/f8071b41d994e4557591bb3d3a148707820d7ee1e0310196e70ae8aa/project_dmps_view_put?project_id=1&has_dmp_been_reviewed=yes'
+            //var request = 'http://lib-dmao.lancs.ac.uk:8090/dmaonline/v0.3/c/d_lancaster/f8071b41d994e4557591bb3d3a148707820d7ee1e0310196e70ae8aa/project_dmps_view_put?';
+            //var data = {
+            //  project_id: rowEntity.project_id,
+            //  has_dmp_been_reviewed: newValue
+            //};
+            //request += 'project_id=' + rowEntity.project_id;
+            //request += '&has_dmp_been_reviewed=yes';
+            //console.log(request, data);
+
+            //console.log(api.getKey('d_lancaster', 'letmein'));
+
+            //response = api.uri.put.dmps(data);
+            //console.log('response ' , response);
+
+
+            //$http.put(request + data).
+            //    success(function (data, status, headers) {
+            //        console.log('SUCCESS', status, data);
+            //    })
+            //    .error(function (data, status, header, config) {
+            //        console.log('FAILURE', status, data);
+            //    });
+            //Alert to show what info about the edit is available
+            //alert('Project ' + rowEntity.project_name + '. You changed ' +
+            //' column ' + colDef.name + ' from ' + oldValue + ' to ' + newValue + '.');
+        //});
+    };
+
+
+    // saving begin
+    //$scope.saveRow = function( rowEntity ) {
+    //    //rowEntity.expected_storage = abs(rowEntity.expected_storage) // prevent negative
+    //    console.log('Look ma I is faking a save!', rowEntity);
+    //    // create a fake promise - normally you'd use the promise returned by $http or $resource
+    //    var promise = $q.defer();
+    //
+    //    $scope.gridApi.rowEdit.setSavePromise( rowEntity, promise.promise );
+    //
+    //    // fake a delay of 3 seconds whilst the save occurs, return error if length <=0
+    //    $interval( function() {
+    //        if (rowEntity.has_dmp_been_reviewed.length > 0){ // need to use constraints
+    //            promise.reject();
+    //                    } else {
+    //            promise.resolve();
+    //        }
+    //    }, 3000, 1);
+    //};
+
+    $scope.saveRow = function( rowEntity ) {
+
+        var spinner = ui.spinner('loader');
+
+        var params = {
+            project_id: rowEntity.project_id,
+            has_dmp_been_reviewed: rowEntity.has_dmp_been_reviewed
+        };
+
+        // create a fake promise - normally you'd use the promise returned by $http or $resource
+        //var promise = $q.defer();
+        var promise = api.uri.put.dmps(params);
+        console.log('promise ', promise);
+        //Cannot use promise.promise with exernal jquery api call
+        $scope.gridApi.rowEdit.setSavePromise( rowEntity, promise );
+
+        // fake a delay of 3 seconds
+        //$interval( function() {
+            //Cannot use promise.reject() and promise.resolve() with exernal jquery api call
+            promise.success(function(data){
+                console.log('promise SUCCESS');
+
+                //needed as promise is not an angular promise and there is no promise.resolve()
+                $scope.gridApi.rowEdit.flushDirtyRows($scope.gridApi.grid);
+                spinner.stop();
+            });
+
+            promise.error(function(data){
+                alert('Error whilst saving data to server');
+                //console.log('promise ERROR');
+                //alert('Invalid input data:   ' + rowEntity.has_dmp_been_reviewed +
+                //'\n\nPermitted values:   ' + $scope.modifiable_column_constraints.has_dmp_been_reviewed.replace(/\|/g, ', '));
+                spinner.stop();
+            });
+            $scope.savingData = false;
+
+        //}, 3000, 1);
+    };
+    // saving end
+
+
+
+
+    //cell navigation begin
+    $scope.currentFocused = "";
+
+    $scope.getCurrentFocus = function(){
+        var rowCol = $scope.gridApi.cellNav.getFocusedCell();
+        if(rowCol !== null) {
+            $scope.currentFocused = 'Row Id:' + rowCol.row.entity.id + ' col:' + rowCol.col.colDef.name;
+        }
+    };
+
+    $scope.getCurrentSelection = function() {
+        var values = [];
+        var currentSelection = $scope.gridApi.cellNav.getCurrentSelection();
+        for (var i = 0; i < currentSelection.length; i++) {
+            values.push(currentSelection[i].row.entity[currentSelection[i].col.name])
+        }
+        $scope.printSelection = values.toString();
+    };
+
+    $scope.scrollTo = function( rowIndex, colIndex ) {
+        $scope.gridApi.core.scrollTo( $scope.gridOptions.data[rowIndex], $scope.gridOptions.columnDefs[colIndex]);
+    };
+
+    $scope.scrollToFocus = function( rowIndex, colIndex ) {
+        $scope.gridApi.cellNav.scrollToFocus( $scope.gridOptions.data[rowIndex], $scope.gridOptions.columnDefs[colIndex]);
+    };
+    //cell navigation end
+
+
+
+    $scope.filterEventListener = $rootScope.$on("FilterEvent", function (event, message) {
+        update(message);
+    });
+
+    $scope.$on('$destroy', function () {
+        // Remove the listener
+        $scope.filterEventListener();
+    });
+
+
+}]);
+
+
+
+
+
+
+app.controller('uiGridNoDmpTableCtrl', ['$scope', '$rootScope', '$http', 'api', 'ui', 'config', '$q', '$interval', function($scope, $rootScope, $http, api, ui, config, $q, $interval){
+    $scope.dataLoaded = false;
+
+    var params = {
+        startDate:          config.startDate,
+        endDate:            config.endDate,
+        faculty:            config.faculty,
+    };
+
+    $scope.gridOptions = {};
+
+    $scope.gridOptions = {
+        rowEditWaitInterval: 1,  // ms before row is 'saved'
+        enableGridMenu: true,
+        //showGridFooter: true,
+        rowHeight: 35,
+        enableColumnResizing: true,
+        //enableCellEditOnFocus: true,
+        enableFiltering: true,
+        //rowHeight: 70,
+
+        //exporting begin
+        enableSelectAll: true,
+        exporterCsvFilename: 'noDmp.csv',
+        exporterPdfDefaultStyle: {fontSize: 8},
+        exporterPdfTableStyle: {margin: [0, 15, 0, 5]},
+        exporterPdfTableHeaderStyle: {fontSize: 10, bold: true, italics: true, color: 'black'},
+        exporterPdfHeader: { text: "Projects without data management plans", style: 'headerStyle' },
+        exporterPdfFooter: function ( currentPage, pageCount ) {
+            return { text: currentPage.toString() + ' of ' + pageCount.toString(), style: 'footerStyle' };
+        },
+        exporterPdfCustomFormatter: function ( docDefinition ) {
+            docDefinition.styles.headerStyle = { fontSize: 22, bold: true, margin: [340, 0, 20, 0] };
+            docDefinition.styles.footerStyle = { fontSize: 10, bold: true, margin: [400, 0, 20, 0] };
+            return docDefinition;
+        },
+        exporterPdfOrientation: 'landscape',
+        exporterPdfPageSize: 'A4',
+        exporterPdfMaxGridWidth: 700,
+        exporterCsvLinkElement: angular.element(document.querySelectorAll(".custom-csv-link-location")),
+        //exporting end
+    };
+
+    $scope.gridOptions.columnDefs = [
+        {
+            name: 'project_name',
+            displayName: 'Project',
+            width: 250,
+            enableCellEdit: false
+        },
+        {
+            name: 'lead_faculty_abbrev',
+            displayName: 'Lead Faculty',
+            width: 110,
+            enableCellEdit: false,
+            enableFiltering: false
+        },
+        {
+            name: 'lead_dept_name',
+            displayName: 'Lead Dept',
+            width: 250,
+            enableCellEdit: false,
+            enableFiltering: false
+        }
+    ];
+
+    //console.log('$scope.gridOptions.columnDefs ', $scope.gridOptions.columnDefs);
+
+    update(params);
+
+    function update(message){
+        var params = {
+            date:               'project_start',
+            sd:                 message.startDate,
+            ed:                 message.endDate,
+            faculty:            message.faculty,
+        };
+        api.uri.dmps(params).then(function(data){
+            //console.log('Datasets ' + uri);
+            //console.log(data);
+            $scope.dataLoaded = true;
+            $scope.gridOptions.data = data;
+            $scope.$apply();
+        });
+    }
+
+    api.uri.dmps({modifiable: true}).success(function (data) {
+        console.log('modifiables ', data);
+        $scope.modifiable_column_constraints = {};
+        for (var i in data){
+            $scope.modifiable_column_constraints[data[i].c_name] = data[i].c_vals;
+        }
+        //console.log('modifiable_column_constraints ', $scope.modifiable_column_constraints);
+    });
+
+    $scope.gridOptions.onRegisterApi = function(gridApi) {
+        //set gridApi on scope
+        $scope.gridApi = gridApi;
+    };
+
+    //cell navigation begin
+    $scope.currentFocused = "";
+
+    $scope.getCurrentFocus = function(){
+        var rowCol = $scope.gridApi.cellNav.getFocusedCell();
+        if(rowCol !== null) {
+            $scope.currentFocused = 'Row Id:' + rowCol.row.entity.id + ' col:' + rowCol.col.colDef.name;
+        }
+    };
+
+    $scope.getCurrentSelection = function() {
+        var values = [];
+        var currentSelection = $scope.gridApi.cellNav.getCurrentSelection();
+        for (var i = 0; i < currentSelection.length; i++) {
+            values.push(currentSelection[i].row.entity[currentSelection[i].col.name])
+        }
+        $scope.printSelection = values.toString();
+    };
+
+    $scope.scrollTo = function( rowIndex, colIndex ) {
+        $scope.gridApi.core.scrollTo( $scope.gridOptions.data[rowIndex], $scope.gridOptions.columnDefs[colIndex]);
+    };
+
+    $scope.scrollToFocus = function( rowIndex, colIndex ) {
+        $scope.gridApi.cellNav.scrollToFocus( $scope.gridOptions.data[rowIndex], $scope.gridOptions.columnDefs[colIndex]);
+    };
+    //cell navigation end
+
+
+
+    $scope.filterEventListener = $rootScope.$on("FilterEvent", function (event, message) {
+        update(message);
+    });
+
+    $scope.$on('$destroy', function () {
+        // Remove the listener
+        $scope.filterEventListener();
+    });
+
+
+}]);
+
+
+
+
+
+
+app.controller('uiGridRcukAccessComplianceTableCtrl', ['$scope', '$rootScope', '$http', 'api', 'ui', 'config', '$q', '$interval', function($scope, $rootScope, $http, api, ui, config, $q, $interval){
+    $scope.dataLoaded = false;
+
+    var params = {
+        startDate:          config.startDate,
+        endDate:            config.endDate,
+        faculty:            config.faculty,
+    };
+
+    $scope.gridOptions = {};
+
+    $scope.gridOptions = {
+        rowEditWaitInterval: 1,  // ms before row is 'saved'
+        enableGridMenu: true,
+        //showGridFooter: true,
+        rowHeight: 35,
+        enableColumnResizing: true,
+        //enableCellEditOnFocus: true,
+        enableFiltering: true,
+        //rowHeight: 70,
+
+        //exporting begin
+        enableSelectAll: true,
+        exporterCsvFilename: 'rcukAccessCompliance.csv',
+        exporterPdfDefaultStyle: {fontSize: 8},
+        exporterPdfTableStyle: {margin: [0, 15, 0, 5]},
+        exporterPdfTableHeaderStyle: {fontSize: 10, bold: true, italics: true, color: 'black'},
+        exporterPdfHeader: { text: "RCUK access compliance", style: 'headerStyle' },
+        exporterPdfFooter: function ( currentPage, pageCount ) {
+            return { text: currentPage.toString() + ' of ' + pageCount.toString(), style: 'footerStyle' };
+        },
+        exporterPdfCustomFormatter: function ( docDefinition ) {
+            docDefinition.styles.headerStyle = { fontSize: 22, bold: true, margin: [340, 0, 20, 0] };
+            docDefinition.styles.footerStyle = { fontSize: 10, bold: true, margin: [400, 0, 20, 0] };
+            return docDefinition;
+        },
+        exporterPdfOrientation: 'landscape',
+        exporterPdfPageSize: 'A4',
+        exporterPdfMaxGridWidth: 700,
+        exporterCsvLinkElement: angular.element(document.querySelectorAll(".custom-csv-link-location")),
+        //exporting end
+    };
+
+    $scope.gridOptions.columnDefs = [
+        {
+            name: 'publication_pid',
+            displayName: 'Publication',
+            width: 150,
+            enableCellEdit: false,
+            enableFiltering: false
+        },
+        {
+            name: 'publication_date',
+            displayName: 'Publication Date',
+            width: 140,
+            enableCellEdit: false,
+            enableFiltering: false
+        },
+        {
+            name: 'data_access_statement',
+            displayName: 'Data access statement',
+            width: 180,
+            enableCellEdit: false,
+            enableFiltering: false
+        },
+        {
+            name: 'funder_name',
+            displayName: 'Funder name',
+            width: 110,
+            enableCellEdit: false,
+            enableFiltering: false
+        },
+        {
+            name: 'project_name',
+            displayName: 'Project',
+            width: 250,
+            enableCellEdit: false
+        },
+    ];
+
+    //console.log('$scope.gridOptions.columnDefs ', $scope.gridOptions.columnDefs);
+
+    update(params);
+
+    function update(message){
+        var params = {
+            date:               'project_start',
+            sd:                 message.startDate,
+            ed:                 message.endDate,
+            faculty:            message.faculty,
+        };
+        api.uri.rcukAccessCompliance(params).then(function(data){
+            //console.log('Datasets ' + uri);
+            //console.log(data);
+            $scope.dataLoaded = true;
+            $scope.gridOptions.data = data;
+            $scope.$apply();
+        });
+    }
+
+    api.uri.dmps({modifiable: true}).success(function (data) {
+        console.log('modifiables ', data);
+        $scope.modifiable_column_constraints = {};
+        for (var i in data){
+            $scope.modifiable_column_constraints[data[i].c_name] = data[i].c_vals;
+        }
+        //console.log('modifiable_column_constraints ', $scope.modifiable_column_constraints);
+    });
+
+    $scope.gridOptions.onRegisterApi = function(gridApi) {
+        //set gridApi on scope
+        $scope.gridApi = gridApi;
+    };
+
+    //cell navigation begin
+    $scope.currentFocused = "";
+
+    $scope.getCurrentFocus = function(){
+        var rowCol = $scope.gridApi.cellNav.getFocusedCell();
+        if(rowCol !== null) {
+            $scope.currentFocused = 'Row Id:' + rowCol.row.entity.id + ' col:' + rowCol.col.colDef.name;
+        }
+    };
+
+    $scope.getCurrentSelection = function() {
+        var values = [];
+        var currentSelection = $scope.gridApi.cellNav.getCurrentSelection();
+        for (var i = 0; i < currentSelection.length; i++) {
+            values.push(currentSelection[i].row.entity[currentSelection[i].col.name])
+        }
+        $scope.printSelection = values.toString();
+    };
+
+    $scope.scrollTo = function( rowIndex, colIndex ) {
+        $scope.gridApi.core.scrollTo( $scope.gridOptions.data[rowIndex], $scope.gridOptions.columnDefs[colIndex]);
+    };
+
+    $scope.scrollToFocus = function( rowIndex, colIndex ) {
+        $scope.gridApi.cellNav.scrollToFocus( $scope.gridOptions.data[rowIndex], $scope.gridOptions.columnDefs[colIndex]);
+    };
+    //cell navigation end
+
+
+
+    $scope.filterEventListener = $rootScope.$on("FilterEvent", function (event, message) {
+        update(message);
     });
 
     $scope.$on('$destroy', function () {
@@ -3180,15 +4267,15 @@ app.controller('uiGridStorageTableCtrl', ['$scope', '$rootScope', 'api', 'ui', '
         },
         {
             name: 'inst_storage_platform_id',
-            displayName: 'Platform ID',
+            displayName: 'Platform',
             sort: { direction: 'asc' },
-            width: 120,
+            width: 100,
             enableCellEdit: false,
         },
         {
             name: 'expected_storage',
             displayName: 'Expected (GB)',
-            width: 120,
+            width: 110,
             type: 'number',
             headerCellClass: 'columnEditableHeaderCell',
             cellClass: 'columnEditableCellContents',
@@ -3369,7 +4456,7 @@ app.controller('uiGridStorageTableCtrl', ['$scope', '$rootScope', 'api', 'ui', '
 
 
     $scope.filterEventListener = $rootScope.$on("FilterEvent", function (event, message) {
-        //update(message);
+        update(message);
     });
 
     $scope.$on('$destroy', function () {

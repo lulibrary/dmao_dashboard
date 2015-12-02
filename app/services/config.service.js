@@ -1,7 +1,7 @@
 var App = {
     institutionId: '',
     institutionName: '',
-    institutionDataCiteSymbol: 'BL.LANCS',
+    institutionDataCiteSymbol: '',
     startDateDefault: '20000101',
     endDateDefault: '20350101', //moment().add(20, 'years').format('YYYYMMDD'),       
     startDate: '20000101',
@@ -10,7 +10,7 @@ var App = {
     facultyDefault: '',
     facultyMap: {},
     departmentMap: {},
-    updateDelay: 10000,
+    updateDelay: 600000
     // dataAccessResponseData: {},
     // metadataAccessResponseData: {}
 };

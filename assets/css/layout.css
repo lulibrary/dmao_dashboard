@@ -11,4 +11,5 @@
 .page-bar .page-breadcrumb > li > a,
 .page-bar .page-breadcrumb > li > span {
     color: white;
+   display: none;
 }

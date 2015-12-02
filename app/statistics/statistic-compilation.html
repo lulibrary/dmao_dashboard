@@ -1,8 +1,16 @@
+<div class="portlet box grey-gallery">
+	<div class="portlet-title">
+		<div class="caption">
+			Divisional
+		</div>
+	</div>
+	<div class="portlet-body">
+
 			<!-- BEGIN DASHBOARD STATS -->
 			<div class="row">
 
 				<div ng-controller="datasetsCtrl">
-					<statistic 	value="{{value}}" 
+					<statistic 	value="{{value}}"
 								description="All datasets"
 								icon="file"
 								colour="green-haze"
@@ -11,47 +19,47 @@
 					</statistic>
 				</div>
 				<div ng-controller="datasetsRCUKCtrl">
-					<statistic 	value="{{value}}" 
+					<statistic 	value="{{value}}"
 								description="RCUK datasets"
 								icon="file"
 								colour="green-haze"
 								link="#/datasetsRCUK"
 								>
 					</statistic>
-				</div>	
+				</div>
 
 				<div ng-controller="dmpsCreatedCtrl">
-					<statistic 	value="{{value}}" 
+					<statistic 	value="{{value}}"
 								description="DMPs produced"
 								icon="file-text-o"
 								colour="blue-madison"
 								link="#/dmp"
 								>
 					</statistic>
-				</div>				
+				</div>
 
 				<div ng-controller="noDmpProjectsCtrl">
-					<statistic 	value="{{value}}" 
+					<statistic 	value="{{value}}"
 								description="Projects without DMPs"
 								icon="exclamation-triangle"
 								colour="red-intense"
 								link="#/nodmp"
 								>
 					</statistic>
-				</div>				
+				</div>
 
 				<div ng-controller="dmpStatusCtrl">
-					<statistic 	value="{{value}}" 
+					<statistic 	value="{{value}}"
 								description="All DMPs"
 								icon="th-list"
 								colour="blue-steel"
 								link="#/dmps"
 								>
 					</statistic>
-				</div>	
+				</div>
 
 				<div ng-controller="storageUnitCtrl">
-					<statistic 	value="{{value}}" 
+					<statistic 	value="{{value}}"
 								description="Storage requirements"
 								icon="hdd-o"
 								colour="purple-plum"
@@ -62,7 +70,7 @@
 				</div>
 
 				<div ng-controller="storageCostCtrl">
-					<statistic 	value="{{value}}" 
+					<statistic 	value="{{value}}"
 								description="Storage cost"
 								icon="gbp"
 								colour="purple-plum"
@@ -70,10 +78,10 @@
 								currency="£"
 								>
 					</statistic>
-				</div>				
+				</div>
 
 				<div ng-controller="rcukAccessComplianceCtrl">
-					<statistic 	value="{{value}}" 
+					<statistic 	value="{{value}}"
 								description="RCUK access compliance"
 								icon="gavel"
 								colour="green-jungle"
@@ -83,62 +91,45 @@
 					</statistic>
 				</div>
 
-				<div ng-controller="doiMintingCtrl">
-					<statistic 	value="{{value}}"
-								description="DOI minting (institutional)"
-								icon="link"
-								colour="grey-cascade"
-								link="#/"
-								units=""
-								>
+				<div ng-controller="dataCtrl">
+					<statistic 	value="{{dataset_accesses.data}}"
+								  description="Data downloads"
+								  icon="cloud-download"
+								  colour="yellow-casablanca"
+								  link="#/data"
+							>
+					</statistic>
+					<statistic 	value="{{dataset_accesses.metadata}}"
+								  description="Metadata accesses"
+								  icon="cloud-download"
+								  colour="yellow-casablanca"
+								  link="#/metadata"
+							>
 					</statistic>
 				</div>
-
 			</div>
+	</div>
+</div>
 
-			<!-- END DASHBOARD STATS-->
+<div class="clearfix">
+</div>
 
-
-			<div class="clearfix">
-			</div>
-			<div class="row">
-					<!-- BEGIN PORTLET-->
-					<div class="portlet light">
-						<div class="portlet-title">
-							<div class="caption">
-								<!-- <i class="fa fa-bar-chart-o"></i>--><!--Data access-->
-								<span class="caption-subject font-red-sunglo bold uppercase">Data downloads</span>
-							</div>
-						</div>
-						<div class="portlet-body">
-<!-- 							<div id="data_access_loading">
-								<img src="../assets/admin/layout/img/loading.gif" alt="loading"/>
-							</div>	 -->						
-								<div ng-controller="dataAccessChartCtrl">
-									<div id="dataAccessChart"></div>
-								</div>
-						</div>
-					</div>
-			</div>				
-			<div class="row">
-					<!-- BEGIN PORTLET-->
-					<div class="portlet light">
-						<div class="portlet-title">
-							<div class="caption">
-								<!-- <i class="fa fa-bar-chart-o"></i>--><!--Data access-->
-								<span class="caption-subject font-green-sharp bold uppercase">Metadata accesses</span>
-							</div>
-						</div>
-						<div class="portlet-body">
-<!-- 							<div id="data_access_loading">
-								<img src="../assets/admin/layout/img/loading.gif" alt="loading"/>
-							</div>	 -->						
-								<div ng-controller="metadataAccessChartCtrl">
-									<div id="metadataAccessChart"></div>
-								</div>
-						</div>
-					</div>			
-			</div>
-			<div class="clearfix">
+<div class="portlet box grey-gallery">
+	<div class="portlet-title">
+		<div class="caption">
+			Institutional
 		</div>
 	</div>
+	<div class="portlet-body">
+		<div class="row">
+			<div ng-controller="doiMintingCtrl">
+				<aggregate 	value="{{value}}"
+							  description="DOI minting"
+							  icon="link"
+							  colour="grey-cascade"
+						>
+				</aggregate>
+			</div>
+		</div>
+	</div>
+</div>

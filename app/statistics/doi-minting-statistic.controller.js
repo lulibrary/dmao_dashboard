@@ -1,10 +1,10 @@
-app.controller('doiMintingCtrl', function($scope, $rootScope, $http, api, config) {
+app.controller('doiMintingCtrl', function($scope, $rootScope, api, config) {
     // init
     $scope.value = 0;
+
     update({
                 startDate:      config.startDate,
-                endDate:        config.endDate,
-                faculty:        config.faculty,
+                endDate:        config.endDate
             });
 
     function update(message){
@@ -19,22 +19,52 @@ app.controller('doiMintingCtrl', function($scope, $rootScope, $http, api, config
         var isoEndDate =    message.endDate.substr(0,4) + '-' +
                             message.endDate.substr(4,2) + '-' +
                             message.endDate.substr(6,2);
-        var uri = 'http://search.datacite.org/api?q=*&wt=json&fq=datacentre_symbol:' +
-                    config.institutionDataCiteSymbol +
-                    '&rows=0' +
-                    '&fq=minted:' +
-                    '[' + isoStartDate + 'T00:00:00Z/DAY' + '%20TO%20' +
-                    isoEndDate + 'T23:59:59Z/DAY]';
-        $http.get(uri).then(function(response) {
-            var value = response.data.response.numFound;
-            // only update if dirty
-            if (value !== $scope.value) $scope.value = value;
-        })
-            .catch(function(response) {
-            var value = 'Error';
-            // only update if dirty
-            if (value !== $scope.value) $scope.value = value;
+
+        //symbol
+        //var uri = 'http://search.datacite.org/api?q=*&wt=json&fq=datacentre_symbol:' +
+        //            config.institutionDataCiteSymbol +
+        //            '&rows=0' +
+        //            '&fq=minted:' +
+        //            '[' + isoStartDate + 'T00:00:00Z/DAY' + '%20TO%20' +
+        //            isoEndDate + 'T23:59:59Z/DAY]';
+
+        //console.log('App ', App);
+        //console.log('Making a querystring with ', config.institutionDataCiteSymbol);
+
+
+        var prefix = '10.17635';
+        //fudge for now (should use config.institutionDataCiteSymbol)
+        if (config.institutionId === 'birmingham'){
+            prefix = '10.13140';
+        }
+
+        //prefix
+        var uri = 'http://search.datacite.org/api?q=*&wt=json&fq=prefix:' +
+            prefix +
+            '&rows=0' +
+            '&fq=minted:' +
+            '[' + isoStartDate + 'T00:00:00Z/DAY' + '%20TO%20' +
+            isoEndDate + 'T23:59:59Z/DAY]';
+
+        //$http.get(uri).then(function(response) {
+        //    var value = response.data.response.numFound;
+        //    // only update if dirty
+        //    if (value !== $scope.value) $scope.value = value;
+        //})
+        //    .catch(function(response) {
+        //    var value = 'Error';
+        //    // only update if dirty
+        //    if (value !== $scope.value) $scope.value = value;
+        //});
+        api.datacite.minted(uri).then(function(response) {
+            $scope.$apply(function(){ // why needed?
+                var value = response.response.numFound;
+                //console.log('minted ', value);
+                // only update if dirty
+                if (value !== $scope.value) $scope.value = value;
+            });
         });
+
     }
 
     $scope.filterEventListener = $rootScope.$on("FilterEvent", function (event, message) {
@@ -45,4 +75,9 @@ app.controller('doiMintingCtrl', function($scope, $rootScope, $http, api, config
         // Remove the listener
         $scope.filterEventListener();
     });
+
+
 });
+
+
+

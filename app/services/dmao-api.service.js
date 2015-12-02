@@ -127,6 +127,22 @@ var ApiService = {
             // var uriWithDateRange = this.addDateRange(uri, params);
             return $.getJSON(uri);
         },
+        rcukAccessCompliance: function(params){
+            var uri = URI(ApiService.prefix() + '/c/' + App.institutionId + '/' +
+            ApiService.apiKey + '/rcuk_as');
+            if (params){
+                uri = this.addParams(uri, params);
+            }
+            return $.getJSON(uri);
+        },
+        divisions: function(params){
+            var uri = URI(ApiService.prefix() + '/c/' + App.institutionId + '/' +
+            ApiService.apiKey + '/faculties_departments');
+            if (params){
+                uri = this.addParams(uri, params);
+            }
+            return $.getJSON(uri);
+        },
         put: {
             dmps: function (params) {
                 //alert('ApiService.uri.put.dmps called');
@@ -198,6 +214,12 @@ var ApiService = {
             var uri = URI(ApiService.prefix() + '/o' + '/' + resource);
             return $.getJSON(uri);
         },
+    },
+    datacite: {
+        minted: function (queryString) {
+            var uri = URI(queryString);
+            return $.getJSON(uri);
+        }
     },
     filter: {
         datasetAccess: function(data, accessType){

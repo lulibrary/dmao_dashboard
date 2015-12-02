@@ -17,11 +17,11 @@ app.controller('dmpsCreatedCtrl', function($scope, $rootScope, $http, api, confi
                     };
         
         api.uri.dmps(params).then(function(response) {
-            $scope.$apply(function(){ 
+            //$scope.$apply(function(){
                 var value = response[0].num_project_dmps;
                 // only update if dirty
                 if (value !== $scope.value) $scope.value = value;
-            });
+            //});
         });
     }
 

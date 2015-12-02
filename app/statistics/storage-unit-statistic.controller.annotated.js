@@ -16,7 +16,7 @@ app.controller('storageUnitCtrl', ['$scope', '$rootScope', '$http', 'api', 'conf
                         };
             
             api.uri.storage(params).then(function(response) {
-                $scope.$apply(function(){
+                //$scope.$apply(function(){
                     var total = 0;
                     var previous_project_id = -1;
                     for(i=0;i<response.length;++i) {            
@@ -29,7 +29,7 @@ app.controller('storageUnitCtrl', ['$scope', '$rootScope', '$http', 'api', 'conf
 
                     // only update if dirty
                     if (value !== $scope.value) $scope.value = value;
-                });
+                //});
             });
         // }
     }
