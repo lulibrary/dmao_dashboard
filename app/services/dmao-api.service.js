@@ -40,13 +40,13 @@ var ApiService = {
                 });
         //console.log('uri ', uri);
         //console.log($.getJSON(uri));
-        return $.getJSON(uri)
-            .then(function( json ) {
-                //console.log('json response ', json);
-                ApiService.apiKey = json[0].api_key;
-                //ApiService.apiKey = 'BLADEBLA';
-            });
-
+        return $.getJSON(uri);
+            //.then(function( json ) {
+            //    //console.log('json response ', json);
+            //    ApiService.apiKey = json[0].api_key;
+            //    $cookies.put('apiKey', json[0].api_key);
+            //    //ApiService.apiKey = 'BLADEBLA';
+            //});
     },
     uri: {
         addParams: function(uri, params){
@@ -60,7 +60,7 @@ var ApiService = {
         datasets: function(params){
             var uri = URI(ApiService.prefix() + '/c/' + App.institutionId + '/' +
             ApiService.apiKey + '/datasets');
-            if (params){
+            if (params) {
                 uri = this.addParams(uri, params);
             }
             return $.getJSON(uri);

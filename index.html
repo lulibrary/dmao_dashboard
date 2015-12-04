@@ -162,7 +162,7 @@
 
 			</div>
 
-			<div ng-include="loggedInUser ? 'app/filter/calendar.html' : null"></div>
+			<!--<div ng-include= "'app/filter/calendar.html'"></div>-->
 
 			<div ng-include="loggedInUser ? 'app/filter/filter.html' : null"></div>
 
@@ -272,9 +272,12 @@
 <script src="http://cdn.datatables.net/colreorder/1.1.3/js/dataTables.colReorder.min.js"></script>
 <script src="https://cdn.datatables.net/colvis/1.1.2/js/dataTables.colVis.min.js"></script>
 
-<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.15/angular.min.js"></script>
-<!--<script src="assets/libs/angular.min.js"></script>-->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.0-beta.2/angular.min.js"></script>
+<!--<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.15/angular.min.js"></script>-->
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.0-beta.2/angular-cookies.js"></script>
+<!--<script src="assets/libs/angular.min.js"></script>-->
+<!--<script src="assets/libs/angular-cookies.min.js"></script>-->
 
 <script src="assets/libs/angular-route.js"></script>
 <script src="assets/libs/d3.min.js"></script>
@@ -293,8 +296,6 @@
 	<!--<script src="assets/libs/ui-grid.js"></script>-->
 	<script src="https://cdn.rawgit.com/angular-ui/bower-ui-grid/master/ui-grid.min.js"></script>
 	<!--<script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.14.3/ui-bootstrap-tpls.min.js"></script>-->
-
-
 
 <!-- <script src="app/app-module.js"></script> -->
 <!-- <script src="app/app-routes.js"></script> -->
@@ -346,6 +347,9 @@ jQuery(document).ready(function() {
    		Metronic.init(); // init metronic core componets
    		Layout.init(); // init layout
    	}
+
+
+
    // QuickSidebar.init(); // init quick sidebar
    // Demo.init(); // init demo features
    // Index.init();

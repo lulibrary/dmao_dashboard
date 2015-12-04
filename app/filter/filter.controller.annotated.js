@@ -24,8 +24,8 @@ app.controller('filterCtrl', ['$scope', '$rootScope', '$interval', 'api', 'confi
         // console.log("TIMED UPDATE at " + Date());
         // //console.table(config);
     }
-    //var timeout = config.updateDelay;
-    //$interval(update, timeout);
+    var timeout = config.updateDelay;
+    $interval(update, timeout);
 
     /****************
         startDate

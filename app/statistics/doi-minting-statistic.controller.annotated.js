@@ -1,6 +1,7 @@
 app.controller('doiMintingCtrl', ['$scope', '$rootScope', 'api', 'config', function($scope, $rootScope, api, config) {
     // init
     $scope.value = 0;
+    $scope.dois = {};
 
     update({
                 startDate:      config.startDate,
@@ -64,6 +65,8 @@ app.controller('doiMintingCtrl', ['$scope', '$rootScope', 'api', 'config', funct
                 if (value !== $scope.value) $scope.value = value;
             });
         });
+
+
 
     }
 

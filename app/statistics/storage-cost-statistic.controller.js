@@ -18,7 +18,7 @@ app.controller('storageCostCtrl', function($scope, $rootScope, $http, api, confi
                         };
             
             api.uri.storage(params).then(function(response) {
-                //$scope.$apply(function(){
+                $scope.$apply(function(){
                     var total = 0;
                     var previous_project_id = -1;
                     // if (response.length){
@@ -34,7 +34,7 @@ app.controller('storageCostCtrl', function($scope, $rootScope, $http, api, confi
 
                     // only update if dirty
                     if (value !== $scope.value) $scope.value = value;
-                //});
+                });
             });
         // }
     }

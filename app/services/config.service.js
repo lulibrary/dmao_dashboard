@@ -10,7 +10,5 @@ var App = {
     facultyDefault: '',
     facultyMap: {},
     departmentMap: {},
-    updateDelay: 600000
-    // dataAccessResponseData: {},
-    // metadataAccessResponseData: {}
+    updateDelay: 30000
 };

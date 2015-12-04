@@ -15,7 +15,7 @@ app.controller('rcukAccessComplianceCtrl', ['$scope', '$rootScope', '$http', 'ap
                             faculty: message.faculty
                         };
             api.uri.rcukAccessCompliance(params).then(function(response) {
-                //$scope.$apply(function(){
+                $scope.$apply(function(){
                     var count = 0;
                     for(i=0;i<response.length;++i) {
                         if (response[i].rcuk_funder_compliant === 'y') ++count;
@@ -27,7 +27,7 @@ app.controller('rcukAccessComplianceCtrl', ['$scope', '$rootScope', '$http', 'ap
                         value = (count / response.length) * 100;
                         $scope.value = Math.round(value);
                     }
-                //});
+                });
             });
         // }
     }

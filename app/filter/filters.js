@@ -47,30 +47,46 @@ var DMAOFilters = (function(){
                 firstDay: 1
             }
         }, function(start, end, label) {
-            // console.log(start.toISOString(), end.toISOString(), label);        
+            console.log('There has been a change by selecting a value');
+
+            // console.log(start.toISOString(), end.toISOString(), label);
             $('#reportrange span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
+
+            console.log('I have updated the html with dates in the right format');
+
             // console.log('option has been selected');
             var startDate = start.format('YYYYMMDD');
             var endDate = end.format('YYYYMMDD');
 
+            console.log('I have grabbed the dates into variables');
+
             // console.log(startDate, endDate);
             //console.log('There has been a change by selecting a value');
-               
+
             config.startDate = startDate;
             config.endDate = endDate;
 
-            var scope = angular.element($("#filterController")).scope();
-            scope.$apply(function(){
-                scope.startDate = startDate;
-                scope.endDate = endDate;
-            });
 
-            //console.log('after date selection ', config.startDate, config.endDate);
 
+            console.log('I have assigned the dates to config');
+
+            tellAngular(startDate, endDate);
+
+            console.log('What on earth is happening now?');
+
+
+
+            var delay = 1;
+            setTimeout(function(){
+                 console.log('I am in a timeout which has a delay of ' + delay);
+                },
+                delay);
+
+            console.log('I am listed after the timeout');
         });
         //console.log('DateRangePicker 3');
 
-       $('.applyBtn').click(function() {
+       //$('.applyBtn').click(function() {
            //console.log('datepicker applyBtn clicked');
             // console.log( $('input[name="daterangepicker_start"]').val() );
             // console.log( 'ado format ' + $('input[name="daterangepicker_start"]').format('YYYYMMDD').val() );
@@ -92,18 +108,18 @@ var DMAOFilters = (function(){
            //     console.log('scope.$apply ', scope.startDate, scope.endDate);
            // });
            //console.log('after angular update with date range');
-        });
+        //});
         //console.log('DateRangePicker 4');
     };
 
-    var setFaculty = function(faculty){
-        config.faculty = faculty;
-        // tell Angular
-        var scope = angular.element($("#filterController")).scope();
-        scope.$apply(function(){
-            scope.faculty = faculty;
-        });
-    };   
+    //var setFaculty = function(faculty){
+    //    config.faculty = faculty;
+    //    // tell Angular
+    //    var scope = angular.element($("#filterController")).scope();
+    //    scope.$apply(function(){
+    //        scope.faculty = faculty;
+    //    });
+    //};
 
     var initUserSelections = function(){
         // update globals
@@ -120,17 +136,25 @@ var DMAOFilters = (function(){
 
         // tell Angular
         var scope = angular.element($("#filterController")).scope();
-        scope.$apply(function(){
+        scope.$apply(function () {
             scope.faculty = config.faculty;
             scope.startDate = config.startDateDefault;
             scope.endDate = config.endDateDefault;
         });
     };
 
+    function tellAngular(startDate, endDate){
+        var scope = angular.element($("#filterController")).scope();
+        scope.$apply(function() {
+            scope.startDate = startDate;
+            scope.endDate = endDate;
+        });
+    }
+
     return {
         init: init,
         initUserSelections: initUserSelections,
         DateRangePicker: DateRangePicker,
-        setFaculty: setFaculty
+        //setFaculty: setFaculty
     };
 })();

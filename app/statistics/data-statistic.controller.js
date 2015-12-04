@@ -15,7 +15,7 @@ app.controller('dataCtrl', function($scope, $rootScope, $http, api, config) {
                     };
 
         api.uri.datasetAccess(params).then(function(response) {
-            //$scope.$apply(function(){
+            $scope.$apply(function(){
             //    console.log('api.uri.datasetAccess ', response);
 
             $scope.dataset_accesses = {};
@@ -29,7 +29,7 @@ app.controller('dataCtrl', function($scope, $rootScope, $http, api, config) {
                     $scope.dataset_accesses.metadata = response[i].count.toLocaleString();
                 }
             }
-            //});
+            });
         });
     }
 

@@ -4,7 +4,7 @@ app.config(['$routeProvider', '$locationProvider', function($routeProvider, $loc
 		//.when('/landing', { templateUrl: 'app/tables/storage-table.html' })
 		//.when('/landing', { templateUrl: 'app/tables/dmp-table.html' })
 		//.when('/landing', { templateUrl: 'app/statistics/statistic-compilation.html' })
-		.when('/', { templateUrl: 'app/statistics/statistic-compilation.html' })
+		.when('/', { templateUrl: 'app/public/landing.html' })
 		.when('/all', { templateUrl: 'app/public/landing.html' })
 		.when('/stats', { 	templateUrl: 'app/statistics/statistic-compilation.html'})
 		.when('/login', { templateUrl: 'app/auth/login.html' })
@@ -22,21 +22,25 @@ app.config(['$routeProvider', '$locationProvider', function($routeProvider, $loc
 	}])
     // use the HTML5 History API to get clean URLs and remove the hashtag from the URL
     // $locationProvider.html5Mode(true);
-	.run(['$rootScope', '$location', function($rootScope, $location) {
+	.run(['$rootScope', '$location', '$cookies', function($rootScope, $location, $cookies) {
 		$rootScope.$on( "$routeChangeStart", function(event, next, current) {
 			//console.log('apikey $routeChangeStart1', ApiService.apikey);
-
+			$cookies.put('lastRoute', $location.path());
 
 			//console.log('Current route name: ' + $location.path());
 			//console.log('$rootScope.loggedInUser ', $rootScope.loggedInUser);
 
-			if ($rootScope.loggedInUser == null) {
+			if (!$cookies.get('username')){
+			//if ($rootScope.loggedInUser == null) {
 				// no logged user, redirect to /login
-				if ($location.path() === '/landing' ||
-					next.templateUrl === 'app/auth/login.html') {
-				} else {
-					$location.path("/landing");
-				}
+				//if ($location.path() === '/landing' ||
+				//	next.templateUrl === 'app/auth/login.html') {
+				//} else {
+				//	$location.path("/landing");
+				//}
+				$location.path("/");
+			} else {
+				$location.path($cookies.get('lastRoute'));
 			}
 			//console.log('apikey $routeChangeStart2', ApiService.apikey);
 		});
