@@ -127,6 +127,7 @@ app.controller('uiGridDmpTableCtrl', ['$scope', '$rootScope', '$http', 'api', 'u
             date:               'project_start',
             sd:                 message.startDate,
             ed:                 message.endDate,
+            has_dmp:            true,
             faculty:            message.faculty,
         };
         api.uri.dmps(params).then(function(data){

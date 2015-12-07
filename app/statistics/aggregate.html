@@ -12,13 +12,11 @@
 
     <!--<div class="jumbotron">-->
 <div class="jumbotron">
-<span class="text-center"><h1>Research data management made simple.</h1></span>
-<p class="text-center">Sign in to see the dashboard working with example data for an imaginary institution.</p>
-<p class="text-center">Institution: Lune Valley Enterprise University, Username: dladmin, Password: dladmin.</p>
+<span class="text-center"><h1>Research data reporting made easy</h1></span>
 </div>
 
 <div ng-controller="aggregateStatisticCtrl">
-    <div ng-hide="data.institutions" class="preloader"></div>
+    <!-- <div ng-hide="data.institutions" class="preloader"></div> -->
     <div ng-show="data.institutions">
         <aggregate 	value="{{count_institutions}}"
                       description="Institutions"

@@ -94,7 +94,7 @@ app.controller('uiGridDmpStatusTableCtrl', ['$scope', '$rootScope', '$http', 'ap
             sd:                 message.startDate,
             ed:                 message.endDate,
             faculty:            message.faculty,
-            has_dmp:            true
+            has_dmp:            'true'
         };
         api.uri.dmpStatus(params).then(function(data){
             //console.log('Datasets ' + uri);

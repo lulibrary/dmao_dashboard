@@ -80,14 +80,15 @@ app.controller("loginCtrl", ['$scope', '$location', '$rootScope', '$cookies', 'a
 
         var cookies = $cookies.getAll();
         angular.forEach(cookies, function (v, k) {
-            //console.log('cookie ', k, '', v);
-            $cookies.remove(k);
-        });
-
-        $location.path("/")
+               //console.log('cookie ', k, '', v);
+                $cookies.remove(k);
+           });
+        
         $scope.institution = '';
         $scope.username = '';
         $scope.password = '';
+
+        $location.path("/");
     };
 
 }]);

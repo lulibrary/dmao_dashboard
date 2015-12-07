@@ -73,6 +73,7 @@ app.controller('uiGridNoDmpTableCtrl', function($scope, $rootScope, $http, api, 
             date:               'project_start',
             sd:                 message.startDate,
             ed:                 message.endDate,
+            has_dmp:            false,
             faculty:            message.faculty,
         };
         api.uri.dmps(params).then(function(data){

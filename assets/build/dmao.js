@@ -62,30 +62,50 @@ app.config(['$routeProvider', '$locationProvider', function($routeProvider, $loc
 	}])
     // use the HTML5 History API to get clean URLs and remove the hashtag from the URL
     // $locationProvider.html5Mode(true);
-	.run(['$rootScope', '$location', '$cookies', function($rootScope, $location, $cookies) {
-		$rootScope.$on( "$routeChangeStart", function(event, next, current) {
-			//console.log('apikey $routeChangeStart1', ApiService.apikey);
-			$cookies.put('lastRoute', $location.path());
+.run(['$rootScope', '$location', function ($rootScope, $location) {
+  $rootScope.$on('$routeChangeStart', function (event, newUrl, oldUrl) {
+        // console.log(newUrl);
+        // console.log(oldUrl);
+        if ($rootScope.loggedInUser) {
+        	// console.log('logged in');
+        	if (newUrl.templateUrl === 'app/public/landing.html'){
+        		// console.log('attempting public page');
+        		$location.path('/stats');
+        	}
+        }
+      }
+    );
+  }]);
 
-			//console.log('Current route name: ' + $location.path());
-			//console.log('$rootScope.loggedInUser ', $rootScope.loggedInUser);
+	// .run(function($rootScope, $location, $cookies) {
+	// 	$rootScope.$on( "$routeChangeStart", function(event, next, current) {
+	// 		//console.log('apikey $routeChangeStart1', ApiService.apikey);
+	// 		$cookies.put('lastRoute', $location.path());
 
-			if (!$cookies.get('username')){
-			//if ($rootScope.loggedInUser == null) {
-				// no logged user, redirect to /login
-				//if ($location.path() === '/landing' ||
-				//	next.templateUrl === 'app/auth/login.html') {
-				//} else {
-				//	$location.path("/landing");
-				//}
-				$location.path("/");
-			} else {
-				$location.path($cookies.get('lastRoute'));
-			}
-			//console.log('apikey $routeChangeStart2', ApiService.apikey);
-		});
-		//console.log('apikey $routeChangeStart3', ApiService.apikey);
-	}]);
+	// 		//console.log('Current route name: ' + $location.path());
+	// 		//console.log('$rootScope.loggedInUser ', $rootScope.loggedInUser);
+
+	// 		if (!$cookies.get('username')){
+	// 		//if ($rootScope.loggedInUser == null) {
+	// 			// no logged user, redirect to /login
+	// 			//if ($location.path() === '/landing' ||
+	// 			//	next.templateUrl === 'app/auth/login.html') {
+	// 			//} else {
+	// 			//	$location.path("/landing");
+	// 			//}
+	// 			$location.path("/");
+	// 		} else {
+	// 			if (next.templateUrl === 'app/public/landing.html') {
+	// 				$location.path('/stats'));
+	// 			} 
+	// 			// else {
+	// 				// $location.path($cookies.get('lastRoute'));
+	// 			// }
+	// 		}
+	// 		//console.log('apikey $routeChangeStart2', ApiService.apikey);
+	// 	});
+	// 	//console.log('apikey $routeChangeStart3', ApiService.apikey);
+	// });
 
 app.controller("loginCtrl", ['$scope', '$location', '$rootScope', '$cookies', 'api', 'config', function($scope, $location, $rootScope, $cookies, api, config) {
     // optionally prefill for testing
@@ -169,14 +189,15 @@ app.controller("loginCtrl", ['$scope', '$location', '$rootScope', '$cookies', 'a
 
         var cookies = $cookies.getAll();
         angular.forEach(cookies, function (v, k) {
-            //console.log('cookie ', k, '', v);
-            $cookies.remove(k);
-        });
-
-        $location.path("/")
+               //console.log('cookie ', k, '', v);
+                $cookies.remove(k);
+           });
+        
         $scope.institution = '';
         $scope.username = '';
         $scope.password = '';
+
+        $location.path("/");
     };
 
 }]);
@@ -880,18 +901,18 @@ var DMAOFilters = (function(){
                 firstDay: 1
             }
         }, function(start, end, label) {
-            console.log('There has been a change by selecting a value');
+            // console.log('There has been a change by selecting a value');
 
             // console.log(start.toISOString(), end.toISOString(), label);
             $('#reportrange span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
 
-            console.log('I have updated the html with dates in the right format');
+            // console.log('I have updated the html with dates in the right format');
 
             // console.log('option has been selected');
             var startDate = start.format('YYYYMMDD');
             var endDate = end.format('YYYYMMDD');
 
-            console.log('I have grabbed the dates into variables');
+            // console.log('I have grabbed the dates into variables');
 
             // console.log(startDate, endDate);
             //console.log('There has been a change by selecting a value');
@@ -901,21 +922,21 @@ var DMAOFilters = (function(){
 
 
 
-            console.log('I have assigned the dates to config');
+            // console.log('I have assigned the dates to config');
 
             tellAngular(startDate, endDate);
 
-            console.log('What on earth is happening now?');
+            // console.log('What on earth is happening now?');
 
 
 
-            var delay = 1;
-            setTimeout(function(){
-                 console.log('I am in a timeout which has a delay of ' + delay);
-                },
-                delay);
+            // var delay = 1;
+            // setTimeout(function(){
+            //      console.log('I am in a timeout which has a delay of ' + delay);
+            //     },
+            //     delay);
 
-            console.log('I am listed after the timeout');
+            // console.log('I am listed after the timeout');
         });
         //console.log('DateRangePicker 3');
 
@@ -3177,6 +3198,7 @@ app.controller('uiGridDatasetsRcukTableCtrl', ['$scope', '$rootScope', '$http', 
             date:               'project_start',
             sd:                 message.startDate,
             ed:                 message.endDate,
+            filter:             'rcuk',
             faculty:            message.faculty,
         };
         api.uri.datasets(params).then(function(data){
@@ -3507,7 +3529,7 @@ app.controller('uiGridDmpStatusTableCtrl', ['$scope', '$rootScope', '$http', 'ap
             sd:                 message.startDate,
             ed:                 message.endDate,
             faculty:            message.faculty,
-            has_dmp:            true
+            has_dmp:            'true'
         };
         api.uri.dmpStatus(params).then(function(data){
             //console.log('Datasets ' + uri);
@@ -3812,6 +3834,7 @@ app.controller('uiGridDmpTableCtrl', ['$scope', '$rootScope', '$http', 'api', 'u
             date:               'project_start',
             sd:                 message.startDate,
             ed:                 message.endDate,
+            has_dmp:            true,
             faculty:            message.faculty,
         };
         api.uri.dmps(params).then(function(data){
@@ -4063,6 +4086,7 @@ app.controller('uiGridNoDmpTableCtrl', ['$scope', '$rootScope', '$http', 'api', 
             date:               'project_start',
             sd:                 message.startDate,
             ed:                 message.endDate,
+            has_dmp:            false,
             faculty:            message.faculty,
         };
         api.uri.dmps(params).then(function(data){

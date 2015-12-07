@@ -47,18 +47,18 @@ var DMAOFilters = (function(){
                 firstDay: 1
             }
         }, function(start, end, label) {
-            console.log('There has been a change by selecting a value');
+            // console.log('There has been a change by selecting a value');
 
             // console.log(start.toISOString(), end.toISOString(), label);
             $('#reportrange span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
 
-            console.log('I have updated the html with dates in the right format');
+            // console.log('I have updated the html with dates in the right format');
 
             // console.log('option has been selected');
             var startDate = start.format('YYYYMMDD');
             var endDate = end.format('YYYYMMDD');
 
-            console.log('I have grabbed the dates into variables');
+            // console.log('I have grabbed the dates into variables');
 
             // console.log(startDate, endDate);
             //console.log('There has been a change by selecting a value');
@@ -68,21 +68,21 @@ var DMAOFilters = (function(){
 
 
 
-            console.log('I have assigned the dates to config');
+            // console.log('I have assigned the dates to config');
 
             tellAngular(startDate, endDate);
 
-            console.log('What on earth is happening now?');
+            // console.log('What on earth is happening now?');
 
 
 
-            var delay = 1;
-            setTimeout(function(){
-                 console.log('I am in a timeout which has a delay of ' + delay);
-                },
-                delay);
+            // var delay = 1;
+            // setTimeout(function(){
+            //      console.log('I am in a timeout which has a delay of ' + delay);
+            //     },
+            //     delay);
 
-            console.log('I am listed after the timeout');
+            // console.log('I am listed after the timeout');
         });
         //console.log('DateRangePicker 3');
 
