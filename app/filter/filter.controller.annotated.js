@@ -1,10 +1,13 @@
-app.controller('filterCtrl', ['$scope', '$rootScope', '$interval', '$cookies', 'api', 'config', function($scope, $rootScope, $interval, $cookies, api, config) {
+app.controller('filterCtrl', ['$scope', '$rootScope', '$interval', '$cookies', 'breadcrumbs', 'api', 'config', function($scope, $rootScope, $interval, $cookies, breadcrumbs, api, config) {
     $scope.startDate = config.startDateDefault;
     $scope.endDate = config.endDateDefault;
     $scope.faculty = config.facultyDefault;
     $scope.facultyName = config.facultyMap[config.facultyDefault];
 
     getInstitutionFaculties();
+
+    $scope.breadcrumbs = breadcrumbs;
+
     //getDataCitePrefix();
 
     // $scope.$on("$locationChangeSuccess", function() {

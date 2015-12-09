@@ -4,7 +4,7 @@ var app = angular.module('dmaoApp', ['ngRoute',
                             'ui.grid.cellNav', 'ui.grid.edit', 'ui.grid.rowEdit',
                             'ui.grid.selection', 'ui.grid.exporter',
                             'ui.grid.resizeColumns',
-                            'ngCookies'
+                            'ngCookies', 'ng-breadcrumbs'
 ]);
 
 // This is a compromise. Factory is used to create an Angular service with dependency injection 
@@ -44,6 +44,7 @@ app.run(['$cookies', '$location', '$rootScope', 'api', 'config', function($cooki
         // $location.path($cookies.get('newRoute'));
         $rootScope.loggedInUser = username;
     }    
+
 }]);
 app.config(['$routeProvider', '$locationProvider', function($routeProvider, $locationProvider) {
 	$routeProvider
@@ -51,19 +52,53 @@ app.config(['$routeProvider', '$locationProvider', function($routeProvider, $loc
 		//.when('/landing', { templateUrl: 'app/tables/storage-table.html' })
 		//.when('/landing', { templateUrl: 'app/tables/dmp-table.html' })
 		//.when('/landing', { templateUrl: 'app/statistics/statistic-compilation.html' })
-		.when('/', { templateUrl: 'app/public/landing.html' })
-		.when('/all', { templateUrl: 'app/public/landing.html' })
-		.when('/stats', { 	templateUrl: 'app/statistics/statistic-compilation.html'})
+		.when('/', { 
+			templateUrl: 'app/public/landing.html',
+			label: 'Home'
+		})
+		.when('/all', { 
+			templateUrl: 'app/public/landing.html',
+		})
+		.when('/stats', { 	
+			templateUrl: 'app/statistics/statistic-compilation.html',
+		})
 		.when('/login', { templateUrl: 'app/auth/login.html' })
-		.when('/datasets', { templateUrl: 'app/tables/datasets-table.html' })
-		.when('/datasetsRCUK', { templateUrl: 'app/tables/datasets-rcuk-table.html' })
-		.when('/dmp', { templateUrl: 'app/tables/dmp-table.html' })
-		.when('/nodmp', { templateUrl: 'app/tables/no-dmp-table.html' })
-		.when('/dmps', { templateUrl: 'app/tables/dmp-status-table.html' })
-		.when('/storage', { templateUrl: 'app/tables/storage-table.html' })
-		.when('/compliance', { templateUrl: 'app/tables/rcuk-access-compliance-table.html' })
-		.when('/data', { templateUrl: 'app/charts/data-access-chart.html' })
-		.when('/metadata', { templateUrl: 'app/charts/metadata-access-chart.html' })
+		.when('/datasets', { 
+			templateUrl: 'app/tables/datasets-table.html',
+			label: 'All datasets'
+		})
+		.when('/datasetsRCUK', { 
+			templateUrl: 'app/tables/datasets-rcuk-table.html',
+			label: 'RCUK datasets'
+		})
+		.when('/dmp', { 
+			templateUrl: 'app/tables/dmp-table.html',
+			label: 'Data management plans produced'
+		})
+		.when('/nodmp', { 
+			templateUrl: 'app/tables/no-dmp-table.html',
+			label: 'Projects without data management plans'
+		})
+		.when('/dmps', { 
+			templateUrl: 'app/tables/dmp-status-table.html',
+			label: 'All data management plans'
+			 })
+		.when('/storage', { 
+			templateUrl: 'app/tables/storage-table.html',
+			label: 'Storage'
+		})
+		.when('/compliance', { 
+			templateUrl: 'app/tables/rcuk-access-compliance-table.html',
+			label: 'RCUK access compliance'
+		})
+		.when('/data', { 
+			templateUrl: 'app/charts/data-access-chart.html',
+			label: 'Data downloads'
+		})
+		.when('/metadata', { 
+			templateUrl: 'app/charts/metadata-access-chart.html',
+			label: 'Metadata accesses'
+		})
 		// .when('/index.html', { templateUrl: 'app/components/statistic/statisticCompilationView.html' })
 		.otherwise({ templateUrl: 'app/messages/error.html' });
 	}])
@@ -98,9 +133,7 @@ app.config(['$routeProvider', '$locationProvider', function($routeProvider, $loc
   }]);
 app.controller("loginCtrl", ['$scope', '$location', '$rootScope', '$cookies', 'api', 'config', function($scope, $location, $rootScope, $cookies, api, config) {
     // optionally prefill for testing
-    $scope.institution = 'luve_u';
-    $scope.username = 'dladmin';
-    $scope.password = 'dladmin';
+    setDemoLoginCredentials();
 
     var username = $cookies.get('username');
     if (username)
@@ -183,12 +216,19 @@ app.controller("loginCtrl", ['$scope', '$location', '$rootScope', '$cookies', 'a
                 $cookies.remove(k);
            });
         
-        $scope.institution = '';
-        $scope.username = '';
-        $scope.password = '';
+        setDemoLoginCredentials();
+        // $scope.institution = '';
+        // $scope.username = '';
+        // $scope.password = '';
 
         $location.path("/");
     };
+
+    function setDemoLoginCredentials(){
+        $scope.institution = 'luve_u';
+        $scope.username = 'dladmin';
+        $scope.password = 'dladmin';
+    }
 
 }]);
 
@@ -682,13 +722,16 @@ var MetadataAccessChart = {
         });
     }
 }
-app.controller('filterCtrl', ['$scope', '$rootScope', '$interval', '$cookies', 'api', 'config', function($scope, $rootScope, $interval, $cookies, api, config) {
+app.controller('filterCtrl', ['$scope', '$rootScope', '$interval', '$cookies', 'breadcrumbs', 'api', 'config', function($scope, $rootScope, $interval, $cookies, breadcrumbs, api, config) {
     $scope.startDate = config.startDateDefault;
     $scope.endDate = config.endDateDefault;
     $scope.faculty = config.facultyDefault;
     $scope.facultyName = config.facultyMap[config.facultyDefault];
 
     getInstitutionFaculties();
+
+    $scope.breadcrumbs = breadcrumbs;
+
     //getDataCitePrefix();
 
     // $scope.$on("$locationChangeSuccess", function() {
@@ -3962,7 +4005,7 @@ app.controller('uiGridNoDmpTableCtrl', ['$scope', '$rootScope', '$http', 'api', 
     }
 
     api.uri.dmps({modifiable: true}).success(function (data) {
-        console.log('modifiables ', data);
+        // console.log('modifiables ', data);
         $scope.modifiable_column_constraints = {};
         for (var i in data){
             $scope.modifiable_column_constraints[data[i].c_name] = data[i].c_vals;
@@ -4130,7 +4173,7 @@ app.controller('uiGridRcukAccessComplianceTableCtrl', ['$scope', '$rootScope', '
     }
 
     api.uri.dmps({modifiable: true}).success(function (data) {
-        console.log('modifiables ', data);
+        // console.log('modifiables ', data);
         $scope.modifiable_column_constraints = {};
         for (var i in data){
             $scope.modifiable_column_constraints[data[i].c_name] = data[i].c_vals;

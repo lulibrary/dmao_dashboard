@@ -4,7 +4,7 @@ var app = angular.module('dmaoApp', ['ngRoute',
                             'ui.grid.cellNav', 'ui.grid.edit', 'ui.grid.rowEdit',
                             'ui.grid.selection', 'ui.grid.exporter',
                             'ui.grid.resizeColumns',
-                            'ngCookies'
+                            'ngCookies', 'ng-breadcrumbs'
 ]);
 
 // This is a compromise. Factory is used to create an Angular service with dependency injection 
@@ -44,4 +44,5 @@ app.run(['$cookies', '$location', '$rootScope', 'api', 'config', function($cooki
         // $location.path($cookies.get('newRoute'));
         $rootScope.loggedInUser = username;
     }    
+
 }]);

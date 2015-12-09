@@ -106,7 +106,7 @@ app.controller('uiGridRcukAccessComplianceTableCtrl', ['$scope', '$rootScope', '
     }
 
     api.uri.dmps({modifiable: true}).success(function (data) {
-        console.log('modifiables ', data);
+        // console.log('modifiables ', data);
         $scope.modifiable_column_constraints = {};
         for (var i in data){
             $scope.modifiable_column_constraints[data[i].c_name] = data[i].c_vals;

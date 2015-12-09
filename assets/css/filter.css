@@ -1,6 +1,7 @@
 .institutionName{
-    position: absolute;
     font-size: 150%;
-    top: 140px;
-    margin-left: 115px;
+    margin-top: 10px;
+    margin-right: 20px;
+    margin-bottom: 20px;
+    float: right;
 }

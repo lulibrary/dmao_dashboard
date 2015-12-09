@@ -1,8 +1,6 @@
 app.controller("loginCtrl", ['$scope', '$location', '$rootScope', '$cookies', 'api', 'config', function($scope, $location, $rootScope, $cookies, api, config) {
     // optionally prefill for testing
-    $scope.institution = 'luve_u';
-    $scope.username = 'dladmin';
-    $scope.password = 'dladmin';
+    setDemoLoginCredentials();
 
     var username = $cookies.get('username');
     if (username)
@@ -85,11 +83,18 @@ app.controller("loginCtrl", ['$scope', '$location', '$rootScope', '$cookies', 'a
                 $cookies.remove(k);
            });
         
-        $scope.institution = '';
-        $scope.username = '';
-        $scope.password = '';
+        setDemoLoginCredentials();
+        // $scope.institution = '';
+        // $scope.username = '';
+        // $scope.password = '';
 
         $location.path("/");
     };
+
+    function setDemoLoginCredentials(){
+        $scope.institution = 'luve_u';
+        $scope.username = 'dladmin';
+        $scope.password = 'dladmin';
+    }
 
 }]);

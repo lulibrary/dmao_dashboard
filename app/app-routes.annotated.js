@@ -4,19 +4,53 @@ app.config(['$routeProvider', '$locationProvider', function($routeProvider, $loc
 		//.when('/landing', { templateUrl: 'app/tables/storage-table.html' })
 		//.when('/landing', { templateUrl: 'app/tables/dmp-table.html' })
 		//.when('/landing', { templateUrl: 'app/statistics/statistic-compilation.html' })
-		.when('/', { templateUrl: 'app/public/landing.html' })
-		.when('/all', { templateUrl: 'app/public/landing.html' })
-		.when('/stats', { 	templateUrl: 'app/statistics/statistic-compilation.html'})
+		.when('/', { 
+			templateUrl: 'app/public/landing.html',
+			label: 'Home'
+		})
+		.when('/all', { 
+			templateUrl: 'app/public/landing.html',
+		})
+		.when('/stats', { 	
+			templateUrl: 'app/statistics/statistic-compilation.html',
+		})
 		.when('/login', { templateUrl: 'app/auth/login.html' })
-		.when('/datasets', { templateUrl: 'app/tables/datasets-table.html' })
-		.when('/datasetsRCUK', { templateUrl: 'app/tables/datasets-rcuk-table.html' })
-		.when('/dmp', { templateUrl: 'app/tables/dmp-table.html' })
-		.when('/nodmp', { templateUrl: 'app/tables/no-dmp-table.html' })
-		.when('/dmps', { templateUrl: 'app/tables/dmp-status-table.html' })
-		.when('/storage', { templateUrl: 'app/tables/storage-table.html' })
-		.when('/compliance', { templateUrl: 'app/tables/rcuk-access-compliance-table.html' })
-		.when('/data', { templateUrl: 'app/charts/data-access-chart.html' })
-		.when('/metadata', { templateUrl: 'app/charts/metadata-access-chart.html' })
+		.when('/datasets', { 
+			templateUrl: 'app/tables/datasets-table.html',
+			label: 'All datasets'
+		})
+		.when('/datasetsRCUK', { 
+			templateUrl: 'app/tables/datasets-rcuk-table.html',
+			label: 'RCUK datasets'
+		})
+		.when('/dmp', { 
+			templateUrl: 'app/tables/dmp-table.html',
+			label: 'Data management plans produced'
+		})
+		.when('/nodmp', { 
+			templateUrl: 'app/tables/no-dmp-table.html',
+			label: 'Projects without data management plans'
+		})
+		.when('/dmps', { 
+			templateUrl: 'app/tables/dmp-status-table.html',
+			label: 'All data management plans'
+			 })
+		.when('/storage', { 
+			templateUrl: 'app/tables/storage-table.html',
+			label: 'Storage'
+		})
+		.when('/compliance', { 
+			templateUrl: 'app/tables/rcuk-access-compliance-table.html',
+			label: 'RCUK access compliance'
+		})
+		.when('/data', { 
+			templateUrl: 'app/charts/data-access-chart.html',
+			label: 'Data downloads'
+		})
+		.when('/metadata', { 
+			templateUrl: 'app/charts/metadata-access-chart.html',
+			label: 'Metadata accesses'
+		})
 		// .when('/index.html', { templateUrl: 'app/components/statistic/statisticCompilationView.html' })
 		.otherwise({ templateUrl: 'app/messages/error.html' });
 	}])
