@@ -1,21 +1,13 @@
-app.controller('filterCtrl', ['$scope', '$rootScope', '$interval', '$cookies', 'breadcrumbs', 'api', 'config', function($scope, $rootScope, $interval, $cookies, breadcrumbs, api, config) {
+app.controller('filterCtrl', ['$scope', '$rootScope', '$interval', '$timeout', '$cookies', 'breadcrumbs', 'api', 'config', function($scope, $rootScope, $interval, $timeout, $cookies, breadcrumbs, api, config) {
     $scope.startDate = config.startDateDefault;
     $scope.endDate = config.endDateDefault;
     $scope.faculty = config.facultyDefault;
     $scope.facultyName = config.facultyMap[config.facultyDefault];
+    $scope.dummy = false;
 
     getInstitutionFaculties();
 
     $scope.breadcrumbs = breadcrumbs;
-
-    //getDataCitePrefix();
-
-    // $scope.$on("$locationChangeSuccess", function() {
-    //     // broadcastFilterChange("Route change");
-    //     // hack as broadcastFilterChange having no effect
-    //     // console.log('location changed');
-    //     // console.log('$scope.faculty ', $scope.faculty);
-    // });
 
     function broadcastFilterChange(msg){
         // console.log('msg ', msg);
@@ -50,7 +42,8 @@ app.controller('filterCtrl', ['$scope', '$rootScope', '$interval', '$cookies', '
             //     return; 
             // }
             //console.log('old startDate', oldValue, 'new ', newValue);
-            $scope.startDate = newValue;                
+            $scope.startDate = newValue;  
+            // config.startDate = newValue;              
             // broadcastDate("New date range");
         }); 
 
@@ -68,6 +61,7 @@ app.controller('filterCtrl', ['$scope', '$rootScope', '$interval', '$cookies', '
             // }    
             //console.log('old endDate', oldValue, 'new ', newValue);
             $scope.endDate = newValue;
+            // config.endDate = newValue;
         });  
 
     /****************
@@ -84,7 +78,8 @@ app.controller('filterCtrl', ['$scope', '$rootScope', '$interval', '$cookies', '
             // }    
             //console.log('old faculty', oldValue, 'new ', newValue);
             $scope.faculty = newValue;
-            $scope.facultyName = config.facultyMap[newValue];       
+            $scope.facultyName = config.facultyMap[newValue]; 
+            config.faculty =  newValue;  // important for route changes, which create new controllers!
         });     
 
     /****************

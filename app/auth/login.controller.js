@@ -18,20 +18,23 @@ app.controller("loginCtrl", function($scope, $location, $rootScope, $cookies, ap
 
     api.uri.o.institutions().then(function(response){
         //get all the institutions
-        //$scope.$apply(function(){
-            //console.log('response ', response);
-            $scope.institutions = response;
-            //console.log('Institutions ', $scope.institutions);
-        //});
+        //console.log('response ', response);
+        $scope.institutions = response;
+        //console.log('Institutions ', $scope.institutions);
 
+        //get name of institution for user
+        getInstitutionName();
+    });
+
+    function getInstitutionName(){
         //get name of institution for user
         angular.forEach($scope.institutions, function(data){
             if (data.inst_id == $scope.institution) {
-                //console.log('name ', data.name);
-                config.institutionName = data.name;
+                // console.log('name ', data.name);
+                $scope.institutionName = data.name;
             }
         });
-    });
+    }
 
     // $location.path($cookies.get('lastRoute'));
 
@@ -53,7 +56,8 @@ app.controller("loginCtrl", function($scope, $location, $rootScope, $cookies, ap
 
                     $cookies.put('username', $scope.username);
                     $cookies.put('institutionId', $scope.institution);
-                    $cookies.put('institutionName', config.institutionName);
+                    getInstitutionName();
+                    $cookies.put('institutionName', $scope.institutionName);
 
                     api.apiKey = response[0].api_key;
                     $cookies.put('apiKey', response[0].api_key);

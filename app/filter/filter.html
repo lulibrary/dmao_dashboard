@@ -20,7 +20,7 @@
 		<div id="reportrange" class="filterElement" style="background: #fff; cursor: pointer; padding: 5px 10px; border: 1px solid #ccc">
 			<i class="glyphicon glyphicon-calendar fa fa-calendar"></i>
 			<span></span> <b class="caret"></b></div>
-		<select class="form-control filterElement" ng-model="faculty">
+		<select id="facultySelect" class="form-control filterElement" ng-change ng-model="faculty">
 			<option ng-repeat="(key, value) in facultyMap" value="{{key}}">{{value}}</option>
 		</select>
 		<div id="searchFiltersButton" class="filterElement">

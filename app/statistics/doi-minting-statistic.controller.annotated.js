@@ -38,6 +38,10 @@ app.controller('doiMintingCtrl', ['$scope', '$rootScope', 'api', 'config', funct
         if (config.institutionId === 'birmingham'){
             prefix = '10.13140';
         }
+        if (config.institutionId === 'york'){
+            prefix = '10.15124';
+        }
+       
 
         //prefix
         var uri = 'http://search.datacite.org/api?q=*&wt=json&fq=prefix:' +
@@ -62,7 +66,7 @@ app.controller('doiMintingCtrl', ['$scope', '$rootScope', 'api', 'config', funct
                 var value = response.response.numFound;
                 //console.log('minted ', value);
                 // only update if dirty
-                if (value !== $scope.value) $scope.value = value;
+                if (value !== $scope.value) $scope.value = value.toLocaleString();
             });
         });
 

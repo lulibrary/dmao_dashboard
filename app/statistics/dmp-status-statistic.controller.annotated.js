@@ -32,7 +32,7 @@ app.controller('dmpStatusCtrl', ['$scope', '$rootScope', '$http', 'api', 'config
             // });
             $scope.$apply(function(){
                 var value = response[0].num_dmp_status;
-                if (value !== $scope.value) $scope.value = value;
+                if (value !== $scope.value) $scope.value = value.toLocaleString();
                 });
             });
         // }

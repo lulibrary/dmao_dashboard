@@ -23,7 +23,7 @@ app.controller('storageUnitCtrl', function($scope, $rootScope, $http, api, confi
                 var value = Math.round(total * 0.001024);
                 $scope.$apply(function(){
                     // only update if dirty
-                    if (value !== $scope.value) $scope.value = value;
+                    if (value !== $scope.value) $scope.value = value.toLocaleString();
                 });
             });
         // }

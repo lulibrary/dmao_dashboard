@@ -25,7 +25,7 @@ app.controller('rcukAccessComplianceCtrl', ['$scope', '$rootScope', '$http', 'ap
                     var value = 0;
                     if (count && count !== $scope.value) {
                         value = (count / response.length) * 100;
-                        $scope.value = Math.round(value);
+                        $scope.value = Math.round(value).toLocaleString();
                     }
                 });
             });

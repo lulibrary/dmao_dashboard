@@ -19,7 +19,7 @@ app.controller('noDmpProjectsCtrl', function($scope, $rootScope, $http, api, con
                 $scope.$apply(function(){
                     var value = response[0].num_project_dmps;
                     // only update if dirty
-                    if (value !== $scope.value) $scope.value = value;
+                    if (value !== $scope.value) $scope.value = value.toLocaleString();
                 });
             });
         // }

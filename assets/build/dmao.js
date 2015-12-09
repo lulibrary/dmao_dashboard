@@ -151,20 +151,23 @@ app.controller("loginCtrl", ['$scope', '$location', '$rootScope', '$cookies', 'a
 
     api.uri.o.institutions().then(function(response){
         //get all the institutions
-        //$scope.$apply(function(){
-            //console.log('response ', response);
-            $scope.institutions = response;
-            //console.log('Institutions ', $scope.institutions);
-        //});
+        //console.log('response ', response);
+        $scope.institutions = response;
+        //console.log('Institutions ', $scope.institutions);
 
+        //get name of institution for user
+        getInstitutionName();
+    });
+
+    function getInstitutionName(){
         //get name of institution for user
         angular.forEach($scope.institutions, function(data){
             if (data.inst_id == $scope.institution) {
-                //console.log('name ', data.name);
-                config.institutionName = data.name;
+                // console.log('name ', data.name);
+                $scope.institutionName = data.name;
             }
         });
-    });
+    }
 
     // $location.path($cookies.get('lastRoute'));
 
@@ -186,7 +189,8 @@ app.controller("loginCtrl", ['$scope', '$location', '$rootScope', '$cookies', 'a
 
                     $cookies.put('username', $scope.username);
                     $cookies.put('institutionId', $scope.institution);
-                    $cookies.put('institutionName', config.institutionName);
+                    getInstitutionName();
+                    $cookies.put('institutionName', $scope.institutionName);
 
                     api.apiKey = response[0].api_key;
                     $cookies.put('apiKey', response[0].api_key);
@@ -722,24 +726,16 @@ var MetadataAccessChart = {
         });
     }
 }
-app.controller('filterCtrl', ['$scope', '$rootScope', '$interval', '$cookies', 'breadcrumbs', 'api', 'config', function($scope, $rootScope, $interval, $cookies, breadcrumbs, api, config) {
+app.controller('filterCtrl', ['$scope', '$rootScope', '$interval', '$timeout', '$cookies', 'breadcrumbs', 'api', 'config', function($scope, $rootScope, $interval, $timeout, $cookies, breadcrumbs, api, config) {
     $scope.startDate = config.startDateDefault;
     $scope.endDate = config.endDateDefault;
     $scope.faculty = config.facultyDefault;
     $scope.facultyName = config.facultyMap[config.facultyDefault];
+    $scope.dummy = false;
 
     getInstitutionFaculties();
 
     $scope.breadcrumbs = breadcrumbs;
-
-    //getDataCitePrefix();
-
-    // $scope.$on("$locationChangeSuccess", function() {
-    //     // broadcastFilterChange("Route change");
-    //     // hack as broadcastFilterChange having no effect
-    //     // console.log('location changed');
-    //     // console.log('$scope.faculty ', $scope.faculty);
-    // });
 
     function broadcastFilterChange(msg){
         // console.log('msg ', msg);
@@ -774,7 +770,8 @@ app.controller('filterCtrl', ['$scope', '$rootScope', '$interval', '$cookies', '
             //     return; 
             // }
             //console.log('old startDate', oldValue, 'new ', newValue);
-            $scope.startDate = newValue;                
+            $scope.startDate = newValue;  
+            // config.startDate = newValue;              
             // broadcastDate("New date range");
         }); 
 
@@ -792,6 +789,7 @@ app.controller('filterCtrl', ['$scope', '$rootScope', '$interval', '$cookies', '
             // }    
             //console.log('old endDate', oldValue, 'new ', newValue);
             $scope.endDate = newValue;
+            // config.endDate = newValue;
         });  
 
     /****************
@@ -808,7 +806,8 @@ app.controller('filterCtrl', ['$scope', '$rootScope', '$interval', '$cookies', '
             // }    
             //console.log('old faculty', oldValue, 'new ', newValue);
             $scope.faculty = newValue;
-            $scope.facultyName = config.facultyMap[newValue];       
+            $scope.facultyName = config.facultyMap[newValue]; 
+            config.faculty =  newValue;  // important for route changes, which create new controllers!
         });     
 
     /****************
@@ -1415,11 +1414,10 @@ app.controller('aggregateStatisticCtrl', ['$scope', '$rootScope', '$http', 'api'
     $scope.data = {};
     $scope.data.institutions = false;
 
-
     update({
                 //startDate:      config.startDate,
                 //endDate:        config.endDate,
-            });
+    });
 
     function update(message){
         // if(config.inView.datasetsRCUKCtrl){        
@@ -1440,44 +1438,44 @@ app.controller('aggregateStatisticCtrl', ['$scope', '$rootScope', '$http', 'api'
         api.uri.public('o_count_institutions').then(function(response) {
             //$scope.$apply(function(){
                 $scope.data.institutions = true;
-                var value = response[0].count.toLocaleString();
+                var value = response[0].count;
                 // only update if dirty
-                if (value !== $scope.count_institutions) $scope.count_institutions = value;
+                if (value !== $scope.count_institutions) $scope.count_institutions = value.toLocaleString();
             //});
         });
         api.uri.public('o_count_faculties').then(function(response) {
             //$scope.$apply(function(){
-                var value = response[0].count.toLocaleString();
+                var value = response[0].count;
                 // only update if dirty
-                if (value !== $scope.count_faculties) $scope.count_faculties = value;
+                if (value !== $scope.count_faculties) $scope.count_faculties = value.toLocaleString();
             //});
         });
         api.uri.public('o_count_departments').then(function(response) {
             //$scope.$apply(function(){
-                var value = response[0].count.toLocaleString();
+                var value = response[0].count;
                 // only update if dirty
-                if (value !== $scope.count_departments) $scope.count_departments = value;
+                if (value !== $scope.count_departments) $scope.count_departments = value.toLocaleString();
             //});
         });
         api.uri.public('o_count_dmps').then(function(response) {
             //$scope.$apply(function(){
-                var value = response[0].count.toLocaleString();
+                var value = response[0].count;
                 // only update if dirty
-                if (value !== $scope.count_dmps) $scope.count_dmps = value;
+                if (value !== $scope.count_dmps) $scope.count_dmps = value.toLocaleString();
             //});
         });
         api.uri.public('o_count_publications').then(function(response) {
             //$scope.$apply(function(){
-                var value = response[0].count.toLocaleString();
+                var value = response[0].count;
                 // only update if dirty
-                if (value !== $scope.count_publications) $scope.count_publications = value;
+                if (value !== $scope.count_publications) $scope.count_publications = value.toLocaleString();
             //});
         });
         api.uri.public('o_count_datasets').then(function(response) {
             //$scope.$apply(function(){
-                var value = response[0].count.toLocaleString();
+                var value = response[0].count;
                 // only update if dirty
-                if (value !== $scope.count_datasets) $scope.count_datasets = value;
+                if (value !== $scope.count_datasets) $scope.count_datasets = value.toLocaleString();
             //});
         });
         api.uri.public('o_count_dataset_accesses').then(function(response) {
@@ -1496,6 +1494,7 @@ app.controller('aggregateStatisticCtrl', ['$scope', '$rootScope', '$http', 'api'
     }
 
     $scope.filterEventListener = $rootScope.$on("FilterEvent", function (event, message) {
+        console.log("update firing");
         update(message);
     });  
 
@@ -1572,7 +1571,7 @@ app.controller('datasetsRCUKCtrl', ['$scope', '$rootScope', '$http', 'api', 'con
                 $scope.$apply(function(){
                     var value = response[0].num_datasets;
                     // only update if dirty
-                    if (value !== $scope.value) $scope.value = value;
+                    if (value !== $scope.value) $scope.value = value.toLocaleString();
                 });
             });
         // }
@@ -1615,7 +1614,7 @@ app.controller('datasetsCtrl', ['$scope', '$rootScope', '$http', 'api', 'config'
                     var oldValue = $scope.value;
                     var value = response[0].num_datasets;
                     // only update if dirty
-                    if (value !== $scope.value) $scope.value = value;
+                    if (value !== $scope.value) $scope.value = value.toLocaleString();
                     //console.log('after datasetsCtrl update ', 'old ', oldValue, 'new ', $scope.value);
                 });
             });
@@ -1654,7 +1653,7 @@ app.controller('dmpsCreatedCtrl', ['$scope', '$rootScope', '$http', 'api', 'conf
             $scope.$apply(function(){
                 var value = response[0].num_project_dmps;
                 // only update if dirty
-                if (value !== $scope.value) $scope.value = value;
+                if (value !== $scope.value) $scope.value = value.toLocaleString();
             });
         });
     }
@@ -1702,7 +1701,7 @@ app.controller('dmpStatusCtrl', ['$scope', '$rootScope', '$http', 'api', 'config
             // });
             $scope.$apply(function(){
                 var value = response[0].num_dmp_status;
-                if (value !== $scope.value) $scope.value = value;
+                if (value !== $scope.value) $scope.value = value.toLocaleString();
                 });
             });
         // }
@@ -1757,6 +1756,10 @@ app.controller('doiMintingCtrl', ['$scope', '$rootScope', 'api', 'config', funct
         if (config.institutionId === 'birmingham'){
             prefix = '10.13140';
         }
+        if (config.institutionId === 'york'){
+            prefix = '10.15124';
+        }
+       
 
         //prefix
         var uri = 'http://search.datacite.org/api?q=*&wt=json&fq=prefix:' +
@@ -1781,7 +1784,7 @@ app.controller('doiMintingCtrl', ['$scope', '$rootScope', 'api', 'config', funct
                 var value = response.response.numFound;
                 //console.log('minted ', value);
                 // only update if dirty
-                if (value !== $scope.value) $scope.value = value;
+                if (value !== $scope.value) $scope.value = value.toLocaleString();
             });
         });
 
@@ -1825,7 +1828,7 @@ app.controller('noDmpProjectsCtrl', ['$scope', '$rootScope', '$http', 'api', 'co
                 $scope.$apply(function(){
                     var value = response[0].num_project_dmps;
                     // only update if dirty
-                    if (value !== $scope.value) $scope.value = value;
+                    if (value !== $scope.value) $scope.value = value.toLocaleString();
                 });
             });
         // }
@@ -1867,7 +1870,7 @@ app.controller('rcukAccessComplianceCtrl', ['$scope', '$rootScope', '$http', 'ap
                     var value = 0;
                     if (count && count !== $scope.value) {
                         value = (count / response.length) * 100;
-                        $scope.value = Math.round(value);
+                        $scope.value = Math.round(value).toLocaleString();
                     }
                 });
             });
@@ -1926,7 +1929,7 @@ app.controller('storageCostCtrl', ['$scope', '$rootScope', '$http', 'api', 'conf
                 var value = Math.round(total);
                 $scope.$apply(function(){
                     // only update if dirty
-                    if (value !== $scope.value) $scope.value = value;
+                    if (value !== $scope.value) $scope.value = value.toLocaleString();
                 });
             });
         // }
@@ -1966,7 +1969,7 @@ app.controller('storageUnitCtrl', ['$scope', '$rootScope', '$http', 'api', 'conf
                 var value = Math.round(total * 0.001024);
                 $scope.$apply(function(){
                     // only update if dirty
-                    if (value !== $scope.value) $scope.value = value;
+                    if (value !== $scope.value) $scope.value = value.toLocaleString();
                 });
             });
         // }
