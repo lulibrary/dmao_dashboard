@@ -51,7 +51,7 @@ var ApiService = {
     uri: {
         addParams: function(uri, params){
             for (key in params) {
-                if (params[key]) {
+                if (params[key] || params[key] === false) {
                     uri.addSearch(key, params[key]);
                 }
             }                    
@@ -151,7 +151,7 @@ var ApiService = {
                 if (params) {
                     //uri = this.addParams(uri, params);
                     uri = ApiService.uri.addParams(uri, params);
-                    console.log('uri ', uri);
+                    // console.log('uri ', uri);
                 }
                 return $.ajax(
                     {
@@ -159,13 +159,13 @@ var ApiService = {
                         type: 'PUT',
                         success: function(data, textStatus, jqXHR) {
                             //alert('Thing updated successfully Status: '+textStatus); },
-                            console.log('Updated ');
-                            console.log('Data ', data);
+                            // console.log('Updated ');
+                            // console.log('Data ', data);
                         },
                         error: function(jqXHR, textStatus, errorThrown) {
-                            console.log('jqXHR ', jqXHR);
-                            console.log('textStatus ', textStatus);
-                            console.log('Error ', errorThrown);
+                            // console.log('jqXHR ', jqXHR);
+                            // console.log('textStatus ', textStatus);
+                            // console.log('Error ', errorThrown);
                             //alert(errorThrown);
                         }
                     });
@@ -177,7 +177,7 @@ var ApiService = {
                 if (params) {
                     //uri = this.addParams(uri, params);
                     uri = ApiService.uri.addParams(uri, params);
-                    console.log('uri ', uri);
+                    // console.log('uri ', uri);
                 }
                 return $.ajax(
                     {
@@ -185,13 +185,13 @@ var ApiService = {
                         type: 'PUT',
                         success: function(data, textStatus, jqXHR) {
                             //alert('Thing updated successfully Status: '+textStatus); },
-                            console.log('Updated ');
-                            console.log('Data ', data);
+                            // console.log('Updated ');
+                            // console.log('Data ', data);
                         },
                         error: function(jqXHR, textStatus, errorThrown) {
-                            console.log('jqXHR ', jqXHR);
-                            console.log('textStatus ', textStatus);
-                            console.log('Error ', errorThrown);
+                            // console.log('jqXHR ', jqXHR);
+                            // console.log('textStatus ', textStatus);
+                            // console.log('Error ', errorThrown);
                             //alert(errorThrown);
                         }
                     });

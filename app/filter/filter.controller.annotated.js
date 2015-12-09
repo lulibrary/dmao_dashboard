@@ -1,4 +1,4 @@
-app.controller('filterCtrl', ['$scope', '$rootScope', '$interval', 'api', 'config', function($scope, $rootScope, $interval, api, config) {
+app.controller('filterCtrl', ['$scope', '$rootScope', '$interval', '$cookies', 'api', 'config', function($scope, $rootScope, $interval, $cookies, api, config) {
     $scope.startDate = config.startDateDefault;
     $scope.endDate = config.endDateDefault;
     $scope.faculty = config.facultyDefault;
@@ -7,16 +7,23 @@ app.controller('filterCtrl', ['$scope', '$rootScope', '$interval', 'api', 'confi
     getInstitutionFaculties();
     //getDataCitePrefix();
 
-     function broadcastFilterChange(msg){
-        //console.log(msg);
-        //console.log('$scope.startDate: ', $scope.startDate, '$scope.endDate: ', $scope.endDate, '$scope.faculty: ' , $scope.faculty);
+    // $scope.$on("$locationChangeSuccess", function() {
+    //     // broadcastFilterChange("Route change");
+    //     // hack as broadcastFilterChange having no effect
+    //     // console.log('location changed');
+    //     // console.log('$scope.faculty ', $scope.faculty);
+    // });
+
+    function broadcastFilterChange(msg){
+        // console.log('msg ', msg);
+        // console.log('$scope.startDate: ', $scope.startDate, '$scope.endDate: ', $scope.endDate, '$scope.faculty: ' , $scope.faculty);
         $rootScope.$broadcast("FilterEvent", {  
                                                     msg: msg,
                                                     startDate: $scope.startDate,
                                                     endDate: $scope.endDate,
                                                     faculty: $scope.faculty
                                                     }
-            );       
+            );   
     }
 
     function update() {
@@ -24,8 +31,8 @@ app.controller('filterCtrl', ['$scope', '$rootScope', '$interval', 'api', 'confi
         // console.log("TIMED UPDATE at " + Date());
         // //console.table(config);
     }
-    var timeout = config.updateDelay;
-    $interval(update, timeout);
+    // var timeout = config.updateDelay;
+    // $interval(update, timeout);
 
     /****************
         startDate
@@ -154,6 +161,6 @@ app.controller('filterCtrl', ['$scope', '$rootScope', '$interval', 'api', 'confi
         });
     }
 
-    $scope.institutionName = config.institutionName;
+    $scope.institutionName = $cookies.get('institutionName');
 
 }]);

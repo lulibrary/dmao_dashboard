@@ -18,20 +18,12 @@ app.controller('storageCostCtrl', function($scope, $rootScope, $http, api, confi
                         };
             
             api.uri.storage(params).then(function(response) {
+                var total = 0;
+                for(var i=0;i<response.length;++i) {            
+                    total += response[i].expected_storage_cost;
+                }
+                var value = Math.round(total);
                 $scope.$apply(function(){
-                    var total = 0;
-                    var previous_project_id = -1;
-                    // if (response.length){
-                    //     $scope.currency = 
-                    // }
-                    for(i=0;i<response.length;++i) {            
-                        if (response[i].project_id != previous_project_id) {
-                            total += response[i].expected_storage_cost;
-                        }
-                        previous_project_id = response[i].project_id;
-                    }
-                    var value = Math.round(total);
-
                     // only update if dirty
                     if (value !== $scope.value) $scope.value = value;
                 });

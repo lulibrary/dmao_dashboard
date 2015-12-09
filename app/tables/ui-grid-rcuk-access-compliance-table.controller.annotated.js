@@ -64,6 +64,13 @@ app.controller('uiGridRcukAccessComplianceTableCtrl', ['$scope', '$rootScope', '
             enableFiltering: false
         },
         {
+            name: 'rcuk_funder_compliant',
+            displayName: 'RCUK funder compliant',
+            width: 190,
+            enableCellEdit: false,
+            enableFiltering: false
+        },        
+        {
             name: 'funder_name',
             displayName: 'Funder name',
             width: 110,

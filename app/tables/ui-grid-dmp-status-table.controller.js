@@ -94,7 +94,7 @@ app.controller('uiGridDmpStatusTableCtrl', function($scope, $rootScope, $http, a
             sd:                 message.startDate,
             ed:                 message.endDate,
             faculty:            message.faculty,
-            has_dmp:            'true'
+            // has_dmp:            true
         };
         api.uri.dmpStatus(params).then(function(data){
             //console.log('Datasets ' + uri);
@@ -106,7 +106,7 @@ app.controller('uiGridDmpStatusTableCtrl', function($scope, $rootScope, $http, a
     }
 
     api.uri.dmps({modifiable: true}).success(function (data) {
-        console.log('modifiables ', data);
+        // console.log('modifiables ', data);
         $scope.modifiable_column_constraints = {};
         for (var i in data){
             $scope.modifiable_column_constraints[data[i].c_name] = data[i].c_vals;
@@ -118,67 +118,7 @@ app.controller('uiGridDmpStatusTableCtrl', function($scope, $rootScope, $http, a
         //set gridApi on scope
         $scope.gridApi = gridApi;
         gridApi.rowEdit.on.saveRow($scope, $scope.saveRow);
-        //gridApi.edit.on.afterCellEdit($scope, function(rowEntity, colDef, newValue, oldValue) {
-            //Do your REST call here via $http.get or $http.post
-            //if (newValue != oldValue){
-            //    var params = {
-            //        project_id: rowEntity.project_id,
-            //        has_dmp_been_reviewed: rowEntity.has_dmp_been_reviewed
-            //    };
-            //    api.uri.put.dmps(params);
-            //}
-                // assumes a particular cell!
-                //response = api.uri.project(rowEntity);
-                //alert("POST (mock) to " + response);
-                //console.log('Going to update ', rowEntity); //
-            //curl -X PUT -s 'http://lib-dmao.lancs.ac.uk:8090/dmaonline/v0.3/c/d_lancaster/f8071b41d994e4557591bb3d3a148707820d7ee1e0310196e70ae8aa/project_dmps_view_put?project_id=1&has_dmp_been_reviewed=yes'
-            //var request = 'http://lib-dmao.lancs.ac.uk:8090/dmaonline/v0.3/c/d_lancaster/f8071b41d994e4557591bb3d3a148707820d7ee1e0310196e70ae8aa/project_dmps_view_put?';
-            //var data = {
-            //  project_id: rowEntity.project_id,
-            //  has_dmp_been_reviewed: newValue
-            //};
-            //request += 'project_id=' + rowEntity.project_id;
-            //request += '&has_dmp_been_reviewed=yes';
-            //console.log(request, data);
-
-            //console.log(api.getKey('d_lancaster', 'letmein'));
-
-            //response = api.uri.put.dmps(data);
-            //console.log('response ' , response);
-
-
-            //$http.put(request + data).
-            //    success(function (data, status, headers) {
-            //        console.log('SUCCESS', status, data);
-            //    })
-            //    .error(function (data, status, header, config) {
-            //        console.log('FAILURE', status, data);
-            //    });
-            //Alert to show what info about the edit is available
-            //alert('Project ' + rowEntity.project_name + '. You changed ' +
-            //' column ' + colDef.name + ' from ' + oldValue + ' to ' + newValue + '.');
-        //});
     };
-
-
-    // saving begin
-    //$scope.saveRow = function( rowEntity ) {
-    //    //rowEntity.expected_storage = abs(rowEntity.expected_storage) // prevent negative
-    //    console.log('Look ma I is faking a save!', rowEntity);
-    //    // create a fake promise - normally you'd use the promise returned by $http or $resource
-    //    var promise = $q.defer();
-    //
-    //    $scope.gridApi.rowEdit.setSavePromise( rowEntity, promise.promise );
-    //
-    //    // fake a delay of 3 seconds whilst the save occurs, return error if length <=0
-    //    $interval( function() {
-    //        if (rowEntity.has_dmp_been_reviewed.length > 0){ // need to use constraints
-    //            promise.reject();
-    //                    } else {
-    //            promise.resolve();
-    //        }
-    //    }, 3000, 1);
-    //};
 
     $scope.saveRow = function( rowEntity ) {
 
@@ -192,7 +132,7 @@ app.controller('uiGridDmpStatusTableCtrl', function($scope, $rootScope, $http, a
         // create a fake promise - normally you'd use the promise returned by $http or $resource
         //var promise = $q.defer();
         var promise = api.uri.put.dmps(params);
-        console.log('promise ', promise);
+        // console.log('promise ', promise);
         //Cannot use promise.promise with exernal jquery api call
         $scope.gridApi.rowEdit.setSavePromise( rowEntity, promise );
 
@@ -200,7 +140,7 @@ app.controller('uiGridDmpStatusTableCtrl', function($scope, $rootScope, $http, a
         //$interval( function() {
             //Cannot use promise.reject() and promise.resolve() with exernal jquery api call
             promise.success(function(data){
-                console.log('promise SUCCESS');
+                // console.log('promise SUCCESS');
 
                 //needed as promise is not an angular promise and there is no promise.resolve()
                 $scope.gridApi.rowEdit.flushDirtyRows($scope.gridApi.grid);

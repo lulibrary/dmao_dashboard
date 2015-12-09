@@ -25,7 +25,7 @@ app.factory('ui', function() {
     return UiService;
 });
 
-app.run(['$cookies', 'api', 'config', function($cookies, api, config) {
+app.run(['$cookies', '$location', '$rootScope', 'api', 'config', function($cookies, $location, $rootScope, api, config) {
     var apiKey = $cookies.get('apiKey');
     //console.log('app.run apiKey ', apiKey);
     if (apiKey)
@@ -36,8 +36,15 @@ app.run(['$cookies', 'api', 'config', function($cookies, api, config) {
     config.institutionId = $cookies.get('institutionId');
     //console.log('app.run institutionId ', config.institutionId);
 
+    // console.log('on startup setting path to ', $cookies.get('savedRoute'));
+    // $location.path($cookies.get('savedRoute'));
+    var username = $cookies.get('username');
+    if (username) {
+        // console.log('trying to change route ');
+        // $location.path($cookies.get('newRoute'));
+        $rootScope.loggedInUser = username;
+    }    
 }]);
-
 app.config(['$routeProvider', '$locationProvider', function($routeProvider, $locationProvider) {
 	$routeProvider
 		.when('/landing', { templateUrl: 'app/public/landing.html' })
@@ -60,53 +67,35 @@ app.config(['$routeProvider', '$locationProvider', function($routeProvider, $loc
 		// .when('/index.html', { templateUrl: 'app/components/statistic/statisticCompilationView.html' })
 		.otherwise({ templateUrl: 'app/messages/error.html' });
 	}])
-    // use the HTML5 History API to get clean URLs and remove the hashtag from the URL
-    // $locationProvider.html5Mode(true);
-.run(['$rootScope', '$location', function ($rootScope, $location) {
-  $rootScope.$on('$routeChangeStart', function (event, newUrl, oldUrl) {
-        // console.log(newUrl);
-        // console.log(oldUrl);
+
+.run(['$rootScope', '$location', '$cookies', function ($rootScope, $location, $cookies) {
+	// console.log('routes startup');
+
+	if ($rootScope.loggedInUser) {
+		// console.log('trying to change route ');
+		$location.path($cookies.get('newRoute'));
+	}
+
+	$rootScope.$on('$routeChangeStart', function (event, newUrl, oldUrl) {
+       
         if ($rootScope.loggedInUser) {
         	// console.log('logged in');
-        	if (newUrl.templateUrl === 'app/public/landing.html'){
+        	if (newUrl.$$route.originalPath === '/'){
         		// console.log('attempting public page');
-        		$location.path('/stats');
+        		$location.path('/stats');    		
+        	}
+        	// $cookies.put('oldRoute', oldUrl.$$route.originalPath);
+        	$cookies.put('newRoute', newUrl.$$route.originalPath);
+        } 
+        // keep on public page
+        else{
+        	if (newUrl.$$route.originalPath !== '/'){
+        		$location.path('/');
         	}
         }
       }
     );
   }]);
-
-	// .run(function($rootScope, $location, $cookies) {
-	// 	$rootScope.$on( "$routeChangeStart", function(event, next, current) {
-	// 		//console.log('apikey $routeChangeStart1', ApiService.apikey);
-	// 		$cookies.put('lastRoute', $location.path());
-
-	// 		//console.log('Current route name: ' + $location.path());
-	// 		//console.log('$rootScope.loggedInUser ', $rootScope.loggedInUser);
-
-	// 		if (!$cookies.get('username')){
-	// 		//if ($rootScope.loggedInUser == null) {
-	// 			// no logged user, redirect to /login
-	// 			//if ($location.path() === '/landing' ||
-	// 			//	next.templateUrl === 'app/auth/login.html') {
-	// 			//} else {
-	// 			//	$location.path("/landing");
-	// 			//}
-	// 			$location.path("/");
-	// 		} else {
-	// 			if (next.templateUrl === 'app/public/landing.html') {
-	// 				$location.path('/stats'));
-	// 			} 
-	// 			// else {
-	// 				// $location.path($cookies.get('lastRoute'));
-	// 			// }
-	// 		}
-	// 		//console.log('apikey $routeChangeStart2', ApiService.apikey);
-	// 	});
-	// 	//console.log('apikey $routeChangeStart3', ApiService.apikey);
-	// });
-
 app.controller("loginCtrl", ['$scope', '$location', '$rootScope', '$cookies', 'api', 'config', function($scope, $location, $rootScope, $cookies, api, config) {
     // optionally prefill for testing
     $scope.institution = 'luve_u';
@@ -144,9 +133,9 @@ app.controller("loginCtrl", ['$scope', '$location', '$rootScope', '$cookies', 'a
         });
     });
 
+    // $location.path($cookies.get('lastRoute'));
+
     //api.clearKey();
-
-
 
     $scope.login = function() {
 
@@ -164,6 +153,7 @@ app.controller("loginCtrl", ['$scope', '$location', '$rootScope', '$cookies', 'a
 
                     $cookies.put('username', $scope.username);
                     $cookies.put('institutionId', $scope.institution);
+                    $cookies.put('institutionName', config.institutionName);
 
                     api.apiKey = response[0].api_key;
                     $cookies.put('apiKey', response[0].api_key);
@@ -692,7 +682,7 @@ var MetadataAccessChart = {
         });
     }
 }
-app.controller('filterCtrl', ['$scope', '$rootScope', '$interval', 'api', 'config', function($scope, $rootScope, $interval, api, config) {
+app.controller('filterCtrl', ['$scope', '$rootScope', '$interval', '$cookies', 'api', 'config', function($scope, $rootScope, $interval, $cookies, api, config) {
     $scope.startDate = config.startDateDefault;
     $scope.endDate = config.endDateDefault;
     $scope.faculty = config.facultyDefault;
@@ -701,16 +691,23 @@ app.controller('filterCtrl', ['$scope', '$rootScope', '$interval', 'api', 'confi
     getInstitutionFaculties();
     //getDataCitePrefix();
 
-     function broadcastFilterChange(msg){
-        //console.log(msg);
-        //console.log('$scope.startDate: ', $scope.startDate, '$scope.endDate: ', $scope.endDate, '$scope.faculty: ' , $scope.faculty);
+    // $scope.$on("$locationChangeSuccess", function() {
+    //     // broadcastFilterChange("Route change");
+    //     // hack as broadcastFilterChange having no effect
+    //     // console.log('location changed');
+    //     // console.log('$scope.faculty ', $scope.faculty);
+    // });
+
+    function broadcastFilterChange(msg){
+        // console.log('msg ', msg);
+        // console.log('$scope.startDate: ', $scope.startDate, '$scope.endDate: ', $scope.endDate, '$scope.faculty: ' , $scope.faculty);
         $rootScope.$broadcast("FilterEvent", {  
                                                     msg: msg,
                                                     startDate: $scope.startDate,
                                                     endDate: $scope.endDate,
                                                     faculty: $scope.faculty
                                                     }
-            );       
+            );   
     }
 
     function update() {
@@ -718,8 +715,8 @@ app.controller('filterCtrl', ['$scope', '$rootScope', '$interval', 'api', 'confi
         // console.log("TIMED UPDATE at " + Date());
         // //console.table(config);
     }
-    var timeout = config.updateDelay;
-    $interval(update, timeout);
+    // var timeout = config.updateDelay;
+    // $interval(update, timeout);
 
     /****************
         startDate
@@ -848,7 +845,7 @@ app.controller('filterCtrl', ['$scope', '$rootScope', '$interval', 'api', 'confi
         });
     }
 
-    $scope.institutionName = config.institutionName;
+    $scope.institutionName = $cookies.get('institutionName');
 
 }]);
 
@@ -1080,7 +1077,7 @@ var ApiService = {
     uri: {
         addParams: function(uri, params){
             for (key in params) {
-                if (params[key]) {
+                if (params[key] || params[key] === false) {
                     uri.addSearch(key, params[key]);
                 }
             }                    
@@ -1180,7 +1177,7 @@ var ApiService = {
                 if (params) {
                     //uri = this.addParams(uri, params);
                     uri = ApiService.uri.addParams(uri, params);
-                    console.log('uri ', uri);
+                    // console.log('uri ', uri);
                 }
                 return $.ajax(
                     {
@@ -1188,13 +1185,13 @@ var ApiService = {
                         type: 'PUT',
                         success: function(data, textStatus, jqXHR) {
                             //alert('Thing updated successfully Status: '+textStatus); },
-                            console.log('Updated ');
-                            console.log('Data ', data);
+                            // console.log('Updated ');
+                            // console.log('Data ', data);
                         },
                         error: function(jqXHR, textStatus, errorThrown) {
-                            console.log('jqXHR ', jqXHR);
-                            console.log('textStatus ', textStatus);
-                            console.log('Error ', errorThrown);
+                            // console.log('jqXHR ', jqXHR);
+                            // console.log('textStatus ', textStatus);
+                            // console.log('Error ', errorThrown);
                             //alert(errorThrown);
                         }
                     });
@@ -1206,7 +1203,7 @@ var ApiService = {
                 if (params) {
                     //uri = this.addParams(uri, params);
                     uri = ApiService.uri.addParams(uri, params);
-                    console.log('uri ', uri);
+                    // console.log('uri ', uri);
                 }
                 return $.ajax(
                     {
@@ -1214,13 +1211,13 @@ var ApiService = {
                         type: 'PUT',
                         success: function(data, textStatus, jqXHR) {
                             //alert('Thing updated successfully Status: '+textStatus); },
-                            console.log('Updated ');
-                            console.log('Data ', data);
+                            // console.log('Updated ');
+                            // console.log('Data ', data);
                         },
                         error: function(jqXHR, textStatus, errorThrown) {
-                            console.log('jqXHR ', jqXHR);
-                            console.log('textStatus ', textStatus);
-                            console.log('Error ', errorThrown);
+                            // console.log('jqXHR ', jqXHR);
+                            // console.log('textStatus ', textStatus);
+                            // console.log('Error ', errorThrown);
                             //alert(errorThrown);
                         }
                     });
@@ -1477,7 +1474,7 @@ app.controller('dataCtrl', ['$scope', '$rootScope', '$http', 'api', 'config', fu
                         sd:         message.startDate,
                         ed:         message.endDate,
                         faculty:    message.faculty,
-                        summary_totals:    'true'
+                        summary_totals:    true
                     };
 
         api.uri.datasetAccess(params).then(function(response) {
@@ -1527,7 +1524,6 @@ app.controller('datasetsRCUKCtrl', ['$scope', '$rootScope', '$http', 'api', 'con
                             filter:     'rcuk',
                             count:      true
                         };
-
             //console.log('before datasetsRCUKCtrl request');
             api.uri.datasets(params).then(function(response) {
                 $scope.$apply(function(){
@@ -1880,20 +1876,12 @@ app.controller('storageCostCtrl', ['$scope', '$rootScope', '$http', 'api', 'conf
                         };
             
             api.uri.storage(params).then(function(response) {
+                var total = 0;
+                for(var i=0;i<response.length;++i) {            
+                    total += response[i].expected_storage_cost;
+                }
+                var value = Math.round(total);
                 $scope.$apply(function(){
-                    var total = 0;
-                    var previous_project_id = -1;
-                    // if (response.length){
-                    //     $scope.currency = 
-                    // }
-                    for(i=0;i<response.length;++i) {            
-                        if (response[i].project_id != previous_project_id) {
-                            total += response[i].expected_storage_cost;
-                        }
-                        previous_project_id = response[i].project_id;
-                    }
-                    var value = Math.round(total);
-
                     // only update if dirty
                     if (value !== $scope.value) $scope.value = value;
                 });
@@ -1928,17 +1916,12 @@ app.controller('storageUnitCtrl', ['$scope', '$rootScope', '$http', 'api', 'conf
                         };
             
             api.uri.storage(params).then(function(response) {
+                var total = 0;
+                for(var i=0;i<response.length;++i) {            
+                    total += response[i].expected_storage;
+                }
+                var value = Math.round(total * 0.001024);
                 $scope.$apply(function(){
-                    var total = 0;
-                    var previous_project_id = -1;
-                    for(i=0;i<response.length;++i) {            
-                        if (response[i].project_id != previous_project_id) {
-                            total += response[i].expected_storage;
-                        }
-                        previous_project_id = response[i].project_id;
-                    }
-                    var value = Math.round(total * 0.001024);
-
                     // only update if dirty
                     if (value !== $scope.value) $scope.value = value;
                 });
@@ -2820,8 +2803,8 @@ app.controller('rcukAccessComplianceTableCtrl', ['$scope', '$rootScope', '$http'
                     };                
         api.uri.rcukAccessCompliance(params).then(function(data){
             //console.log('Datasets ' + uri);
-            RcukAccessComplianceTable.init(data);    
-            // console.log(Datasets.init(');        
+            RcukAccessComplianceTable.init(data);  
+            // console.log(Datasets.init('); 
         });
     }
 
@@ -3196,9 +3179,9 @@ app.controller('uiGridDatasetsRcukTableCtrl', ['$scope', '$rootScope', '$http', 
     function update(message){
         var params = {
             date:               'project_start',
+            filter:             'rcuk',
             sd:                 message.startDate,
             ed:                 message.endDate,
-            filter:             'rcuk',
             faculty:            message.faculty,
         };
         api.uri.datasets(params).then(function(data){
@@ -3529,7 +3512,7 @@ app.controller('uiGridDmpStatusTableCtrl', ['$scope', '$rootScope', '$http', 'ap
             sd:                 message.startDate,
             ed:                 message.endDate,
             faculty:            message.faculty,
-            has_dmp:            'true'
+            // has_dmp:            true
         };
         api.uri.dmpStatus(params).then(function(data){
             //console.log('Datasets ' + uri);
@@ -3541,7 +3524,7 @@ app.controller('uiGridDmpStatusTableCtrl', ['$scope', '$rootScope', '$http', 'ap
     }
 
     api.uri.dmps({modifiable: true}).success(function (data) {
-        console.log('modifiables ', data);
+        // console.log('modifiables ', data);
         $scope.modifiable_column_constraints = {};
         for (var i in data){
             $scope.modifiable_column_constraints[data[i].c_name] = data[i].c_vals;
@@ -3553,67 +3536,7 @@ app.controller('uiGridDmpStatusTableCtrl', ['$scope', '$rootScope', '$http', 'ap
         //set gridApi on scope
         $scope.gridApi = gridApi;
         gridApi.rowEdit.on.saveRow($scope, $scope.saveRow);
-        //gridApi.edit.on.afterCellEdit($scope, function(rowEntity, colDef, newValue, oldValue) {
-            //Do your REST call here via $http.get or $http.post
-            //if (newValue != oldValue){
-            //    var params = {
-            //        project_id: rowEntity.project_id,
-            //        has_dmp_been_reviewed: rowEntity.has_dmp_been_reviewed
-            //    };
-            //    api.uri.put.dmps(params);
-            //}
-                // assumes a particular cell!
-                //response = api.uri.project(rowEntity);
-                //alert("POST (mock) to " + response);
-                //console.log('Going to update ', rowEntity); //
-            //curl -X PUT -s 'http://lib-dmao.lancs.ac.uk:8090/dmaonline/v0.3/c/d_lancaster/f8071b41d994e4557591bb3d3a148707820d7ee1e0310196e70ae8aa/project_dmps_view_put?project_id=1&has_dmp_been_reviewed=yes'
-            //var request = 'http://lib-dmao.lancs.ac.uk:8090/dmaonline/v0.3/c/d_lancaster/f8071b41d994e4557591bb3d3a148707820d7ee1e0310196e70ae8aa/project_dmps_view_put?';
-            //var data = {
-            //  project_id: rowEntity.project_id,
-            //  has_dmp_been_reviewed: newValue
-            //};
-            //request += 'project_id=' + rowEntity.project_id;
-            //request += '&has_dmp_been_reviewed=yes';
-            //console.log(request, data);
-
-            //console.log(api.getKey('d_lancaster', 'letmein'));
-
-            //response = api.uri.put.dmps(data);
-            //console.log('response ' , response);
-
-
-            //$http.put(request + data).
-            //    success(function (data, status, headers) {
-            //        console.log('SUCCESS', status, data);
-            //    })
-            //    .error(function (data, status, header, config) {
-            //        console.log('FAILURE', status, data);
-            //    });
-            //Alert to show what info about the edit is available
-            //alert('Project ' + rowEntity.project_name + '. You changed ' +
-            //' column ' + colDef.name + ' from ' + oldValue + ' to ' + newValue + '.');
-        //});
     };
-
-
-    // saving begin
-    //$scope.saveRow = function( rowEntity ) {
-    //    //rowEntity.expected_storage = abs(rowEntity.expected_storage) // prevent negative
-    //    console.log('Look ma I is faking a save!', rowEntity);
-    //    // create a fake promise - normally you'd use the promise returned by $http or $resource
-    //    var promise = $q.defer();
-    //
-    //    $scope.gridApi.rowEdit.setSavePromise( rowEntity, promise.promise );
-    //
-    //    // fake a delay of 3 seconds whilst the save occurs, return error if length <=0
-    //    $interval( function() {
-    //        if (rowEntity.has_dmp_been_reviewed.length > 0){ // need to use constraints
-    //            promise.reject();
-    //                    } else {
-    //            promise.resolve();
-    //        }
-    //    }, 3000, 1);
-    //};
 
     $scope.saveRow = function( rowEntity ) {
 
@@ -3627,7 +3550,7 @@ app.controller('uiGridDmpStatusTableCtrl', ['$scope', '$rootScope', '$http', 'ap
         // create a fake promise - normally you'd use the promise returned by $http or $resource
         //var promise = $q.defer();
         var promise = api.uri.put.dmps(params);
-        console.log('promise ', promise);
+        // console.log('promise ', promise);
         //Cannot use promise.promise with exernal jquery api call
         $scope.gridApi.rowEdit.setSavePromise( rowEntity, promise );
 
@@ -3635,7 +3558,7 @@ app.controller('uiGridDmpStatusTableCtrl', ['$scope', '$rootScope', '$http', 'ap
         //$interval( function() {
             //Cannot use promise.reject() and promise.resolve() with exernal jquery api call
             promise.success(function(data){
-                console.log('promise SUCCESS');
+                // console.log('promise SUCCESS');
 
                 //needed as promise is not an angular promise and there is no promise.resolve()
                 $scope.gridApi.rowEdit.flushDirtyRows($scope.gridApi.grid);
@@ -3847,7 +3770,7 @@ app.controller('uiGridDmpTableCtrl', ['$scope', '$rootScope', '$http', 'api', 'u
     }
 
     api.uri.dmps({modifiable: true}).success(function (data) {
-        console.log('modifiables ', data);
+        // console.log('modifiables ', data);
         $scope.modifiable_column_constraints = {};
         for (var i in data){
             $scope.modifiable_column_constraints[data[i].c_name] = data[i].c_vals;
@@ -3859,67 +3782,7 @@ app.controller('uiGridDmpTableCtrl', ['$scope', '$rootScope', '$http', 'api', 'u
         //set gridApi on scope
         $scope.gridApi = gridApi;
         gridApi.rowEdit.on.saveRow($scope, $scope.saveRow);
-        //gridApi.edit.on.afterCellEdit($scope, function(rowEntity, colDef, newValue, oldValue) {
-            //Do your REST call here via $http.get or $http.post
-            //if (newValue != oldValue){
-            //    var params = {
-            //        project_id: rowEntity.project_id,
-            //        has_dmp_been_reviewed: rowEntity.has_dmp_been_reviewed
-            //    };
-            //    api.uri.put.dmps(params);
-            //}
-                // assumes a particular cell!
-                //response = api.uri.project(rowEntity);
-                //alert("POST (mock) to " + response);
-                //console.log('Going to update ', rowEntity); //
-            //curl -X PUT -s 'http://lib-dmao.lancs.ac.uk:8090/dmaonline/v0.3/c/d_lancaster/f8071b41d994e4557591bb3d3a148707820d7ee1e0310196e70ae8aa/project_dmps_view_put?project_id=1&has_dmp_been_reviewed=yes'
-            //var request = 'http://lib-dmao.lancs.ac.uk:8090/dmaonline/v0.3/c/d_lancaster/f8071b41d994e4557591bb3d3a148707820d7ee1e0310196e70ae8aa/project_dmps_view_put?';
-            //var data = {
-            //  project_id: rowEntity.project_id,
-            //  has_dmp_been_reviewed: newValue
-            //};
-            //request += 'project_id=' + rowEntity.project_id;
-            //request += '&has_dmp_been_reviewed=yes';
-            //console.log(request, data);
-
-            //console.log(api.getKey('d_lancaster', 'letmein'));
-
-            //response = api.uri.put.dmps(data);
-            //console.log('response ' , response);
-
-
-            //$http.put(request + data).
-            //    success(function (data, status, headers) {
-            //        console.log('SUCCESS', status, data);
-            //    })
-            //    .error(function (data, status, header, config) {
-            //        console.log('FAILURE', status, data);
-            //    });
-            //Alert to show what info about the edit is available
-            //alert('Project ' + rowEntity.project_name + '. You changed ' +
-            //' column ' + colDef.name + ' from ' + oldValue + ' to ' + newValue + '.');
-        //});
     };
-
-
-    // saving begin
-    //$scope.saveRow = function( rowEntity ) {
-    //    //rowEntity.expected_storage = abs(rowEntity.expected_storage) // prevent negative
-    //    console.log('Look ma I is faking a save!', rowEntity);
-    //    // create a fake promise - normally you'd use the promise returned by $http or $resource
-    //    var promise = $q.defer();
-    //
-    //    $scope.gridApi.rowEdit.setSavePromise( rowEntity, promise.promise );
-    //
-    //    // fake a delay of 3 seconds whilst the save occurs, return error if length <=0
-    //    $interval( function() {
-    //        if (rowEntity.has_dmp_been_reviewed.length > 0){ // need to use constraints
-    //            promise.reject();
-    //                    } else {
-    //            promise.resolve();
-    //        }
-    //    }, 3000, 1);
-    //};
 
     $scope.saveRow = function( rowEntity ) {
 
@@ -3933,7 +3796,7 @@ app.controller('uiGridDmpTableCtrl', ['$scope', '$rootScope', '$http', 'api', 'u
         // create a fake promise - normally you'd use the promise returned by $http or $resource
         //var promise = $q.defer();
         var promise = api.uri.put.dmps(params);
-        console.log('promise ', promise);
+        // console.log('promise ', promise);
         //Cannot use promise.promise with exernal jquery api call
         $scope.gridApi.rowEdit.setSavePromise( rowEntity, promise );
 
@@ -3941,7 +3804,7 @@ app.controller('uiGridDmpTableCtrl', ['$scope', '$rootScope', '$http', 'api', 'u
         //$interval( function() {
             //Cannot use promise.reject() and promise.resolve() with exernal jquery api call
             promise.success(function(data){
-                console.log('promise SUCCESS');
+                // console.log('promise SUCCESS');
 
                 //needed as promise is not an angular promise and there is no promise.resolve()
                 $scope.gridApi.rowEdit.flushDirtyRows($scope.gridApi.grid);
@@ -4225,6 +4088,13 @@ app.controller('uiGridRcukAccessComplianceTableCtrl', ['$scope', '$rootScope', '
             enableFiltering: false
         },
         {
+            name: 'rcuk_funder_compliant',
+            displayName: 'RCUK funder compliant',
+            width: 190,
+            enableCellEdit: false,
+            enableFiltering: false
+        },        
+        {
             name: 'funder_name',
             displayName: 'Funder name',
             width: 110,
@@ -4460,7 +4330,7 @@ app.controller('uiGridStorageTableCtrl', ['$scope', '$rootScope', 'api', 'ui', '
             //console.log('Changing ', colDef, newValue, oldValue);
             $scope.modifications[colDef.name] = {old: oldValue, new: newValue};
             //console.log('$scope.modifications', $scope.modifications);
-            console.log('rowEntity afterCellEdit ', rowEntity );
+            // console.log('rowEntity afterCellEdit ', rowEntity );
         });
     };
 
@@ -4489,15 +4359,15 @@ app.controller('uiGridStorageTableCtrl', ['$scope', '$rootScope', 'api', 'ui', '
         // create a fake promise - normally you'd use the promise returned by $http or $resource
         //var promise = $q.defer();
         var promise = api.uri.put.storage(params);
-        console.log('promise ', promise);
+        // console.log('promise ', promise);
         //Cannot use promise.promise with exernal jquery api call
         $scope.gridApi.rowEdit.setSavePromise( rowEntity, promise );
-        console.log('after setSavePromise ');
+        // console.log('after setSavePromise ');
         // fake a delay of 3 seconds
         //$interval( function() {
             //Cannot use promise.reject() and promise.resolve() with external jquery api call
             promise.success(function(data){
-                console.log('promise SUCCESS');
+                // console.log('promise SUCCESS');
                 $scope.modifications = {};
                 rowEntity.expected_storage_cost = data[1][0].expected_storage_cost;
                 //console.log('rowEntity ', rowEntity );

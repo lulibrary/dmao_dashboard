@@ -138,7 +138,7 @@ app.controller('uiGridStorageTableCtrl', ['$scope', '$rootScope', 'api', 'ui', '
             //console.log('Changing ', colDef, newValue, oldValue);
             $scope.modifications[colDef.name] = {old: oldValue, new: newValue};
             //console.log('$scope.modifications', $scope.modifications);
-            console.log('rowEntity afterCellEdit ', rowEntity );
+            // console.log('rowEntity afterCellEdit ', rowEntity );
         });
     };
 
@@ -167,15 +167,15 @@ app.controller('uiGridStorageTableCtrl', ['$scope', '$rootScope', 'api', 'ui', '
         // create a fake promise - normally you'd use the promise returned by $http or $resource
         //var promise = $q.defer();
         var promise = api.uri.put.storage(params);
-        console.log('promise ', promise);
+        // console.log('promise ', promise);
         //Cannot use promise.promise with exernal jquery api call
         $scope.gridApi.rowEdit.setSavePromise( rowEntity, promise );
-        console.log('after setSavePromise ');
+        // console.log('after setSavePromise ');
         // fake a delay of 3 seconds
         //$interval( function() {
             //Cannot use promise.reject() and promise.resolve() with external jquery api call
             promise.success(function(data){
-                console.log('promise SUCCESS');
+                // console.log('promise SUCCESS');
                 $scope.modifications = {};
                 rowEntity.expected_storage_cost = data[1][0].expected_storage_cost;
                 //console.log('rowEntity ', rowEntity );

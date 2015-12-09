@@ -11,7 +11,7 @@ app.controller('dataCtrl', ['$scope', '$rootScope', '$http', 'api', 'config', fu
                         sd:         message.startDate,
                         ed:         message.endDate,
                         faculty:    message.faculty,
-                        summary_totals:    'true'
+                        summary_totals:    true
                     };
 
         api.uri.datasetAccess(params).then(function(response) {

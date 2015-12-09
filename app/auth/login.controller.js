@@ -35,9 +35,9 @@ app.controller("loginCtrl", function($scope, $location, $rootScope, $cookies, ap
         });
     });
 
+    // $location.path($cookies.get('lastRoute'));
+
     //api.clearKey();
-
-
 
     $scope.login = function() {
 
@@ -55,6 +55,7 @@ app.controller("loginCtrl", function($scope, $location, $rootScope, $cookies, ap
 
                     $cookies.put('username', $scope.username);
                     $cookies.put('institutionId', $scope.institution);
+                    $cookies.put('institutionName', config.institutionName);
 
                     api.apiKey = response[0].api_key;
                     $cookies.put('apiKey', response[0].api_key);

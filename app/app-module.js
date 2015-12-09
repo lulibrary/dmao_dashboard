@@ -25,7 +25,7 @@ app.factory('ui', function() {
     return UiService;
 });
 
-app.run(['$cookies', 'api', 'config', function($cookies, api, config) {
+app.run(['$cookies', '$location', '$rootScope', 'api', 'config', function($cookies, $location, $rootScope, api, config) {
     var apiKey = $cookies.get('apiKey');
     //console.log('app.run apiKey ', apiKey);
     if (apiKey)
@@ -36,4 +36,12 @@ app.run(['$cookies', 'api', 'config', function($cookies, api, config) {
     config.institutionId = $cookies.get('institutionId');
     //console.log('app.run institutionId ', config.institutionId);
 
+    // console.log('on startup setting path to ', $cookies.get('savedRoute'));
+    // $location.path($cookies.get('savedRoute'));
+    var username = $cookies.get('username');
+    if (username) {
+        // console.log('trying to change route ');
+        // $location.path($cookies.get('newRoute'));
+        $rootScope.loggedInUser = username;
+    }    
 }]);

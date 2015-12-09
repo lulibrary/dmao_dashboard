@@ -17,7 +17,6 @@ app.controller('datasetsRCUKCtrl', function($scope, $rootScope, $http, api, conf
                             filter:     'rcuk',
                             count:      true
                         };
-
             //console.log('before datasetsRCUKCtrl request');
             api.uri.datasets(params).then(function(response) {
                 $scope.$apply(function(){

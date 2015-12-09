@@ -20,49 +20,32 @@ app.config(['$routeProvider', '$locationProvider', function($routeProvider, $loc
 		// .when('/index.html', { templateUrl: 'app/components/statistic/statisticCompilationView.html' })
 		.otherwise({ templateUrl: 'app/messages/error.html' });
 	}])
-    // use the HTML5 History API to get clean URLs and remove the hashtag from the URL
-    // $locationProvider.html5Mode(true);
-.run(['$rootScope', '$location', function ($rootScope, $location) {
-  $rootScope.$on('$routeChangeStart', function (event, newUrl, oldUrl) {
-        // console.log(newUrl);
-        // console.log(oldUrl);
+
+.run(['$rootScope', '$location', '$cookies', function ($rootScope, $location, $cookies) {
+	// console.log('routes startup');
+
+	if ($rootScope.loggedInUser) {
+		// console.log('trying to change route ');
+		$location.path($cookies.get('newRoute'));
+	}
+
+	$rootScope.$on('$routeChangeStart', function (event, newUrl, oldUrl) {
+       
         if ($rootScope.loggedInUser) {
         	// console.log('logged in');
-        	if (newUrl.templateUrl === 'app/public/landing.html'){
+        	if (newUrl.$$route.originalPath === '/'){
         		// console.log('attempting public page');
-        		$location.path('/stats');
+        		$location.path('/stats');    		
+        	}
+        	// $cookies.put('oldRoute', oldUrl.$$route.originalPath);
+        	$cookies.put('newRoute', newUrl.$$route.originalPath);
+        } 
+        // keep on public page
+        else{
+        	if (newUrl.$$route.originalPath !== '/'){
+        		$location.path('/');
         	}
         }
       }
     );
   }]);
-
-	// .run(function($rootScope, $location, $cookies) {
-	// 	$rootScope.$on( "$routeChangeStart", function(event, next, current) {
-	// 		//console.log('apikey $routeChangeStart1', ApiService.apikey);
-	// 		$cookies.put('lastRoute', $location.path());
-
-	// 		//console.log('Current route name: ' + $location.path());
-	// 		//console.log('$rootScope.loggedInUser ', $rootScope.loggedInUser);
-
-	// 		if (!$cookies.get('username')){
-	// 		//if ($rootScope.loggedInUser == null) {
-	// 			// no logged user, redirect to /login
-	// 			//if ($location.path() === '/landing' ||
-	// 			//	next.templateUrl === 'app/auth/login.html') {
-	// 			//} else {
-	// 			//	$location.path("/landing");
-	// 			//}
-	// 			$location.path("/");
-	// 		} else {
-	// 			if (next.templateUrl === 'app/public/landing.html') {
-	// 				$location.path('/stats'));
-	// 			} 
-	// 			// else {
-	// 				// $location.path($cookies.get('lastRoute'));
-	// 			// }
-	// 		}
-	// 		//console.log('apikey $routeChangeStart2', ApiService.apikey);
-	// 	});
-	// 	//console.log('apikey $routeChangeStart3', ApiService.apikey);
-	// });

@@ -15,8 +15,8 @@ app.controller('rcukAccessComplianceTableCtrl', ['$scope', '$rootScope', '$http'
                     };                
         api.uri.rcukAccessCompliance(params).then(function(data){
             //console.log('Datasets ' + uri);
-            RcukAccessComplianceTable.init(data);    
-            // console.log(Datasets.init(');        
+            RcukAccessComplianceTable.init(data);  
+            // console.log(Datasets.init('); 
         });
     }
 

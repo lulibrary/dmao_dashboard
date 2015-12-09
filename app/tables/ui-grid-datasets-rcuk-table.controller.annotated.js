@@ -104,9 +104,9 @@ app.controller('uiGridDatasetsRcukTableCtrl', ['$scope', '$rootScope', '$http', 
     function update(message){
         var params = {
             date:               'project_start',
+            filter:             'rcuk',
             sd:                 message.startDate,
             ed:                 message.endDate,
-            filter:             'rcuk',
             faculty:            message.faculty,
         };
         api.uri.datasets(params).then(function(data){
