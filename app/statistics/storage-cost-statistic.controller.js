@@ -26,7 +26,7 @@ app.controller('storageCostCtrl', function($scope, $rootScope, $http, api, confi
                 var value = Math.round(total);
                 $scope.$apply(function(){
                     // only update if dirty
-                    if (value !== $scope.value) $scope.value = value.toLocaleString();
+                    if (value !== $scope.value) $scope.value = numeral(value).format('0,0');
                 });
             });
         // }

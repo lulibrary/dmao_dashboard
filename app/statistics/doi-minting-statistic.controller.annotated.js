@@ -67,7 +67,7 @@ app.controller('doiMintingCtrl', ['$scope', '$rootScope', 'api', 'config', funct
                 var value = response.response.numFound;
                 //console.log('minted ', value);
                 // only update if dirty
-                if (value !== $scope.value) $scope.value = value.toLocaleString();
+                if (value !== $scope.value) $scope.value = numeral(value).format('0,0');
             });
         });
 

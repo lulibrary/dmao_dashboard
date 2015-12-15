@@ -1482,52 +1482,58 @@ app.controller('aggregateStatisticCtrl', ['$scope', '$rootScope', '$http', 'api'
                 //$scope.data.institutions = true;
                 var value = response[0].count;
                 // only update if dirty
-                if (value !== $scope.count_institutions) $scope.count_institutions = value.toLocaleString();
+                if (value !== $scope.count_institutions)
+                    $scope.count_institutions = numeral(value).format('0,0');
             //});
         });
         api.uri.public('o_count_faculties').then(function(response) {
             //$scope.$apply(function(){
                 var value = response[0].count;
                 // only update if dirty
-                if (value !== $scope.count_faculties) $scope.count_faculties = value.toLocaleString();
+                if (value !== $scope.count_faculties)
+                    $scope.count_faculties = numeral(value).format('0,0');
             //});
         });
         api.uri.public('o_count_departments').then(function(response) {
             //$scope.$apply(function(){
                 var value = response[0].count;
                 // only update if dirty
-                if (value !== $scope.count_departments) $scope.count_departments = value.toLocaleString();
+                if (value !== $scope.count_departments)
+                    $scope.count_departments = numeral(value).format('0,0');
             //});
         });
         api.uri.public('o_count_dmps').then(function(response) {
             //$scope.$apply(function(){
                 var value = response[0].count;
                 // only update if dirty
-                if (value !== $scope.count_dmps) $scope.count_dmps = value.toLocaleString();
+                if (value !== $scope.count_dmps)
+                    $scope.count_dmps = numeral(value).format('0,0');
             //});
         });
         api.uri.public('o_count_publications').then(function(response) {
             //$scope.$apply(function(){
                 var value = response[0].count;
                 // only update if dirty
-                if (value !== $scope.count_publications) $scope.count_publications = value.toLocaleString();
+                if (value !== $scope.count_publications)
+                    $scope.count_publications = numeral(value).format('0,0');
             //});
         });
         api.uri.public('o_count_datasets').then(function(response) {
             //$scope.$apply(function(){
                 var value = response[0].count;
                 // only update if dirty
-                if (value !== $scope.count_datasets) $scope.count_datasets = value.toLocaleString();
+                if (value !== $scope.count_datasets)
+                    $scope.count_datasets = numeral(value).format('0,0');
             //});
         });
         api.uri.public('o_count_dataset_accesses').then(function(response) {
             $scope.$apply(function(){ //not sure why this is needed for values to stick in this controller
                 for (var i=0; i < response.length; ++i){
                     if (response[i].access_type === 'data_download'){
-                        $scope.dataset_accesses.data = response[i].count.toLocaleString();
+                        $scope.dataset_accesses.data = numeral(response[i].count).format('0,0');
                     }
                     if (response[i].access_type === 'metadata'){
-                        $scope.dataset_accesses.metadata = response[i].count.toLocaleString();
+                        $scope.dataset_accesses.metadata = numeral(response[i].count).format('0,0');
                     }
                 }
             });
@@ -1570,10 +1576,10 @@ app.controller('dataCtrl', ['$scope', '$rootScope', '$http', 'api', 'config', fu
             $scope.dataset_accesses.metadata = 0;
             for (var i=0; i < response.length; ++i){
                 if (response[i].access_type === 'data_download'){
-                    $scope.dataset_accesses.data = response[i].count.toLocaleString();
+                    $scope.dataset_accesses.data = numeral(response[i].count).format('0,0');
                 }
                 if (response[i].access_type === 'metadata'){
-                    $scope.dataset_accesses.metadata = response[i].count.toLocaleString();
+                    $scope.dataset_accesses.metadata = numeral(response[i].count).format('0,0');
                 }
             }
             });
@@ -1614,7 +1620,7 @@ app.controller('datasetsRCUKCtrl', ['$scope', '$rootScope', '$http', 'api', 'con
                 $scope.$apply(function(){
                     var value = response[0].num_datasets;
                     // only update if dirty
-                    if (value !== $scope.value) $scope.value = value.toLocaleString();
+                    if (value !== $scope.value) $scope.value = numeral(value).format('0,0');
                 });
             });
         // }
@@ -1658,7 +1664,7 @@ app.controller('datasetsCtrl', ['$scope', '$rootScope', '$http', 'api', 'ui', 'c
                     var oldValue = $scope.value;
                     var value = response[0].num_datasets;
                     // only update if dirty
-                    if (value !== $scope.value) $scope.value = value.toLocaleString();
+                    if (value !== $scope.value) $scope.value = numeral(value).format('0,0');
                     //console.log('after datasetsCtrl update ', 'old ', oldValue, 'new ', $scope.value);
                 });
             });
@@ -1698,7 +1704,7 @@ app.controller('dmpsCreatedCtrl', ['$scope', '$rootScope', '$http', 'api', 'conf
             $scope.$apply(function(){
                 var value = response[0].num_project_dmps;
                 // only update if dirty
-                if (value !== $scope.value) $scope.value = value.toLocaleString();
+                if (value !== $scope.value) $scope.value = numeral(value).format('0,0');
             });
         });
     }
@@ -1747,7 +1753,7 @@ app.controller('dmpStatusCtrl', ['$scope', '$rootScope', '$http', 'api', 'config
             // });
             $scope.$apply(function(){
                 var value = response[0].num_dmp_status;
-                if (value !== $scope.value) $scope.value = value.toLocaleString();
+                if (value !== $scope.value) $scope.value = numeral(value).format('0,0');
                 });
             });
         // }
@@ -1831,7 +1837,7 @@ app.controller('doiMintingCtrl', ['$scope', '$rootScope', 'api', 'config', funct
                 var value = response.response.numFound;
                 //console.log('minted ', value);
                 // only update if dirty
-                if (value !== $scope.value) $scope.value = value.toLocaleString();
+                if (value !== $scope.value) $scope.value = numeral(value).format('0,0');
             });
         });
 
@@ -1876,7 +1882,7 @@ app.controller('noDmpProjectsCtrl', ['$scope', '$rootScope', '$http', 'api', 'co
                 $scope.$apply(function(){
                     var value = response[0].num_project_dmps;
                     // only update if dirty
-                    if (value !== $scope.value) $scope.value = value.toLocaleString();
+                    if (value !== $scope.value) $scope.value = numeral(value).format('0,0');
                 });
             });
         // }
@@ -1920,7 +1926,7 @@ app.controller('rcukAccessComplianceCtrl', ['$scope', '$rootScope', '$http', 'ap
                     }
                     // only update if dirty
                     if (value !== $scope.value)
-                        $scope.value = Math.round(value).toLocaleString();
+                        $scope.value = Math.round(value);
                 });
             });
         // }
@@ -1979,7 +1985,7 @@ app.controller('storageCostCtrl', ['$scope', '$rootScope', '$http', 'api', 'conf
                 var value = Math.round(total);
                 $scope.$apply(function(){
                     // only update if dirty
-                    if (value !== $scope.value) $scope.value = value.toLocaleString();
+                    if (value !== $scope.value) $scope.value = numeral(value).format('0,0');
                 });
             });
         // }
@@ -2020,7 +2026,8 @@ app.controller('storageUnitCtrl', ['$scope', '$rootScope', '$http', 'api', 'conf
                 var value = Math.round(total * 0.001024);
                 $scope.$apply(function(){
                     // only update if dirty
-                    if (value !== $scope.value) $scope.value = value.toLocaleString();
+                    if (value !== $scope.value)
+                        $scope.value = numeral(value).format('0,0');
                 });
             });
         // }

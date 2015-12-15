@@ -24,10 +24,10 @@ app.controller('dataCtrl', function($scope, $rootScope, $http, api, config) {
             $scope.dataset_accesses.metadata = 0;
             for (var i=0; i < response.length; ++i){
                 if (response[i].access_type === 'data_download'){
-                    $scope.dataset_accesses.data = response[i].count.toLocaleString();
+                    $scope.dataset_accesses.data = numeral(response[i].count).format('0,0');
                 }
                 if (response[i].access_type === 'metadata'){
-                    $scope.dataset_accesses.metadata = response[i].count.toLocaleString();
+                    $scope.dataset_accesses.metadata = numeral(response[i].count).format('0,0');
                 }
             }
             });

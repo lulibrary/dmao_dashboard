@@ -21,7 +21,7 @@ app.controller('dmpsCreatedCtrl', ['$scope', '$rootScope', '$http', 'api', 'conf
             $scope.$apply(function(){
                 var value = response[0].num_project_dmps;
                 // only update if dirty
-                if (value !== $scope.value) $scope.value = value.toLocaleString();
+                if (value !== $scope.value) $scope.value = numeral(value).format('0,0');
             });
         });
     }

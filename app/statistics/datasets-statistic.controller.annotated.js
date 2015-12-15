@@ -27,7 +27,7 @@ app.controller('datasetsCtrl', ['$scope', '$rootScope', '$http', 'api', 'ui', 'c
                     var oldValue = $scope.value;
                     var value = response[0].num_datasets;
                     // only update if dirty
-                    if (value !== $scope.value) $scope.value = value.toLocaleString();
+                    if (value !== $scope.value) $scope.value = numeral(value).format('0,0');
                     //console.log('after datasetsCtrl update ', 'old ', oldValue, 'new ', $scope.value);
                 });
             });

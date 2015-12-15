@@ -27,7 +27,7 @@ app.controller('rcukAccessComplianceCtrl', ['$scope', '$rootScope', '$http', 'ap
                     }
                     // only update if dirty
                     if (value !== $scope.value)
-                        $scope.value = Math.round(value).toLocaleString();
+                        $scope.value = Math.round(value);
                 });
             });
         // }

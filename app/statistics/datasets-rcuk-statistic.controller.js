@@ -23,7 +23,7 @@ app.controller('datasetsRCUKCtrl', function($scope, $rootScope, $http, api, conf
                 $scope.$apply(function(){
                     var value = response[0].num_datasets;
                     // only update if dirty
-                    if (value !== $scope.value) $scope.value = value.toLocaleString();
+                    if (value !== $scope.value) $scope.value = numeral(value).format('0,0');
                 });
             });
         // }
