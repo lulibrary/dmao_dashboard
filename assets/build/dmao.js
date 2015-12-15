@@ -257,9 +257,7 @@ function reverseChronoChartData(monthData) {
 }
 
 
-app.controller('dataAccessChartCtrl', ['$scope', '$rootScope', '$http', 'api', 'config', function($scope, $rootScope, $http, api, config) {
-    $scope.dataAvailable = false;
-
+app.controller('dataAccessChartCtrl', ['$scope', '$rootScope', '$http', 'api', 'ui', 'config', function($scope, $rootScope, $http, api, ui, config) {
     var params = {
                 startDate:          config.startDate,
                 endDate:            config.endDate,
@@ -270,6 +268,9 @@ app.controller('dataAccessChartCtrl', ['$scope', '$rootScope', '$http', 'api', '
     update(params);
 
     function update(message){
+        $scope.dataAvailable = false;
+        $scope.dataFetched = false;
+        var spinner = ui.spinner('loader');
         var params = {  //date:               'project_start',
                         sd:                 message.startDate,
                         ed:                 message.endDate,
@@ -278,15 +279,15 @@ app.controller('dataAccessChartCtrl', ['$scope', '$rootScope', '$http', 'api', '
                     };
         api.uri.datasetAccess(params).then(function(data){
             //console.log('data access ' + uri);
-            $scope.dataAvailable = false;
             data = api.filter.datasetAccess(data, 'data_download');
             if (data.length) {
                 $scope.dataAvailable = true;
                 //console.log('data length ', data.length);
             }
+            $scope.dataFetched = true;
             $scope.$apply();
-            DataAccessLineChart(data, {width:700, height:300});
-
+            DataAccessLineChart(data, {width: 700, height: 300});
+            spinner.stop();
             // console.log('DataAccessLineChart(');        
         });
     }
@@ -384,9 +385,7 @@ var DataAccessLineChart = function(data, options){
     }
 };
 
-app.controller('metadataAccessChartCtrl', ['$scope', '$rootScope', '$http', 'api', 'config', function($scope, $rootScope, $http, api, config) {
-    $scope.dataAvailable = false;
-
+app.controller('metadataAccessChartCtrl', ['$scope', '$rootScope', '$http', 'api', 'ui', 'config', function($scope, $rootScope, $http, api, ui, config) {
     var params = {
                 startDate:          config.startDate,
                 endDate:            config.endDate,
@@ -397,6 +396,9 @@ app.controller('metadataAccessChartCtrl', ['$scope', '$rootScope', '$http', 'api
     update(params);
 
     function update(message){
+        $scope.dataAvailable = false;
+        $scope.dataFetched = false;
+        var spinner = ui.spinner('loader');
         var params = {  //date:               'project_start',
                         sd:                 message.startDate,
                         ed:                 message.endDate,
@@ -405,14 +407,15 @@ app.controller('metadataAccessChartCtrl', ['$scope', '$rootScope', '$http', 'api
                     };        
         api.uri.datasetAccess(params).then(function(data){
             //console.log('data access ' + uri);
-            $scope.dataAvailable = false;
             data = api.filter.datasetAccess(data, 'metadata');
             if (data.length) {
                 $scope.dataAvailable = true;
                 //console.log('data length ', data.length);
             }
+            $scope.dataFetched = true;
             $scope.$apply();
-            MetadataAccessLineChart(data, {width:700, height:300});    
+            MetadataAccessLineChart(data, {width:700, height:300});
+            spinner.stop();
             // console.log('MetadataAccessLineChart(');        
         });
     }
@@ -1063,7 +1066,8 @@ var App = {
     facultyDefault: '',
     facultyMap: {},
     departmentMap: {},
-    updateDelay: 30000
+    updateDelay: 30000,
+    loadingText: ' Loading... '
 };
 
 var ApiService = {
@@ -1382,6 +1386,35 @@ var UiService = {
       };
       var target = document.getElementById(target);
       return new Spinner(opts).spin(target);
+  },
+  spinnerSimple: function(target){
+      var opts = {
+          lines: 13 // The number of lines to draw
+          , length: 7 // The length of each line
+          , width: 3 // The line thickness
+          , radius: 10 // The radius of the inner circle
+          , scale: 1 // Scales overall size of the spinner
+          , corners: 1 // Corner roundness (0..1)
+          , color: '#000' // #rgb or #rrggbb or array of colors
+          , opacity: 0.25 // Opacity of the lines
+          , rotate: 0 // The rotation offset
+          , direction: 1 // 1: clockwise, -1: counterclockwise
+          , speed: 1 // Rounds per second
+          , trail: 60 // Afterglow percentage
+          , fps: 20 // Frames per second when using setTimeout() as a fallback for CSS
+          , zIndex: 2e9 // The z-index (defaults to 2000000000)
+          , className: 'spinner' // The CSS class to assign to the spinner
+          , top: '50%' // Top position relative to parent
+          , left: '50%' // Left position relative to parent
+          , shadow: false // Whether to render a shadow
+          , hwaccel: false // Whether to use hardware acceleration
+          , position: 'absolute' // Element positioning
+      };
+      var target = document.getElementById(target);
+      return new Spinner(opts).spin(target);
+      //
+      //var spinner = new Spinner().spin()
+      //target.appendChild(spinner.el)
   }
 };
 
@@ -1411,8 +1444,8 @@ app.controller('aggregateStatisticCtrl', ['$scope', '$rootScope', '$http', 'api'
     $scope.count_datasets = 0;
     $scope.count_dataset_accesses = 0;
 
-    $scope.data = {};
-    $scope.data.institutions = false;
+    //$scope.data = {};
+    //$scope.data.institutions = false;
 
     update({
                 //startDate:      config.startDate,
@@ -1420,6 +1453,15 @@ app.controller('aggregateStatisticCtrl', ['$scope', '$rootScope', '$http', 'api'
     });
 
     function update(message){
+        $scope.count_institutions = config.loadingText;
+        $scope.count_faculties = config.loadingText;
+        $scope.count_departments = config.loadingText;
+        $scope.count_dmps = config.loadingText;
+        $scope.count_publications = config.loadingText;
+        $scope.count_datasets = config.loadingText;
+        $scope.dataset_accesses = {};
+        $scope.dataset_accesses.data = config.loadingText;
+        $scope.dataset_accesses.metadata = config.loadingText;
         // if(config.inView.datasetsRCUKCtrl){        
             var params = {
                             //sd:         message.startDate,
@@ -1437,7 +1479,7 @@ app.controller('aggregateStatisticCtrl', ['$scope', '$rootScope', '$http', 'api'
 
         api.uri.public('o_count_institutions').then(function(response) {
             //$scope.$apply(function(){
-                $scope.data.institutions = true;
+                //$scope.data.institutions = true;
                 var value = response[0].count;
                 // only update if dirty
                 if (value !== $scope.count_institutions) $scope.count_institutions = value.toLocaleString();
@@ -1480,7 +1522,6 @@ app.controller('aggregateStatisticCtrl', ['$scope', '$rootScope', '$http', 'api'
         });
         api.uri.public('o_count_dataset_accesses').then(function(response) {
             $scope.$apply(function(){ //not sure why this is needed for values to stick in this controller
-                $scope.dataset_accesses = {};
                 for (var i=0; i < response.length; ++i){
                     if (response[i].access_type === 'data_download'){
                         $scope.dataset_accesses.data = response[i].count.toLocaleString();
@@ -1494,7 +1535,7 @@ app.controller('aggregateStatisticCtrl', ['$scope', '$rootScope', '$http', 'api'
     }
 
     $scope.filterEventListener = $rootScope.$on("FilterEvent", function (event, message) {
-        console.log("update firing");
+        //console.log("update firing");
         update(message);
     });  
 
@@ -1512,18 +1553,19 @@ app.controller('dataCtrl', ['$scope', '$rootScope', '$http', 'api', 'config', fu
             });
 
     function update(message){
+        $scope.dataset_accesses = {};
+        $scope.dataset_accesses.data = config.loadingText;
+        $scope.dataset_accesses.metadata = config.loadingText;
         var params = {
                         sd:         message.startDate,
                         ed:         message.endDate,
                         faculty:    message.faculty,
                         summary_totals:    true
                     };
-
         api.uri.datasetAccess(params).then(function(response) {
             $scope.$apply(function(){
             //    console.log('api.uri.datasetAccess ', response);
 
-            $scope.dataset_accesses = {};
             $scope.dataset_accesses.data = 0;
             $scope.dataset_accesses.metadata = 0;
             for (var i=0; i < response.length; ++i){
@@ -1558,6 +1600,7 @@ app.controller('datasetsRCUKCtrl', ['$scope', '$rootScope', '$http', 'api', 'con
             });
 
     function update(message){
+        $scope.value = config.loadingText;
         // if(config.inView.datasetsRCUKCtrl){        
             var params = {  date:       'project_start',
                             sd:         message.startDate, 
@@ -1586,7 +1629,7 @@ app.controller('datasetsRCUKCtrl', ['$scope', '$rootScope', '$http', 'api', 'con
         $scope.filterEventListener();
     });        
 }]);
-app.controller('datasetsCtrl', ['$scope', '$rootScope', '$http', 'api', 'config', function($scope, $rootScope, $http, api, config) {
+app.controller('datasetsCtrl', ['$scope', '$rootScope', '$http', 'api', 'ui', 'config', function($scope, $rootScope, $http, api, ui, config) {
 
     //console.log('hard coding $rootScope.loggedInUser credentials in datasetsCtrl to bypass auth');
     //$rootScope.loggedInUser = 'luve_u';
@@ -1601,6 +1644,7 @@ app.controller('datasetsCtrl', ['$scope', '$rootScope', '$http', 'api', 'config'
             });
 
     function update(message){
+        $scope.value = config.loadingText;
         // if(config.inView.datasetsCtrl){
             var params = {  date:       'project_start',
                             sd:         message.startDate, 
@@ -1641,6 +1685,7 @@ app.controller('dmpsCreatedCtrl', ['$scope', '$rootScope', '$http', 'api', 'conf
             });
     
     function update(message){
+        $scope.value = config.loadingText;
         var params = {  date:       'project_start',
                         sd:         message.startDate, 
                         ed:         message.endDate,
@@ -1678,6 +1723,7 @@ app.controller('dmpStatusCtrl', ['$scope', '$rootScope', '$http', 'api', 'config
             });
 
     function update(message){
+        $scope.value = config.loadingText;
         // if(config.inView.dmpStatusCtrl){        
             var params = {  date:       'project_start',
                             sd:         message.startDate, 
@@ -1727,6 +1773,7 @@ app.controller('doiMintingCtrl', ['$scope', '$rootScope', 'api', 'config', funct
             });
 
     function update(message){
+        $scope.value = config.loadingText;
         //var params = {  date:       'project_start',
         //                sd:         message.startDate,
         //                ed:         message.endDate,
@@ -1815,6 +1862,7 @@ app.controller('noDmpProjectsCtrl', ['$scope', '$rootScope', '$http', 'api', 'co
             });
     
     function update(message){
+        $scope.value = config.loadingText;
         // if(config.inView.noDmpProjectsCtrl){ 
             var params = {  date:       'project_start',
                             sd:         message.startDate, 
@@ -1853,6 +1901,7 @@ app.controller('rcukAccessComplianceCtrl', ['$scope', '$rootScope', '$http', 'ap
             });
 
     function update(message){
+        $scope.value = config.loadingText;
         // if(config.inView.rcukAccessComplianceCtrl){ 
             var params = {  date:       'project_start',
                             sd:         message.startDate, 
@@ -1862,16 +1911,16 @@ app.controller('rcukAccessComplianceCtrl', ['$scope', '$rootScope', '$http', 'ap
             api.uri.rcukAccessCompliance(params).then(function(response) {
                 $scope.$apply(function(){
                     var count = 0;
-                    for(i=0;i<response.length;++i) {
+                    for(var i=0;i<response.length;++i) {
                         if (response[i].rcuk_funder_compliant === 'y') ++count;
                     }
-
-                    // only update if dirty
                     var value = 0;
                     if (count && count !== $scope.value) {
                         value = (count / response.length) * 100;
-                        $scope.value = Math.round(value).toLocaleString();
                     }
+                    // only update if dirty
+                    if (value !== $scope.value)
+                        $scope.value = Math.round(value).toLocaleString();
                 });
             });
         // }
@@ -1905,7 +1954,7 @@ app.directive('statistic', function() {
 app.controller('storageCostCtrl', ['$scope', '$rootScope', '$http', 'api', 'config', function($scope, $rootScope, $http, api, config) {
     // init
     $scope.value = 0;
-    // $scope.currency = '';
+        // $scope.currency = '';
 
     update({
                 startDate:      config.startDate,
@@ -1914,6 +1963,7 @@ app.controller('storageCostCtrl', ['$scope', '$rootScope', '$http', 'api', 'conf
             });
 
     function update(message){
+        $scope.value = config.loadingText;
         // if(config.inView.storageCostCtrl){ 
             var params = {  date:       'project_start',
                             sd:         message.startDate, 
@@ -1954,6 +2004,7 @@ app.controller('storageUnitCtrl', ['$scope', '$rootScope', '$http', 'api', 'conf
             });
 
     function update(message){
+        $scope.value = config.loadingText;
         // if(config.inView.storageUnitCtrl){ 
             var params = {  date:       'project_start',
                             sd:         message.startDate, 
@@ -3120,7 +3171,7 @@ function toDataTablesFormat(data) {
 	return hash;
 }
 app.controller('uiGridDatasetsRcukTableCtrl', ['$scope', '$rootScope', '$http', 'api', 'ui', 'config', '$q', '$interval', function($scope, $rootScope, $http, api, ui, config, $q, $interval){
-    $scope.dataLoaded = false;
+    //$scope.dataLoaded = false;
 
     var params = {
         startDate:          config.startDate,
@@ -3223,6 +3274,8 @@ app.controller('uiGridDatasetsRcukTableCtrl', ['$scope', '$rootScope', '$http', 
     update(params);
 
     function update(message){
+        $scope.dataFetched = false;
+        var spinner = ui.spinner('loader');
         var params = {
             date:               'project_start',
             filter:             'rcuk',
@@ -3233,9 +3286,11 @@ app.controller('uiGridDatasetsRcukTableCtrl', ['$scope', '$rootScope', '$http', 
         api.uri.datasets(params).then(function(data){
             //console.log('Datasets ' + uri);
             //console.log(data);
-            $scope.dataLoaded = true;
+            //$scope.dataLoaded = true;
+            $scope.dataFetched = true;
             $scope.gridOptions.data = data;
             $scope.$apply();
+            spinner.stop();
         });
     }
 
@@ -3292,7 +3347,7 @@ app.controller('uiGridDatasetsRcukTableCtrl', ['$scope', '$rootScope', '$http', 
 
 
 app.controller('uiGridDatasetsTableCtrl', ['$scope', '$rootScope', '$http', 'api', 'ui', 'config', '$q', '$interval', function($scope, $rootScope, $http, api, ui, config, $q, $interval){
-    $scope.dataLoaded = false;
+    //$scope.dataLoaded = false;
 
     var params = {
         startDate:          config.startDate,
@@ -3395,6 +3450,8 @@ app.controller('uiGridDatasetsTableCtrl', ['$scope', '$rootScope', '$http', 'api
     update(params);
 
     function update(message){
+        $scope.dataFetched = false;
+        var spinner = ui.spinner('loader');
         var params = {
             date:               'project_start',
             sd:                 message.startDate,
@@ -3404,9 +3461,11 @@ app.controller('uiGridDatasetsTableCtrl', ['$scope', '$rootScope', '$http', 'api
         api.uri.datasets(params).then(function(data){
             //console.log('Datasets ' + uri);
             //console.log(data);
-            $scope.dataLoaded = true;
+            //$scope.dataLoaded = true;
+            $scope.dataFetched = true;
             $scope.gridOptions.data = data;
             $scope.$apply();
+            spinner.stop();
         });
     }
 
@@ -3463,7 +3522,7 @@ app.controller('uiGridDatasetsTableCtrl', ['$scope', '$rootScope', '$http', 'api
 
 
 app.controller('uiGridDmpStatusTableCtrl', ['$scope', '$rootScope', '$http', 'api', 'ui', 'config', '$q', '$interval', function($scope, $rootScope, $http, api, ui, config, $q, $interval){
-    $scope.dataLoaded = false;
+    //$scope.dataLoaded = false;
 
     var params = {
         startDate:          config.startDate,
@@ -3553,6 +3612,8 @@ app.controller('uiGridDmpStatusTableCtrl', ['$scope', '$rootScope', '$http', 'ap
     update(params);
 
     function update(message){
+        $scope.dataFetched = false;
+        var spinner = ui.spinner('loader');
         var params = {
             date:               'project_start',
             sd:                 message.startDate,
@@ -3563,9 +3624,11 @@ app.controller('uiGridDmpStatusTableCtrl', ['$scope', '$rootScope', '$http', 'ap
         api.uri.dmpStatus(params).then(function(data){
             //console.log('Datasets ' + uri);
             //console.log(data);
-            $scope.dataLoaded = true;
+            //$scope.dataLoaded = true;
+            $scope.dataFetched = true;
             $scope.gridOptions.data = data;
             $scope.$apply();
+            spinner.stop();
         });
     }
 
@@ -3675,7 +3738,7 @@ app.controller('uiGridDmpStatusTableCtrl', ['$scope', '$rootScope', '$http', 'ap
 
 
 app.controller('uiGridDmpTableCtrl', ['$scope', '$rootScope', '$http', 'api', 'ui', 'config', '$q', '$interval', function($scope, $rootScope, $http, api, ui, config, $q, $interval){
-    $scope.dataLoaded = false;
+    //$scope.dataLoaded = false;
 
     var params = {
         startDate:          config.startDate,
@@ -3799,6 +3862,8 @@ app.controller('uiGridDmpTableCtrl', ['$scope', '$rootScope', '$http', 'api', 'u
     update(params);
 
     function update(message){
+        $scope.dataFetched = false;
+        var spinner = ui.spinner('loader');
         var params = {
             date:               'project_start',
             sd:                 message.startDate,
@@ -3809,9 +3874,11 @@ app.controller('uiGridDmpTableCtrl', ['$scope', '$rootScope', '$http', 'api', 'u
         api.uri.dmps(params).then(function(data){
             //console.log('Datasets ' + uri);
             //console.log(data);
-            $scope.dataLoaded = true;
+            //$scope.dataLoaded = true;
+            $scope.dataFetched = true;
             $scope.gridOptions.data = data;
             $scope.$apply();
+            spinner.stop();
         });
     }
 
@@ -3921,7 +3988,7 @@ app.controller('uiGridDmpTableCtrl', ['$scope', '$rootScope', '$http', 'api', 'u
 
 
 app.controller('uiGridNoDmpTableCtrl', ['$scope', '$rootScope', '$http', 'api', 'ui', 'config', '$q', '$interval', function($scope, $rootScope, $http, api, ui, config, $q, $interval){
-    $scope.dataLoaded = false;
+    //$scope.dataLoaded = false;
 
     var params = {
         startDate:          config.startDate,
@@ -3991,6 +4058,8 @@ app.controller('uiGridNoDmpTableCtrl', ['$scope', '$rootScope', '$http', 'api', 
     update(params);
 
     function update(message){
+        $scope.dataFetched = false;
+        var spinner = ui.spinner('loader');
         var params = {
             date:               'project_start',
             sd:                 message.startDate,
@@ -4001,9 +4070,11 @@ app.controller('uiGridNoDmpTableCtrl', ['$scope', '$rootScope', '$http', 'api', 
         api.uri.dmps(params).then(function(data){
             //console.log('Datasets ' + uri);
             //console.log(data);
-            $scope.dataLoaded = true;
+            //$scope.dataLoaded = true;
+            $scope.dataFetched = true;
             $scope.gridOptions.data = data;
             $scope.$apply();
+            spinner.stop();
         });
     }
 
@@ -4069,7 +4140,7 @@ app.controller('uiGridNoDmpTableCtrl', ['$scope', '$rootScope', '$http', 'api', 
 
 
 app.controller('uiGridRcukAccessComplianceTableCtrl', ['$scope', '$rootScope', '$http', 'api', 'ui', 'config', '$q', '$interval', function($scope, $rootScope, $http, api, ui, config, $q, $interval){
-    $scope.dataLoaded = false;
+    //$scope.dataLoaded = false;
 
     var params = {
         startDate:          config.startDate,
@@ -4160,6 +4231,8 @@ app.controller('uiGridRcukAccessComplianceTableCtrl', ['$scope', '$rootScope', '
     update(params);
 
     function update(message){
+        $scope.dataFetched = false;
+        var spinner = ui.spinner('loader');
         var params = {
             date:               'project_start',
             sd:                 message.startDate,
@@ -4169,9 +4242,11 @@ app.controller('uiGridRcukAccessComplianceTableCtrl', ['$scope', '$rootScope', '
         api.uri.rcukAccessCompliance(params).then(function(data){
             //console.log('Datasets ' + uri);
             //console.log(data);
-            $scope.dataLoaded = true;
+            //$scope.dataLoaded = true;
+            $scope.dataFetched = true;
             $scope.gridOptions.data = data;
             $scope.$apply();
+            spinner.stop();
         });
     }
 
@@ -4343,6 +4418,8 @@ app.controller('uiGridStorageTableCtrl', ['$scope', '$rootScope', 'api', 'ui', '
     update(params);
 
     function update(message){
+        $scope.dataFetched = false;
+        var spinner = ui.spinner('loader');
         var params = {
             date:               'project_start',
             sd:                 message.startDate,
@@ -4353,8 +4430,10 @@ app.controller('uiGridStorageTableCtrl', ['$scope', '$rootScope', 'api', 'ui', '
             //console.log('Datasets ' + uri);
             //console.log('Data ', data);
             //$scope.modifications[colDef.name] = {old: oldValue, new: newValue};
+            $scope.dataFetched = true;
             $scope.gridOptions.data = data;
             $scope.$apply();
+            spinner.stop();
         });
     }
 

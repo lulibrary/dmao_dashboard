@@ -26,7 +26,7 @@
     </div>
 
     <div ng-show="loggedInUser" class="pull-right">
-        <button type="button" class="btn btn-sm" ng-click="logout()">Sign out</button>
+        <button type="button" class="btn btn-sm btn-info" ng-click="logout()">Sign out</button>
     </div>
 
     <div ng-hide="loggedInUser" class="pull-right">
@@ -35,7 +35,7 @@
 </div>
 
 <div ng-hide="loggedInUser">
-    <div class="modal fade" id="myModal" role="dialog">
+    <div class="modal" id="myModal" role="dialog">
         <div class="modal-dialog modal-sm">
             <div class="modal-content">
                 <div class="modal-header">

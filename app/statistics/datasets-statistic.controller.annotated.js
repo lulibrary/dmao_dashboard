@@ -1,4 +1,4 @@
-app.controller('datasetsCtrl', ['$scope', '$rootScope', '$http', 'api', 'config', function($scope, $rootScope, $http, api, config) {
+app.controller('datasetsCtrl', ['$scope', '$rootScope', '$http', 'api', 'ui', 'config', function($scope, $rootScope, $http, api, ui, config) {
 
     //console.log('hard coding $rootScope.loggedInUser credentials in datasetsCtrl to bypass auth');
     //$rootScope.loggedInUser = 'luve_u';
@@ -13,6 +13,7 @@ app.controller('datasetsCtrl', ['$scope', '$rootScope', '$http', 'api', 'config'
             });
 
     function update(message){
+        $scope.value = config.loadingText;
         // if(config.inView.datasetsCtrl){
             var params = {  date:       'project_start',
                             sd:         message.startDate, 

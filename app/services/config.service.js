@@ -10,5 +10,6 @@ var App = {
     facultyDefault: '',
     facultyMap: {},
     departmentMap: {},
-    updateDelay: 30000
+    updateDelay: 30000,
+    loadingText: ' Loading... '
 };

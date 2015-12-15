@@ -6,6 +6,7 @@ app.controller('noDmpProjectsCtrl', function($scope, $rootScope, $http, api, con
             });
     
     function update(message){
+        $scope.value = config.loadingText;
         // if(config.inView.noDmpProjectsCtrl){ 
             var params = {  date:       'project_start',
                             sd:         message.startDate, 

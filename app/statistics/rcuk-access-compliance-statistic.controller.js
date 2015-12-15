@@ -8,6 +8,7 @@ app.controller('rcukAccessComplianceCtrl', function($scope, $rootScope, $http, a
             });
 
     function update(message){
+        $scope.value = config.loadingText;
         // if(config.inView.rcukAccessComplianceCtrl){ 
             var params = {  date:       'project_start',
                             sd:         message.startDate, 
@@ -17,16 +18,16 @@ app.controller('rcukAccessComplianceCtrl', function($scope, $rootScope, $http, a
             api.uri.rcukAccessCompliance(params).then(function(response) {
                 $scope.$apply(function(){
                     var count = 0;
-                    for(i=0;i<response.length;++i) {
+                    for(var i=0;i<response.length;++i) {
                         if (response[i].rcuk_funder_compliant === 'y') ++count;
                     }
-
-                    // only update if dirty
                     var value = 0;
                     if (count && count !== $scope.value) {
                         value = (count / response.length) * 100;
-                        $scope.value = Math.round(value).toLocaleString();
                     }
+                    // only update if dirty
+                    if (value !== $scope.value)
+                        $scope.value = Math.round(value).toLocaleString();
                 });
             });
         // }

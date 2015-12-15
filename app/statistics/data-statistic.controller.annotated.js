@@ -7,18 +7,19 @@ app.controller('dataCtrl', ['$scope', '$rootScope', '$http', 'api', 'config', fu
             });
 
     function update(message){
+        $scope.dataset_accesses = {};
+        $scope.dataset_accesses.data = config.loadingText;
+        $scope.dataset_accesses.metadata = config.loadingText;
         var params = {
                         sd:         message.startDate,
                         ed:         message.endDate,
                         faculty:    message.faculty,
                         summary_totals:    true
                     };
-
         api.uri.datasetAccess(params).then(function(response) {
             $scope.$apply(function(){
             //    console.log('api.uri.datasetAccess ', response);
 
-            $scope.dataset_accesses = {};
             $scope.dataset_accesses.data = 0;
             $scope.dataset_accesses.metadata = 0;
             for (var i=0; i < response.length; ++i){

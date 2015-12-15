@@ -8,6 +8,7 @@ app.controller('storageUnitCtrl', ['$scope', '$rootScope', '$http', 'api', 'conf
             });
 
     function update(message){
+        $scope.value = config.loadingText;
         // if(config.inView.storageUnitCtrl){ 
             var params = {  date:       'project_start',
                             sd:         message.startDate, 

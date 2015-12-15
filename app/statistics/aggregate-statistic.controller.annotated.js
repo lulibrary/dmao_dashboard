@@ -8,8 +8,8 @@ app.controller('aggregateStatisticCtrl', ['$scope', '$rootScope', '$http', 'api'
     $scope.count_datasets = 0;
     $scope.count_dataset_accesses = 0;
 
-    $scope.data = {};
-    $scope.data.institutions = false;
+    //$scope.data = {};
+    //$scope.data.institutions = false;
 
     update({
                 //startDate:      config.startDate,
@@ -17,6 +17,15 @@ app.controller('aggregateStatisticCtrl', ['$scope', '$rootScope', '$http', 'api'
     });
 
     function update(message){
+        $scope.count_institutions = config.loadingText;
+        $scope.count_faculties = config.loadingText;
+        $scope.count_departments = config.loadingText;
+        $scope.count_dmps = config.loadingText;
+        $scope.count_publications = config.loadingText;
+        $scope.count_datasets = config.loadingText;
+        $scope.dataset_accesses = {};
+        $scope.dataset_accesses.data = config.loadingText;
+        $scope.dataset_accesses.metadata = config.loadingText;
         // if(config.inView.datasetsRCUKCtrl){        
             var params = {
                             //sd:         message.startDate,
@@ -34,7 +43,7 @@ app.controller('aggregateStatisticCtrl', ['$scope', '$rootScope', '$http', 'api'
 
         api.uri.public('o_count_institutions').then(function(response) {
             //$scope.$apply(function(){
-                $scope.data.institutions = true;
+                //$scope.data.institutions = true;
                 var value = response[0].count;
                 // only update if dirty
                 if (value !== $scope.count_institutions) $scope.count_institutions = value.toLocaleString();
@@ -77,7 +86,6 @@ app.controller('aggregateStatisticCtrl', ['$scope', '$rootScope', '$http', 'api'
         });
         api.uri.public('o_count_dataset_accesses').then(function(response) {
             $scope.$apply(function(){ //not sure why this is needed for values to stick in this controller
-                $scope.dataset_accesses = {};
                 for (var i=0; i < response.length; ++i){
                     if (response[i].access_type === 'data_download'){
                         $scope.dataset_accesses.data = response[i].count.toLocaleString();
@@ -91,7 +99,7 @@ app.controller('aggregateStatisticCtrl', ['$scope', '$rootScope', '$http', 'api'
     }
 
     $scope.filterEventListener = $rootScope.$on("FilterEvent", function (event, message) {
-        console.log("update firing");
+        //console.log("update firing");
         update(message);
     });  
 

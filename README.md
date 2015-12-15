@@ -16,3 +16,8 @@ For development and demonstration purposes, the user interface currently uses so
 var useThirdPartyStyling = false;
 ```
 within the jQuery document ready function in index.html.
+
+
+Known issues
+-
+On Chrome browser v46 using the daterangepicker blocks the UI and causes processing delays.

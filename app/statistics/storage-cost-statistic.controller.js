@@ -1,7 +1,7 @@
 app.controller('storageCostCtrl', function($scope, $rootScope, $http, api, config) {
     // init
     $scope.value = 0;
-    // $scope.currency = '';
+        // $scope.currency = '';
 
     update({
                 startDate:      config.startDate,
@@ -10,6 +10,7 @@ app.controller('storageCostCtrl', function($scope, $rootScope, $http, api, confi
             });
 
     function update(message){
+        $scope.value = config.loadingText;
         // if(config.inView.storageCostCtrl){ 
             var params = {  date:       'project_start',
                             sd:         message.startDate, 

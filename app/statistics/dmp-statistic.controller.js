@@ -8,6 +8,7 @@ app.controller('dmpsCreatedCtrl', function($scope, $rootScope, $http, api, confi
             });
     
     function update(message){
+        $scope.value = config.loadingText;
         var params = {  date:       'project_start',
                         sd:         message.startDate, 
                         ed:         message.endDate,

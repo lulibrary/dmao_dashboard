@@ -9,6 +9,7 @@ app.controller('dmpStatusCtrl', ['$scope', '$rootScope', '$http', 'api', 'config
             });
 
     function update(message){
+        $scope.value = config.loadingText;
         // if(config.inView.dmpStatusCtrl){        
             var params = {  date:       'project_start',
                             sd:         message.startDate, 

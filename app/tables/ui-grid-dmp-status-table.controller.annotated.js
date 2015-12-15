@@ -1,5 +1,5 @@
 app.controller('uiGridDmpStatusTableCtrl', ['$scope', '$rootScope', '$http', 'api', 'ui', 'config', '$q', '$interval', function($scope, $rootScope, $http, api, ui, config, $q, $interval){
-    $scope.dataLoaded = false;
+    //$scope.dataLoaded = false;
 
     var params = {
         startDate:          config.startDate,
@@ -89,6 +89,8 @@ app.controller('uiGridDmpStatusTableCtrl', ['$scope', '$rootScope', '$http', 'ap
     update(params);
 
     function update(message){
+        $scope.dataFetched = false;
+        var spinner = ui.spinner('loader');
         var params = {
             date:               'project_start',
             sd:                 message.startDate,
@@ -99,9 +101,11 @@ app.controller('uiGridDmpStatusTableCtrl', ['$scope', '$rootScope', '$http', 'ap
         api.uri.dmpStatus(params).then(function(data){
             //console.log('Datasets ' + uri);
             //console.log(data);
-            $scope.dataLoaded = true;
+            //$scope.dataLoaded = true;
+            $scope.dataFetched = true;
             $scope.gridOptions.data = data;
             $scope.$apply();
+            spinner.stop();
         });
     }
 

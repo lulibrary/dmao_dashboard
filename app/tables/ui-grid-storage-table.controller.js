@@ -105,6 +105,8 @@ app.controller('uiGridStorageTableCtrl', function($scope, $rootScope, api, ui, c
     update(params);
 
     function update(message){
+        $scope.dataFetched = false;
+        var spinner = ui.spinner('loader');
         var params = {
             date:               'project_start',
             sd:                 message.startDate,
@@ -115,8 +117,10 @@ app.controller('uiGridStorageTableCtrl', function($scope, $rootScope, api, ui, c
             //console.log('Datasets ' + uri);
             //console.log('Data ', data);
             //$scope.modifications[colDef.name] = {old: oldValue, new: newValue};
+            $scope.dataFetched = true;
             $scope.gridOptions.data = data;
             $scope.$apply();
+            spinner.stop();
         });
     }
 

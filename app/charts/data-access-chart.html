@@ -9,7 +9,7 @@
                                             <img src="../assets/admin/layout/img/loading.gif" alt="loading"/>
                                         </div>	 -->
 			<div ng-controller="dataAccessChartCtrl">
-				<div class="watermark-chart" ng-show="!dataAvailable">No data available</div>
+				<div class="watermark-chart" ng-show="!dataAvailable && dataFetched">No data available</div>
 				<div id="dataAccessChart"></div>
 			</div>
 		</div>

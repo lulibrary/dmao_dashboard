@@ -9,6 +9,7 @@ app.controller('datasetsRCUKCtrl', ['$scope', '$rootScope', '$http', 'api', 'con
             });
 
     function update(message){
+        $scope.value = config.loadingText;
         // if(config.inView.datasetsRCUKCtrl){        
             var params = {  date:       'project_start',
                             sd:         message.startDate, 

@@ -1,6 +1,4 @@
-app.controller('dataAccessChartCtrl', ['$scope', '$rootScope', '$http', 'api', 'config', function($scope, $rootScope, $http, api, config) {
-    $scope.dataAvailable = false;
-
+app.controller('dataAccessChartCtrl', ['$scope', '$rootScope', '$http', 'api', 'ui', 'config', function($scope, $rootScope, $http, api, ui, config) {
     var params = {
                 startDate:          config.startDate,
                 endDate:            config.endDate,
@@ -11,6 +9,9 @@ app.controller('dataAccessChartCtrl', ['$scope', '$rootScope', '$http', 'api', '
     update(params);
 
     function update(message){
+        $scope.dataAvailable = false;
+        $scope.dataFetched = false;
+        var spinner = ui.spinner('loader');
         var params = {  //date:               'project_start',
                         sd:                 message.startDate,
                         ed:                 message.endDate,
@@ -19,15 +20,15 @@ app.controller('dataAccessChartCtrl', ['$scope', '$rootScope', '$http', 'api', '
                     };
         api.uri.datasetAccess(params).then(function(data){
             //console.log('data access ' + uri);
-            $scope.dataAvailable = false;
             data = api.filter.datasetAccess(data, 'data_download');
             if (data.length) {
                 $scope.dataAvailable = true;
                 //console.log('data length ', data.length);
             }
+            $scope.dataFetched = true;
             $scope.$apply();
-            DataAccessLineChart(data, {width:700, height:300});
-
+            DataAccessLineChart(data, {width: 700, height: 300});
+            spinner.stop();
             // console.log('DataAccessLineChart(');        
         });
     }

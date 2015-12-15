@@ -9,6 +9,7 @@ app.controller('doiMintingCtrl', function($scope, $rootScope, api, config) {
             });
 
     function update(message){
+        $scope.value = config.loadingText;
         //var params = {  date:       'project_start',
         //                sd:         message.startDate,
         //                ed:         message.endDate,
