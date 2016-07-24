@@ -1,0 +1,48 @@
+<div class="portlet box green-haze">
+    <div class="portlet-title">
+        <div class="caption">
+            Advocacy events
+        </div>
+    </div>
+    <div class="portlet-body">
+        <div ng-controller="advocacyEventCtrl" ng-init="index()" ng-cloak>
+            <div class="container">
+                <div class="row">
+                    <!--<div class="col-md-9">-->
+                        <table class="table table-striped">
+                            <thead>
+                            <tr>
+                                <th class="col-xs-2">Date</th>
+                                <th class="col-xs-2">Content</th>
+                                <th class="col-xs-2">Type</th>
+                                <th class="col-xs-5">Notes</th>
+                                <th class="col-xs-1">Participants</th>
+                                <th></th>
+                                <th></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+
+                            <tr dir-paginate="thing in things | orderBy:'-session_date' | itemsPerPage: 10">
+                                <td>{{thing.session_date}}</td>
+                                <td>{{thing.session_content}}</td>
+                                <td>{{thing.ast_name}}</td>
+                                <td>{{thing.notes}}</td>
+                                <td>{{thing.num_participants}}</td>
+                                <!--<td><a href="#advocacy_events/{{thing.event_id}}">Show</a></td>-->
+                                <!--<td><a href="#advocacy_events/{{thing.event_id}}/edit">Edit</a></td>-->
+                                <td><a href="#advocacy/{{thing.event_id}}">Show</a></td>
+                            </tr>
+
+
+                            </tbody>
+                        </table>
+
+                    <dir-pagination-controls></dir-pagination-controls>
+                </div>
+            </div>
+            <a href ng-click="new()">New</a>
+        </div>
+
+    </div>
+</div>

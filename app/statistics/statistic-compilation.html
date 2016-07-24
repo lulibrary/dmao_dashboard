@@ -91,6 +91,16 @@
 					</statistic>
 				</div>
 
+				<div ng-controller="publicationsCtrl">
+					<statistic 	value="{{value}}"
+								  description="Publications"
+								  icon="book"
+								  colour="blue-hoki"
+								  link="#/publications"
+					>
+					</statistic>
+				</div>
+
 				<div ng-controller="dataCtrl">
 					<statistic 	value="{{dataset_accesses.data}}"
 								  description="Data downloads"
@@ -129,6 +139,22 @@
 							  colour="grey-cascade"
 						>
 				</aggregate>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="portlet box grey-gallery">
+	<div class="portlet-title">
+		<div class="caption">
+			Advocacy
+		</div>
+	</div>
+	<div class="portlet-body">
+		<div class="row">
+			<div class="container">
+				<div><a href="#advocacy">Events</a></div>
+				<div><a href="#advocacySessionTypes">Session types</a></div>
 			</div>
 		</div>
 	</div>

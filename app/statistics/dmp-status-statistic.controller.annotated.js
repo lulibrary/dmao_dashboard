@@ -1,4 +1,4 @@
-app.controller('dmpStatusCtrl', ['$scope', '$rootScope', '$http', 'api', 'config', function($scope, $rootScope, $http, api, config) {  
+angular.module('dmaoApp').controller('dmpStatusCtrl', ['$scope', '$rootScope', '$http', 'api', 'config', function($scope, $rootScope, $http, api, config) {
     // init
     $scope.value = 0;
     // $scope.fraction = {numerator: 0, denominator: 0}

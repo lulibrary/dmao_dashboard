@@ -1,4 +1,4 @@
-app.controller('uiGridStorageTableCtrl', function($scope, $rootScope, api, ui, config, $q, $interval){
+angular.module('dmaoApp').controller('uiGridStorageTableCtrl', function($scope, $rootScope, api, ui, config, $q, $interval){
     var params = {
         startDate:          config.startDate,
         endDate:            config.endDate,

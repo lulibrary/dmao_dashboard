@@ -1,4 +1,4 @@
-app.controller('rcukAccessComplianceTableCtrl', function($scope, $rootScope, $http, api, config) {  
+angular.module('dmaoApp').controller('rcukAccessComplianceTableCtrl', function($scope, $rootScope, $http, api, config) {
     var params = {
                 startDate:          config.startDate,
                 endDate:            config.endDate,

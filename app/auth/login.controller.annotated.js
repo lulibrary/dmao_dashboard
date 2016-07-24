@@ -1,4 +1,4 @@
-app.controller("loginCtrl", ['$scope', '$location', '$rootScope', '$cookies', 'api', 'config', function($scope, $location, $rootScope, $cookies, api, config) {
+angular.module('dmaoApp').controller("loginCtrl", ['$scope', '$location', '$rootScope', '$cookies', 'api', 'config', function($scope, $location, $rootScope, $cookies, api, config) {
     // optionally prefill for testing
     setDemoLoginCredentials();
 

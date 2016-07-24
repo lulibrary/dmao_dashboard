@@ -1,4 +1,4 @@
-app.controller('datasetsCtrl', ['$scope', '$rootScope', '$http', 'api', 'ui', 'config', function($scope, $rootScope, $http, api, ui, config) {
+angular.module('dmaoApp').controller('datasetsCtrl', ['$scope', '$rootScope', '$http', 'api', 'ui', 'config', function($scope, $rootScope, $http, api, ui, config) {
 
     //console.log('hard coding $rootScope.loggedInUser credentials in datasetsCtrl to bypass auth');
     //$rootScope.loggedInUser = 'luve_u';

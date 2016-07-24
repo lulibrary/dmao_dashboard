@@ -1,4 +1,4 @@
-app.controller('uiGridRcukAccessComplianceTableCtrl', function($scope, $rootScope, $http, api, ui, config, $q, $interval){
+angular.module('dmaoApp').controller('uiGridRcukAccessComplianceTableCtrl', function($scope, $rootScope, $http, api, ui, config, $q, $interval){
     //$scope.dataLoaded = false;
 
     var params = {

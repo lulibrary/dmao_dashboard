@@ -1,4 +1,4 @@
-app.controller('metadataAccessChartCtrl', ['$scope', '$rootScope', '$http', 'api', 'ui', 'config', function($scope, $rootScope, $http, api, ui, config) {
+angular.module('dmaoApp').controller('metadataAccessChartCtrl', ['$scope', '$rootScope', '$http', 'api', 'ui', 'config', function($scope, $rootScope, $http, api, ui, config) {
     var params = {
                 startDate:          config.startDate,
                 endDate:            config.endDate,

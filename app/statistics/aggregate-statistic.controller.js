@@ -1,4 +1,4 @@
-app.controller('aggregateStatisticCtrl', function($scope, $rootScope, $http, api, config) {
+angular.module('dmaoApp').controller('aggregateStatisticCtrl', function($scope, $rootScope, $http, api, config) {
     // init
     $scope.count_institutions = 0;
     $scope.count_faculties = 0;

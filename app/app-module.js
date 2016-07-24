@@ -1,10 +1,16 @@
-var app = angular.module('dmaoApp', ['ngRoute',
+
+// var app = angular.module('dmaoApp', []);
+
+angular.module('dmaoApp', ['ngRoute',
                             'ngTouch',
                             'ui.grid',
                             'ui.grid.cellNav', 'ui.grid.edit', 'ui.grid.rowEdit',
                             'ui.grid.selection', 'ui.grid.exporter',
                             'ui.grid.resizeColumns',
-                            'ngCookies', 'ng-breadcrumbs'
+                            'ngCookies', 'ng-breadcrumbs',
+                            'schemaForm',
+                            'angularUtils.directives.dirPagination',
+                            'ui.bootstrap'
 ]);
 
 // This is a compromise. Factory is used to create an Angular service with dependency injection 
@@ -13,19 +19,19 @@ var app = angular.module('dmaoApp', ['ngRoute',
 // the config definition.
 //
 
-app.factory('api', function() {
+angular.module('dmaoApp').factory('api', function() {
     return ApiService;
 });
 
-app.factory('config', function() { 
+angular.module('dmaoApp').factory('config', function() {
     return App;
 });
 
-app.factory('ui', function() {
+angular.module('dmaoApp').factory('ui', function() {
     return UiService;
 });
 
-app.run(['$cookies', '$location', '$rootScope', 'api', 'config', function($cookies, $location, $rootScope, api, config) {
+angular.module('dmaoApp').run(['$cookies', '$location', '$rootScope', 'api', 'config', function($cookies, $location, $rootScope, api, config) {
     var apiKey = $cookies.get('apiKey');
     //console.log('app.run apiKey ', apiKey);
     if (apiKey)

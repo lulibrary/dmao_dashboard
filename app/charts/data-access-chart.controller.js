@@ -1,4 +1,4 @@
-app.controller('dataAccessChartCtrl', function($scope, $rootScope, $http, api, ui, config) {
+angular.module('dmaoApp').controller('dataAccessChartCtrl', function($scope, $rootScope, $http, api, ui, config) {
     var params = {
                 startDate:          config.startDate,
                 endDate:            config.endDate,

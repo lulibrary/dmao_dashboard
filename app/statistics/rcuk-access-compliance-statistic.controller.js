@@ -1,4 +1,4 @@
-app.controller('rcukAccessComplianceCtrl', function($scope, $rootScope, $http, api, config) {
+angular.module('dmaoApp').controller('rcukAccessComplianceCtrl', function($scope, $rootScope, $http, api, config) {
     // init
     $scope.value = 0;
     update({

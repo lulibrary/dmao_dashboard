@@ -1,4 +1,4 @@
-app.controller('doiMintingCtrl', function($scope, $rootScope, api, config) {
+angular.module('dmaoApp').controller('doiMintingCtrl', function($scope, $rootScope, api, config) {
     // init
     $scope.value = 0;
     $scope.dois = {};

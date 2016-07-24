@@ -1,4 +1,4 @@
-app.controller('filterCtrl', function($scope, $rootScope, $interval, $timeout, $cookies, breadcrumbs, api, config) {
+angular.module('dmaoApp').controller('filterCtrl', function($scope, $rootScope, $interval, $timeout, $cookies, breadcrumbs, api, config) {
     $scope.startDate = config.startDateDefault;
     $scope.endDate = config.endDateDefault;
     $scope.faculty = config.facultyDefault;

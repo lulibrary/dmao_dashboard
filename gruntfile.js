@@ -7,13 +7,13 @@ module.exports = function(grunt) {
         concat: {
             // 2. Configuration for concatenating files goes here.
 		    dist: {
-		        src: [	
-		        	'app/**/*.js',	
+		        src: [
+					'app/*module.js',
+					'app/**/*.js',
 		        	'!app/app-routes.js',
 		        	'!app/**/*controller.js'
-
 		        ],
-		        dest: 'assets/build/dmao.js',
+		        dest: 'assets/build/dmao.js'
 		    }            
         },
 

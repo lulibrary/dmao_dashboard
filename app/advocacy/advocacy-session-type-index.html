@@ -1,0 +1,41 @@
+<div class="portlet box green-haze">
+    <div class="portlet-title">
+        <div class="caption">
+            Advocacy session types
+        </div>
+    </div>
+    <div class="portlet-body">
+        <div ng-controller="advocacySessionTypeCtrl" ng-init="index()" ng-cloak>
+            <div class="container">
+                <div class="row">
+                    <!--<div class="col-md-9">-->
+                        <table class="table table-striped">
+                            <thead>
+                            <tr>
+                                <th class="col-xs-3">Name</th>
+                                <th class="col-xs-1"></th>
+                                <th class="col-xs-1"></th>
+                                <th class="col-xs-7"></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+
+                            <tr dir-paginate="thing in things | orderBy:'ast_name' | itemsPerPage: 10">
+                                <td>{{thing.ast_name}}</td>
+                                <td><a href="#advocacySessionTypes/{{thing.ast_id}}/edit">Edit</a></td>
+                                <td><a href ng-click="destroy(thing)">Delete</a></td>
+                                <td></td>
+                            </tr>
+
+
+                            </tbody>
+                        </table>
+
+                    <dir-pagination-controls></dir-pagination-controls>
+                </div>
+            </div>
+            <a href ng-click="new()">New</a>
+        </div>
+
+    </div>
+</div>

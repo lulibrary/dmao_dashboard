@@ -1,4 +1,4 @@
-app.controller('noDmpProjectsCtrl', ['$scope', '$rootScope', '$http', 'api', 'config', function($scope, $rootScope, $http, api, config) {
+angular.module('dmaoApp').controller('noDmpProjectsCtrl', ['$scope', '$rootScope', '$http', 'api', 'config', function($scope, $rootScope, $http, api, config) {
     update({
                 startDate:      config.startDate,
                 endDate:        config.endDate,

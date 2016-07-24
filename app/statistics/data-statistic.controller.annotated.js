@@ -1,4 +1,4 @@
-app.controller('dataCtrl', ['$scope', '$rootScope', '$http', 'api', 'config', function($scope, $rootScope, $http, api, config) {
+angular.module('dmaoApp').controller('dataCtrl', ['$scope', '$rootScope', '$http', 'api', 'config', function($scope, $rootScope, $http, api, config) {
     // init
     update({
                 startDate:      config.startDate,

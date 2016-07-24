@@ -1,4 +1,4 @@
-app.controller('datasetsTableCtrl', ['$scope', '$rootScope', '$http', 'api', 'config', function($scope, $rootScope, $http, api, config) {
+angular.module('dmaoApp').controller('datasetsTableCtrl', ['$scope', '$rootScope', '$http', 'api', 'config', function($scope, $rootScope, $http, api, config) {
     var params = {
                 startDate:          config.startDate,
                 endDate:            config.endDate,

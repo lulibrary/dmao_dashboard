@@ -1,0 +1,60 @@
+<div class="portlet box green-haze">
+    <div class="portlet-title">
+        <div class="caption">
+            Advocacy session type
+        </div>
+    </div>
+    <div class="portlet-body">
+        <h3>Description</h3>
+        <div class="container">
+        <div class="row">
+            <div class="col-xs-4">
+                <div ng-controller="advocacySessionTypeCtrl" ng-cloak>
+                    <form name="advocacySessionTypeNew"
+                          sf-schema="schema"
+                          sf-form="form"
+                          sf-model="model"
+                          ng-submit="onSubmitNew(advocacySessionTypeNew)">
+                    </form>
+                </div>
+            </div>
+            <div class="col-xs-8"></div>
+        </div>
+            <!--{{model}}-->
+            <!--<ul>-->
+                <!--<li ng-repeat="thing in things | orderBy : 'session_date'">-->
+                    <!--{{thing.session_date}}, {{thing.session_content}}, {{thing.ast_name}}-->
+                    <!--<a href="#/advocacyEventsForm" ng-click="remove(thing)">Delete</a>-->
+                    <!--<a href="#/advocacyEventsForm" ng-click="edit(thing)">Edit</a>-->
+                <!--</li>-->
+                <!--<form>-->
+                    <!--<select ng-model="selectedSessionType" ng-options="item.ast_name for item in sessionTypes track by item.ast_id">-->
+                    <!--</select>-->
+
+                    <!--<h1>You selected: {{selectedSessionType.ast_name}}</h1>-->
+                    <!--<p>Its id is: {{selectedSessionType.ast_id}}</p>-->
+
+                    <!--&lt;!&ndash;<label for="ast_name">Name</label>&ndash;&gt;-->
+                    <!--&lt;!&ndash;<input type="text" id="ast_name" ng-model="current.ast_name" value="{{current.ast_name}}"/>&ndash;&gt;-->
+
+
+                    <!--<label for="session_date">Date</label>-->
+                    <!--<input type="text" required id="session_date" ng-model="current.session_date" value="{{current.session_date}}"/>-->
+                    <!--<label for="session_type">Session type</label>-->
+                    <!--<input type="text" required id="session_type" ng-model="current.session_type" value="{{current.session_type}}"/>-->
+                    <!--<label for="session_content">Content</label>-->
+                    <!--<input type="text" required  id="session_content" ng-model="current.session_content" value="{{current.session_content}}"/>-->
+                    <!--<label for="num_participants">Number of participants</label>-->
+                    <!--<input type="text" id="num_participants" ng-model="current.num_participants" value="{{current.num_participants}}"/>-->
+                    <!--<button ng-click="save(current)">Save</button>-->
+                    <!--<label for="notes">Notes</label>-->
+                    <!--<textarea rows="4" cols="50" id="notes" ng-model="current.notes">{{current.notes}}</textarea>-->
+
+                    <!--<button ng-click="add(current)">Add</button>-->
+                <!--</form>-->
+            <!--</ul>-->
+            <!--<p>form = {{current}}</p>-->
+        </div>
+    </div>
+    </div>
+</div>

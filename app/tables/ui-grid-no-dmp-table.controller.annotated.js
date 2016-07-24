@@ -1,4 +1,4 @@
-app.controller('uiGridNoDmpTableCtrl', ['$scope', '$rootScope', '$http', 'api', 'ui', 'config', '$q', '$interval', function($scope, $rootScope, $http, api, ui, config, $q, $interval){
+angular.module('dmaoApp').controller('uiGridNoDmpTableCtrl', ['$scope', '$rootScope', '$http', 'api', 'ui', 'config', '$q', '$interval', function($scope, $rootScope, $http, api, ui, config, $q, $interval){
     //$scope.dataLoaded = false;
 
     var params = {

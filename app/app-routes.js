@@ -1,4 +1,4 @@
-app.config(function($routeProvider, $locationProvider) {
+angular.module('dmaoApp').config(function($routeProvider, $locationProvider) {
 	$routeProvider
 		.when('/landing', { templateUrl: 'app/public/landing.html' })
 		//.when('/landing', { templateUrl: 'app/tables/storage-table.html' })
@@ -43,6 +43,10 @@ app.config(function($routeProvider, $locationProvider) {
 			templateUrl: 'app/tables/rcuk-access-compliance-table.html',
 			label: 'RCUK access compliance'
 		})
+		.when('/publications', {
+			templateUrl: 'app/tables/publications-table.html',
+			label: 'Publications'
+		})
 		.when('/data', { 
 			templateUrl: 'app/charts/data-access-chart.html',
 			label: 'Data downloads'
@@ -50,6 +54,35 @@ app.config(function($routeProvider, $locationProvider) {
 		.when('/metadata', { 
 			templateUrl: 'app/charts/metadata-access-chart.html',
 			label: 'Metadata accesses'
+		})
+		.when('/advocacySessionTypes', {
+			templateUrl: 'app/advocacy/advocacy-session-type-index.html',
+			label: 'Advocacy session types'
+		})
+		.when('/advocacySessionTypes/new', {
+			templateUrl: 'app/advocacy/advocacy-session-type-new.html',
+			label: 'New'
+		})
+		.when('/advocacySessionTypes/:id/edit', {
+			templateUrl: 'app/advocacy/advocacy-session-type-edit.html',
+			label: 'Edit'
+		})
+		.when('/advocacy', {
+			templateUrl: 'app/advocacy/advocacy-event-index.html',
+			label: 'Advocacy events'
+		})
+		.when('/advocacy/new', {
+			templateUrl: 'app/advocacy/advocacy-event-new.html',
+			label: 'New'
+		})
+		.when('/advocacy/:id', {
+			templateUrl: 'app/advocacy/advocacy-event-show.html',
+			// templateUrl: 'app/advocacy/stub.html',
+			label: 'Event'
+		})
+		.when('/advocacy/:id/edit', {
+			templateUrl: 'app/advocacy/advocacy-event-edit.html',
+			label: 'Edit'
 		})
 		// .when('/index.html', { templateUrl: 'app/components/statistic/statisticCompilationView.html' })
 		.otherwise({ templateUrl: 'app/messages/error.html' });

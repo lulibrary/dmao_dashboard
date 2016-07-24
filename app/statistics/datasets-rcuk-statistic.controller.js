@@ -1,4 +1,4 @@
-app.controller('datasetsRCUKCtrl', function($scope, $rootScope, $http, api, config) {
+angular.module('dmaoApp').controller('datasetsRCUKCtrl', function($scope, $rootScope, $http, api, config) {
     // init
     $scope.value = 0;
 

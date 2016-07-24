@@ -1,10 +1,16 @@
-var app = angular.module('dmaoApp', ['ngRoute',
+
+// var app = angular.module('dmaoApp', []);
+
+angular.module('dmaoApp', ['ngRoute',
                             'ngTouch',
                             'ui.grid',
                             'ui.grid.cellNav', 'ui.grid.edit', 'ui.grid.rowEdit',
                             'ui.grid.selection', 'ui.grid.exporter',
                             'ui.grid.resizeColumns',
-                            'ngCookies', 'ng-breadcrumbs'
+                            'ngCookies', 'ng-breadcrumbs',
+                            'schemaForm',
+                            'angularUtils.directives.dirPagination',
+                            'ui.bootstrap'
 ]);
 
 // This is a compromise. Factory is used to create an Angular service with dependency injection 
@@ -13,19 +19,19 @@ var app = angular.module('dmaoApp', ['ngRoute',
 // the config definition.
 //
 
-app.factory('api', function() {
+angular.module('dmaoApp').factory('api', function() {
     return ApiService;
 });
 
-app.factory('config', function() { 
+angular.module('dmaoApp').factory('config', function() {
     return App;
 });
 
-app.factory('ui', function() {
+angular.module('dmaoApp').factory('ui', function() {
     return UiService;
 });
 
-app.run(['$cookies', '$location', '$rootScope', 'api', 'config', function($cookies, $location, $rootScope, api, config) {
+angular.module('dmaoApp').run(['$cookies', '$location', '$rootScope', 'api', 'config', function($cookies, $location, $rootScope, api, config) {
     var apiKey = $cookies.get('apiKey');
     //console.log('app.run apiKey ', apiKey);
     if (apiKey)
@@ -46,7 +52,499 @@ app.run(['$cookies', '$location', '$rootScope', 'api', 'config', function($cooki
     }    
 
 }]);
-app.config(['$routeProvider', '$locationProvider', function($routeProvider, $locationProvider) {
+angular.module('dmaoApp').controller("advocacyEventCtrl", ['$scope', '$http', '$location', '$route', '$routeParams', 'api', 'config', 'ui', function($scope, $http, $location, $route, $routeParams, api, config, ui){
+
+    $scope.things = [];
+    $scope.participants = [];
+
+    $scope.schema = {
+        type: "object",
+        required: [
+            'session_type',
+            'session_content',
+            'session_date'
+        ],
+        properties: {
+            session_type: {
+                type: "integer",
+                title: "Type"
+            },
+            num_participants: {
+                type: 'integer',
+                title: 'Participants',
+                minimum: 0
+            },
+            session_content: {
+                type: 'string',
+                minLength: 2,
+                title: 'Content'
+            },
+            session_date: {
+                title: 'Date',
+                type: 'string',
+                format: 'date'
+            },
+            notes: {
+                type: 'string',
+                minLength: 2,
+                title: 'Notes'
+            }
+        }
+    };
+
+    $scope.form = [
+        {
+            key: 'session_date',
+            type: 'datepicker',
+            format: 'yyyy-mm-dd'
+        },
+        {
+            key: 'session_content',
+            fieldHtmlClass: 'advocacyContent'
+        },
+        {
+            key: 'session_type',
+            type: 'select',
+            titleMap: []
+        },
+        {
+            key: 'notes',
+            type: 'textarea',
+            fieldHtmlClass: 'advocacyNotes'
+        },
+        {
+            key: 'num_participants',
+            fieldHtmlClass: 'advocacyParticipants'
+        },
+        {
+            type: 'submit',
+            title: 'Save'
+        }
+    ];
+
+    $scope.model = {};
+
+    $scope.index = function(){
+        var spinner = ui.spinner('loader');
+        var promise = api.uri.advocacyEvents();
+        // console.log(promise);
+        promise.success(function(data){
+            // console.log(data);
+            var last_event_id = null;
+            angular.forEach(data, function(x) {
+                if (x.event_id != last_event_id){
+                    $scope.things.push(x);
+                    last_event_id = x.event_id;
+                }
+            });
+            $scope.$apply();
+            spinner.stop();
+        });
+        promise.error(function(data){
+            alert('Error whilst fetching data from server');
+            //console.log('promise ERROR');
+            spinner.stop();
+        });
+    };
+
+    $scope.show = function(){
+        // console.log('show called');
+        var spinner = ui.spinner('loader');
+        var params = { 'event_id': $routeParams.id }
+        var promise = api.uri.advocacyEvents(params);
+        // console.log(promise);
+        promise.success(function(data){
+            // console.log(data);
+            var last_event_id = null;
+            angular.forEach(data, function(x) {
+                // console.log(x);
+                $scope.participants.push(x);
+                if (x.event_id != last_event_id){
+                    $scope.things.push(x);
+                    last_event_id = x.event_id;
+                }
+            });
+            $scope.$apply();
+            spinner.stop();
+        });
+        promise.error(function(data){
+            alert('Error whilst fetching data from server');
+            //console.log('promise ERROR');
+            spinner.stop();
+        });
+    };
+
+    $scope.new = function(){
+        $location.path('/advocacy/new');
+    };
+
+    function create(){
+        post().then(function(data){
+            // console.log(data);
+            var response = JSON.parse(data['affected_rows']);
+            if(response == 1) {
+                $location.path('/advocacy');
+                $scope.$apply();
+            }
+        });
+    }
+
+    function post(){
+        var thing = $scope.model;
+        var arr = [];
+        var o = {};
+        o.inst_id = config.institutionId;
+        o.num_participants = thing.num_participants;
+        o.notes = thing.notes;
+        o.session_type = thing.session_type;
+        o.session_date = thing.session_date;
+        o.session_content = thing.session_content;
+        arr.push(o);
+        data = arr;
+        // console.log('thing' , JSON.stringify(arr));
+        var params = {};
+        params.data = data;
+        return api.uri.post.advocacyEvents(params);
+    }
+
+    $scope.onSubmitNew = function(form) {
+        // First we broadcast an event so all fields validate themselves
+        $scope.$broadcast('schemaFormValidate');
+
+        // Then we check if the form is valid
+        if (form.$valid) {
+            create();
+        }
+    };
+
+    $scope.edit = function(){
+        var spinner = ui.spinner('loader');
+        var params = { 'event_id': $routeParams.id };
+        var promise = api.uri.advocacyEvents(params);
+        // console.log(promise);
+        promise.success(function(data){
+            // console.log(data);
+
+            // get actual header info from first record in array
+            var x = data[0];
+            // console.log(x);
+
+            var o = {};
+            o['event_id'] = x['event_id'];
+            o['inst_id'] = x['inst_id'];
+            o['notes'] = x['notes'];
+            o['num_participants'] = x['num_participants'];
+            o['session_content'] = x['session_content'];
+            o['session_date'] = x['session_date'];
+            o['session_type'] = x['session_type'];
+            $scope.model = o;
+            // console.log($scope.model);
+
+            $scope.$apply();
+            spinner.stop();
+            // console.log('tings ', $scope.things);
+        });
+        promise.error(function(data){
+            alert('Error whilst fetching data from server');
+            //console.log('promise ERROR');
+            spinner.stop();
+        });
+    };
+
+    function put(){
+        var thing = $scope.model;
+        var arr = [];
+        var o = {};
+        o['pkey:event_id'] = thing.event_id;
+        o.inst_id = config.institutionId;
+        // if (thing.num_participants)
+        o.num_participants = thing.num_participants;
+        o.notes = thing.notes;
+        o.session_type = thing.session_type;
+        o.session_date = thing.session_date;
+        o.session_content = thing.session_content;
+        arr.push(o);
+        var data = arr;
+        // console.log('thing' , JSON.stringify(arr));
+        var params = {};
+        params.data = data;
+        api.uri.put.advocacyEvents(params);
+    }
+
+    $scope.onSubmitEdit = function(form) {
+        // First we broadcast an event so all fields validate themselves
+        $scope.$broadcast('schemaFormValidate');
+
+        // Then we check if the form is valid
+        if (form.$valid) {
+            put();
+            $location.path('/advocacy');
+            // $scope.$apply();
+        }
+    };
+
+    $scope.deleteAdvocacyEvent = function(eventId){
+        var params = { 'event_id': eventId }
+        api.uri.delete.advocacyEvents(params).then(function(data, textStatus, jqXHR){
+            // console.log(jqXHR);
+            if(jqXHR['status'] == 204) {
+                $location.path('/advocacy');
+                $scope.$apply();
+            }
+        });
+    };
+
+    $scope.getPerson = function(val) {
+        var params = {last_name_like: val};
+        return api.uri.persons(params).then(function(response){
+            return response.map(function(item){
+                return item;
+            });
+        });
+    };
+
+    $scope.addPersonToEvent = function(searchPerson){
+        var arr = [];
+        var o = {};
+        o.inst_id = config.institutionId;
+        o.event_id = $scope.participants[0].event_id;
+        o.person_id = searchPerson.person_id;
+        arr.push(o);
+        var data = arr;
+        var params = {};
+        params.data = data;
+
+        api.uri.post.advocacyPersons(params).then(function(data){
+            // console.log(data);
+            var response = JSON.parse(data['affected_rows']);
+            if(response == 1) {
+                $route.reload();
+            }
+        });
+    };
+
+    $scope.removePersonFromEvent = function(searchPerson){
+        var params = {};
+        params.event_id = $scope.participants[0].event_id;
+        params.person_id = searchPerson.person_id;
+        api.uri.delete.advocacyPerson(params).then(function(data, textStatus, jqXHR){
+            // console.log(jqXHR);
+            if(jqXHR['status'] == 204) {
+                $route.reload();
+            }
+        });
+    };
+
+    function getSessionTypes(){
+        var promise = api.uri.advocacySessionTypes();
+        // console.log(promise);
+        promise.success(function(data){
+            // console.log('promise SUCCESS');
+            var download = [];
+            angular.forEach(data, function(x) {
+                // console.log(x);
+                var o = {};
+                o['ast_id'] = x['ast_id'];
+                o['ast_name'] = x['ast_name'];
+                o['inst_id'] = x["inst_id"];
+                download.push(o);
+            });
+            populateSessionTypesSelect(download);
+            $scope.$apply();
+        });
+        promise.error(function(data){
+            alert('Error whilst fetching data from server');
+            //console.log('promise ERROR');
+        });
+    }
+
+    function populateSessionTypesSelect(data) {
+        // console.log('download ', data);
+        var sessionTitleMap = [];
+        for(var i=0; i < data.length; ++i){
+            var o = {};
+            o.value = data[i].ast_id;
+            o.name = data[i].ast_name;
+            sessionTitleMap.push(o);
+        }
+        // console.log('sessionTitleMap ', sessionTitleMap);
+        for(var i=0; i < $scope.form.length; ++i){
+            if ($scope.form[i].key == 'session_type'){
+                $scope.form[i].titleMap = sessionTitleMap;
+            }
+        }
+    }
+
+    getSessionTypes();
+}]);
+
+angular.module('dmaoApp').controller("advocacySessionTypeCtrl", ['$scope', '$http', '$location', '$route', '$routeParams', 'api', 'config', 'ui', function($scope, $http, $location, $route, $routeParams, api, config, ui){
+
+    $scope.model = {};
+    $scope.things = [];
+
+    $scope.schema = {
+        type: "object",
+        required: [
+            'ast_name'
+        ],
+        properties: {
+            ast_name: {
+                type: 'string',
+                minLength: 2,
+                title: 'Name'
+            }
+        }
+    };
+
+    $scope.form = [
+        'ast_name',
+        {
+            type: 'submit',
+            title: 'Save'
+        }
+    ];
+
+    $scope.index = function(){
+        // console.log('get called');
+        // load data
+        var spinner = ui.spinner('loader');
+        var promise = api.uri.advocacySessionTypes();
+        // console.log(promise);
+        promise.success(function(data){
+            // console.log('promise SUCCESS');
+            var download = [];
+            angular.forEach(data, function(x) {
+                // console.log(x);
+                var o = {};
+                o['ast_id'] = x['ast_id'];
+                o['ast_name'] = x['ast_name'];
+                o['inst_id'] = x["inst_id"];
+                download.push(o);
+            });
+            $scope.things = download;
+            $scope.$apply();
+            spinner.stop();
+            // console.log('tings ', $scope.things);
+        });
+        promise.error(function(data){
+            alert('Error whilst fetching data from server');
+            //console.log('promise ERROR');
+            spinner.stop();
+        });
+    };
+
+    $scope.new = function(){
+        $location.path('/advocacySessionTypes/new');
+    };
+
+    function create(){
+        post().then(function(data){
+            // console.log(data);
+            var response = JSON.parse(data['affected_rows']);
+            if(response == 1) {
+                $location.path('/advocacySessionTypes');
+                $scope.$apply();
+            }
+        });
+    }
+
+    $scope.onSubmitNew = function(form) {
+        // First we broadcast an event so all fields validate themselves
+        $scope.$broadcast('schemaFormValidate');
+
+        // Then we check if the form is valid
+        if (form.$valid) {
+            create();
+            // reset();
+        }
+    };
+
+    function post(){
+        var thing = $scope.model;
+        var arr = [];
+        var o = {};
+        o.inst_id = config.institutionId;
+        o.ast_name = thing.ast_name;
+        arr.push(o);
+        data = arr;
+        // console.log('thing' , JSON.stringify(arr));
+        var params = {};
+        params.data = data;
+        return api.uri.post.advocacySessionTypes(params);
+    }
+
+    $scope.edit = function(){
+        var spinner = ui.spinner('loader');
+        // var params = { 'ast_id': $routeParams.id };
+        var promise = api.uri.advocacySessionTypes();
+        promise.success(function(data){
+            // console.log(data);
+
+            angular.forEach(data, function(x) {// console.log(x);
+                // console.log(x);
+                if (x.ast_id == $routeParams.id) {
+                    // console.log('yay');
+                    $scope.model = x;
+                    $scope.$apply();
+                    spinner.stop();
+                }
+            });
+        });
+        promise.error(function(data){
+            alert('Error whilst fetching data from server');
+            //console.log('promise ERROR');
+            spinner.stop();
+        });
+    };
+
+    function put(){
+        var thing = $scope.model;
+        var arr = [];
+        var o = {};
+        o['pkey:ast_id'] = thing.ast_id;
+        o.inst_id = config.institutionId;
+        o.ast_name = thing.ast_name;
+        arr.push(o);
+        data = arr;
+        // console.log('thing' , JSON.stringify(arr));
+        var params = {};
+        params.data = data;
+        return api.uri.put.advocacySessionTypes(params);
+    }
+
+    $scope.onSubmitEdit = function(form) {
+        // First we broadcast an event so all fields validate themselves
+        $scope.$broadcast('schemaFormValidate');
+
+        // Then we check if the form is valid
+        if (form.$valid) {
+            put().then(function(data){
+                $location.path('/advocacySessionTypes');
+                $scope.$apply();
+            });
+        }
+    };
+
+    $scope.destroy = function(thing){
+        var params = {};
+        params.ast_id = thing.ast_id;
+        api.uri.delete.advocacySessionTypes(params).then(function(data, textStatus, jqXHR){
+            // console.log(jqXHR);
+            if(jqXHR['status'] == 204) {
+                $route.reload();
+            }
+        });
+    };
+
+    // function reset(){
+    //     $scope.model = {};
+    //     $scope.form.$pristine = true;
+    //     $scope.$broadcast('schemaFormRedraw');
+    // }
+}]);
+
+angular.module('dmaoApp').config(['$routeProvider', '$locationProvider', function($routeProvider, $locationProvider) {
 	$routeProvider
 		.when('/landing', { templateUrl: 'app/public/landing.html' })
 		//.when('/landing', { templateUrl: 'app/tables/storage-table.html' })
@@ -91,6 +589,10 @@ app.config(['$routeProvider', '$locationProvider', function($routeProvider, $loc
 			templateUrl: 'app/tables/rcuk-access-compliance-table.html',
 			label: 'RCUK access compliance'
 		})
+		.when('/publications', {
+			templateUrl: 'app/tables/publications-table.html',
+			label: 'Publications'
+		})
 		.when('/data', { 
 			templateUrl: 'app/charts/data-access-chart.html',
 			label: 'Data downloads'
@@ -98,6 +600,35 @@ app.config(['$routeProvider', '$locationProvider', function($routeProvider, $loc
 		.when('/metadata', { 
 			templateUrl: 'app/charts/metadata-access-chart.html',
 			label: 'Metadata accesses'
+		})
+		.when('/advocacySessionTypes', {
+			templateUrl: 'app/advocacy/advocacy-session-type-index.html',
+			label: 'Advocacy session types'
+		})
+		.when('/advocacySessionTypes/new', {
+			templateUrl: 'app/advocacy/advocacy-session-type-new.html',
+			label: 'New'
+		})
+		.when('/advocacySessionTypes/:id/edit', {
+			templateUrl: 'app/advocacy/advocacy-session-type-edit.html',
+			label: 'Edit'
+		})
+		.when('/advocacy', {
+			templateUrl: 'app/advocacy/advocacy-event-index.html',
+			label: 'Advocacy events'
+		})
+		.when('/advocacy/new', {
+			templateUrl: 'app/advocacy/advocacy-event-new.html',
+			label: 'New'
+		})
+		.when('/advocacy/:id', {
+			templateUrl: 'app/advocacy/advocacy-event-show.html',
+			// templateUrl: 'app/advocacy/stub.html',
+			label: 'Event'
+		})
+		.when('/advocacy/:id/edit', {
+			templateUrl: 'app/advocacy/advocacy-event-edit.html',
+			label: 'Edit'
 		})
 		// .when('/index.html', { templateUrl: 'app/components/statistic/statisticCompilationView.html' })
 		.otherwise({ templateUrl: 'app/messages/error.html' });
@@ -131,7 +662,7 @@ app.config(['$routeProvider', '$locationProvider', function($routeProvider, $loc
       }
     );
   }]);
-app.controller("loginCtrl", ['$scope', '$location', '$rootScope', '$cookies', 'api', 'config', function($scope, $location, $rootScope, $cookies, api, config) {
+angular.module('dmaoApp').controller("loginCtrl", ['$scope', '$location', '$rootScope', '$cookies', 'api', 'config', function($scope, $location, $rootScope, $cookies, api, config) {
     // optionally prefill for testing
     setDemoLoginCredentials();
 
@@ -257,7 +788,7 @@ function reverseChronoChartData(monthData) {
 }
 
 
-app.controller('dataAccessChartCtrl', ['$scope', '$rootScope', '$http', 'api', 'ui', 'config', function($scope, $rootScope, $http, api, ui, config) {
+angular.module('dmaoApp').controller('dataAccessChartCtrl', ['$scope', '$rootScope', '$http', 'api', 'ui', 'config', function($scope, $rootScope, $http, api, ui, config) {
     var params = {
                 startDate:          config.startDate,
                 endDate:            config.endDate,
@@ -385,7 +916,7 @@ var DataAccessLineChart = function(data, options){
     }
 };
 
-app.controller('metadataAccessChartCtrl', ['$scope', '$rootScope', '$http', 'api', 'ui', 'config', function($scope, $rootScope, $http, api, ui, config) {
+angular.module('dmaoApp').controller('metadataAccessChartCtrl', ['$scope', '$rootScope', '$http', 'api', 'ui', 'config', function($scope, $rootScope, $http, api, ui, config) {
     var params = {
                 startDate:          config.startDate,
                 endDate:            config.endDate,
@@ -729,7 +1260,7 @@ var MetadataAccessChart = {
         });
     }
 }
-app.controller('filterCtrl', ['$scope', '$rootScope', '$interval', '$timeout', '$cookies', 'breadcrumbs', 'api', 'config', function($scope, $rootScope, $interval, $timeout, $cookies, breadcrumbs, api, config) {
+angular.module('dmaoApp').controller('filterCtrl', ['$scope', '$rootScope', '$interval', '$timeout', '$cookies', 'breadcrumbs', 'api', 'config', function($scope, $rootScope, $interval, $timeout, $cookies, breadcrumbs, api, config) {
     $scope.startDate = config.startDateDefault;
     $scope.endDate = config.endDateDefault;
     $scope.faculty = config.facultyDefault;
@@ -1086,7 +1617,7 @@ var ApiService = {
         var uri = URI({
             protocol:   'http',
             hostname:   'lib-dmao.lancs.ac.uk',
-            port:       '8090',
+            port:       '8070',
             path:       'dmaonline',             
         });
         uri += '/' + this.version;
@@ -1113,12 +1644,6 @@ var ApiService = {
         //console.log('uri ', uri);
         //console.log($.getJSON(uri));
         return $.getJSON(uri);
-            //.then(function( json ) {
-            //    //console.log('json response ', json);
-            //    ApiService.apiKey = json[0].api_key;
-            //    $cookies.put('apiKey', json[0].api_key);
-            //    //ApiService.apiKey = 'BLADEBLA';
-            //});
     },
     uri: {
         addParams: function(uri, params){
@@ -1169,13 +1694,6 @@ var ApiService = {
                 //var json = JSON.stringify (params)
             }
             return uri;
-            return $.ajax({
-                type: 'POST',
-                url: uri,
-                data: json,
-                contentType: "application/json",
-                dataType: 'json'
-            });
         },
         rcukAccessCompliance: function(params){
             var uri = URI(ApiService.prefix() + '/c/' + App.institutionId + '/' +
@@ -1215,6 +1733,38 @@ var ApiService = {
             }
             return $.getJSON(uri);
         },
+        publications: function(params){
+            var uri = URI(ApiService.prefix() + '/c/' + App.institutionId + '/' +
+            ApiService.apiKey + '/publications_editor');
+            if (params){
+                uri = this.addParams(uri, params);
+            }
+            return $.getJSON(uri);
+        },
+        persons: function(params){
+            var uri = URI(ApiService.prefix() + '/c/' + App.institutionId + '/' +
+                ApiService.apiKey + '/persons');
+            if (params){
+                uri = this.addParams(uri, params);
+            }
+            return $.getJSON(uri);
+        },
+        advocacyEvents: function(params){
+            var uri = URI(ApiService.prefix() + '/c/' + App.institutionId + '/' +
+                ApiService.apiKey + '/advocacy_events');
+            if (params){
+                uri = this.addParams(uri, params);
+            }
+            return $.getJSON(uri);
+        },
+        advocacySessionTypes: function(params){
+            var uri = URI(ApiService.prefix() + '/' + App.institutionId + '/' +
+                ApiService.apiKey + '/advocacy_session_types');
+            if (params){
+                uri = this.addParams(uri, params);
+            }
+            return $.getJSON(uri);
+        },
         put: {
             dmps: function (params) {
                 //alert('ApiService.uri.put.dmps called');
@@ -1225,21 +1775,9 @@ var ApiService = {
                     uri = ApiService.uri.addParams(uri, params);
                     // console.log('uri ', uri);
                 }
-                return $.ajax(
-                    {
+                return $.ajax({
                         url: uri,
-                        type: 'PUT',
-                        success: function(data, textStatus, jqXHR) {
-                            //alert('Thing updated successfully Status: '+textStatus); },
-                            // console.log('Updated ');
-                            // console.log('Data ', data);
-                        },
-                        error: function(jqXHR, textStatus, errorThrown) {
-                            // console.log('jqXHR ', jqXHR);
-                            // console.log('textStatus ', textStatus);
-                            // console.log('Error ', errorThrown);
-                            //alert(errorThrown);
-                        }
+                        type: 'PUT'
                     });
             },
             storage: function (params) {
@@ -1251,21 +1789,100 @@ var ApiService = {
                     uri = ApiService.uri.addParams(uri, params);
                     // console.log('uri ', uri);
                 }
-                return $.ajax(
-                    {
+                return $.ajax({
+                        url: uri,
+                        type: 'PUT'
+                    });
+            },
+            publications: function (params) {
+                //alert('ApiService.uri.put.storage called');
+                var uri = URI(ApiService.prefix() + '/c/' + App.institutionId + '/' + ApiService.apiKey + '/publications_editor');
+                if (params) {
+                    //uri = this.addParams(uri, params);
+                    uri = ApiService.uri.addParams(uri, params);
+                    // console.log('uri ', uri);
+                }
+                return $.ajax({
+                        url: uri,
+                        type: 'PUT'
+                    });
+            },
+            advocacySessionTypes: function (params) {
+                // console.log(JSON.stringify(params.data));
+                var uri = URI(ApiService.prefix() + '/' + App.institutionId + '/' + ApiService.apiKey + '/advocacy_session_types');
+                return $.ajax({
                         url: uri,
                         type: 'PUT',
-                        success: function(data, textStatus, jqXHR) {
-                            //alert('Thing updated successfully Status: '+textStatus); },
-                            // console.log('Updated ');
-                            // console.log('Data ', data);
-                        },
-                        error: function(jqXHR, textStatus, errorThrown) {
-                            // console.log('jqXHR ', jqXHR);
-                            // console.log('textStatus ', textStatus);
-                            // console.log('Error ', errorThrown);
-                            //alert(errorThrown);
-                        }
+                        data: JSON.stringify(params.data),
+                        contentType: "application/json; charset=UTF-8"
+                    });
+            },
+            advocacyEvents: function (params) {
+                // console.log(JSON.stringify(params.data));
+                var uri = URI(ApiService.prefix() + '/' + App.institutionId + '/' + ApiService.apiKey + '/advocacy');
+                return $.ajax({
+                        url: uri,
+                        type: 'PUT',
+                        data: JSON.stringify(params.data),
+                        contentType: "application/json; charset=UTF-8",
+                    });
+            }
+        },
+        post: {
+            advocacySessionTypes: function (params) {
+                var uri = URI(ApiService.prefix() + '/' + App.institutionId + '/' + ApiService.apiKey + '/advocacy_session_types');
+                return $.ajax({
+                        url: uri,
+                        type: 'POST',
+                        data: JSON.stringify(params.data),
+                        contentType: "application/json"
+                    });
+            },
+            advocacyEvents: function (params) {
+                var uri = URI(ApiService.prefix() + '/' + App.institutionId + '/' + ApiService.apiKey + '/advocacy');
+                return $.ajax({
+                        url: uri,
+                        type: 'POST',
+                        data: JSON.stringify(params.data),
+                        contentType: "application/json"
+                    });
+            },
+            advocacyPersons: function(params){
+                var uri = URI(ApiService.prefix() + '/' + App.institutionId + '/' + ApiService.apiKey + '/map_advocacy_person');
+                return $.ajax({
+                        url: uri,
+                        type: 'POST',
+                        data: JSON.stringify(params.data),
+                        contentType: "application/json"
+                    });
+            },
+        },
+        delete: {
+            advocacySessionTypes: function (params) {
+                var uri = URI(ApiService.prefix() + '/' + App.institutionId + '/' +
+                    ApiService.apiKey + '/advocacy_session_types' + '/' + 'ast_id' +
+                    '/' + params.ast_id);
+
+                return $.ajax({
+                        url: uri,
+                        type: 'DELETE'
+                    });
+            },
+            advocacyEvents: function (params) {
+                var uri = URI(ApiService.prefix() + '/' + App.institutionId + '/' +
+                    ApiService.apiKey + '/advocacy' + '/' + 'event_id' +
+                    '/' + params.event_id);
+                return $.ajax({
+                        url: uri,
+                        type: 'DELETE'
+                    });
+            },
+            advocacyPerson: function (params) {
+                var uri = URI(ApiService.prefix() + '/' + App.institutionId + '/' + ApiService.apiKey +
+                    '/map_advocacy_person' + '/' + 'event_id' + '/' + params.event_id + '/' + 'person_id' + '/' + params.person_id);
+                return $.ajax({
+                        url: uri,
+                        type: 'DELETE'
                     });
             }
         },
@@ -1418,7 +2035,7 @@ var UiService = {
   }
 };
 
-app.directive('aggregate', function() {
+angular.module('dmaoApp').directive('aggregate', function() {
 	return {
 		restrict: 		'E',
 		templateUrl: 	'app/statistics/aggregate-directive.html',
@@ -1434,7 +2051,7 @@ app.directive('aggregate', function() {
         }
     };
 });
-app.controller('aggregateStatisticCtrl', ['$scope', '$rootScope', '$http', 'api', 'config', function($scope, $rootScope, $http, api, config) {
+angular.module('dmaoApp').controller('aggregateStatisticCtrl', ['$scope', '$rootScope', '$http', 'api', 'config', function($scope, $rootScope, $http, api, config) {
     // init
     $scope.count_institutions = 0;
     $scope.count_faculties = 0;
@@ -1550,7 +2167,7 @@ app.controller('aggregateStatisticCtrl', ['$scope', '$rootScope', '$http', 'api'
         $scope.filterEventListener();
     });        
 }]);
-app.controller('dataCtrl', ['$scope', '$rootScope', '$http', 'api', 'config', function($scope, $rootScope, $http, api, config) {
+angular.module('dmaoApp').controller('dataCtrl', ['$scope', '$rootScope', '$http', 'api', 'config', function($scope, $rootScope, $http, api, config) {
     // init
     update({
                 startDate:      config.startDate,
@@ -1595,7 +2212,7 @@ app.controller('dataCtrl', ['$scope', '$rootScope', '$http', 'api', 'config', fu
         $scope.filterEventListener();
     });    
 }]);
-app.controller('datasetsRCUKCtrl', ['$scope', '$rootScope', '$http', 'api', 'config', function($scope, $rootScope, $http, api, config) {
+angular.module('dmaoApp').controller('datasetsRCUKCtrl', ['$scope', '$rootScope', '$http', 'api', 'config', function($scope, $rootScope, $http, api, config) {
     // init
     $scope.value = 0;
 
@@ -1635,7 +2252,7 @@ app.controller('datasetsRCUKCtrl', ['$scope', '$rootScope', '$http', 'api', 'con
         $scope.filterEventListener();
     });        
 }]);
-app.controller('datasetsCtrl', ['$scope', '$rootScope', '$http', 'api', 'ui', 'config', function($scope, $rootScope, $http, api, ui, config) {
+angular.module('dmaoApp').controller('datasetsCtrl', ['$scope', '$rootScope', '$http', 'api', 'ui', 'config', function($scope, $rootScope, $http, api, ui, config) {
 
     //console.log('hard coding $rootScope.loggedInUser credentials in datasetsCtrl to bypass auth');
     //$rootScope.loggedInUser = 'luve_u';
@@ -1681,7 +2298,7 @@ app.controller('datasetsCtrl', ['$scope', '$rootScope', '$http', 'api', 'ui', 'c
     });       
 }]);  
 
-app.controller('dmpsCreatedCtrl', ['$scope', '$rootScope', '$http', 'api', 'config', function($scope, $rootScope, $http, api, config) {
+angular.module('dmaoApp').controller('dmpsCreatedCtrl', ['$scope', '$rootScope', '$http', 'api', 'config', function($scope, $rootScope, $http, api, config) {
     // init
     $scope.value = 0;
     update({
@@ -1718,7 +2335,7 @@ app.controller('dmpsCreatedCtrl', ['$scope', '$rootScope', '$http', 'api', 'conf
         $scope.filterEventListener();
     });    
 }]);
-app.controller('dmpStatusCtrl', ['$scope', '$rootScope', '$http', 'api', 'config', function($scope, $rootScope, $http, api, config) {  
+angular.module('dmaoApp').controller('dmpStatusCtrl', ['$scope', '$rootScope', '$http', 'api', 'config', function($scope, $rootScope, $http, api, config) {
     // init
     $scope.value = 0;
     // $scope.fraction = {numerator: 0, denominator: 0}
@@ -1768,7 +2385,7 @@ app.controller('dmpStatusCtrl', ['$scope', '$rootScope', '$http', 'api', 'config
         $scope.filterEventListener();
     });  
 }]);
-app.controller('doiMintingCtrl', ['$scope', '$rootScope', 'api', 'config', function($scope, $rootScope, api, config) {
+angular.module('dmaoApp').controller('doiMintingCtrl', ['$scope', '$rootScope', 'api', 'config', function($scope, $rootScope, api, config) {
     // init
     $scope.value = 0;
     $scope.dois = {};
@@ -1860,7 +2477,7 @@ app.controller('doiMintingCtrl', ['$scope', '$rootScope', 'api', 'config', funct
 
 
 
-app.controller('noDmpProjectsCtrl', ['$scope', '$rootScope', '$http', 'api', 'config', function($scope, $rootScope, $http, api, config) {
+angular.module('dmaoApp').controller('noDmpProjectsCtrl', ['$scope', '$rootScope', '$http', 'api', 'config', function($scope, $rootScope, $http, api, config) {
     update({
                 startDate:      config.startDate,
                 endDate:        config.endDate,
@@ -1897,7 +2514,43 @@ app.controller('noDmpProjectsCtrl', ['$scope', '$rootScope', '$http', 'api', 'co
         $scope.filterEventListener();
     }); 
 }]);
-app.controller('rcukAccessComplianceCtrl', ['$scope', '$rootScope', '$http', 'api', 'config', function($scope, $rootScope, $http, api, config) {
+angular.module('dmaoApp').controller('publicationsCtrl', ['$scope', '$rootScope', '$http', 'api', 'config', function($scope, $rootScope, $http, api, config) {
+    // init
+    $scope.value = 0;
+    update({
+                startDate:      config.startDate,
+                endDate:        config.endDate,
+                faculty:        config.faculty,
+            });
+    
+    function update(message){
+        $scope.value = config.loadingText;
+        var params = {  date:       'publication_date',
+                        sd:         message.startDate, 
+                        ed:         message.endDate,
+                        faculty:    message.faculty,
+                        count:      true
+                    };
+        
+        api.uri.publications(params).then(function(response) {
+            $scope.$apply(function(){
+                var value = response[0].num_publications;
+                // only update if dirty
+                if (value !== $scope.value) $scope.value = numeral(value).format('0,0');
+            });
+        });
+    }
+
+    $scope.filterEventListener = $rootScope.$on("FilterEvent", function (event, message) {
+            update(message);
+    });  
+
+    $scope.$on('$destroy', function () {
+        // Remove the listener
+        $scope.filterEventListener();
+    });    
+}]);
+angular.module('dmaoApp').controller('rcukAccessComplianceCtrl', ['$scope', '$rootScope', '$http', 'api', 'config', function($scope, $rootScope, $http, api, config) {
     // init
     $scope.value = 0;
     update({
@@ -1941,7 +2594,7 @@ app.controller('rcukAccessComplianceCtrl', ['$scope', '$rootScope', '$http', 'ap
         $scope.filterEventListener();
     });   
 }]);
-app.directive('statistic', function() {
+angular.module('dmaoApp').directive('statistic', function() {
 	return {
 		restrict: 		'E',
 		templateUrl: 	'app/statistics/statistic-directive.html',
@@ -1957,7 +2610,7 @@ app.directive('statistic', function() {
         }
     };
 });
-app.controller('storageCostCtrl', ['$scope', '$rootScope', '$http', 'api', 'config', function($scope, $rootScope, $http, api, config) {
+angular.module('dmaoApp').controller('storageCostCtrl', ['$scope', '$rootScope', '$http', 'api', 'config', function($scope, $rootScope, $http, api, config) {
     // init
     $scope.value = 0;
         // $scope.currency = '';
@@ -2000,7 +2653,7 @@ app.controller('storageCostCtrl', ['$scope', '$rootScope', '$http', 'api', 'conf
         $scope.filterEventListener();
     });   
 }]);
-app.controller('storageUnitCtrl', ['$scope', '$rootScope', '$http', 'api', 'config', function($scope, $rootScope, $http, api, config) {
+angular.module('dmaoApp').controller('storageUnitCtrl', ['$scope', '$rootScope', '$http', 'api', 'config', function($scope, $rootScope, $http, api, config) {
     // init
     $scope.value = 0;
     update({
@@ -2043,7 +2696,7 @@ app.controller('storageUnitCtrl', ['$scope', '$rootScope', '$http', 'api', 'conf
     });   
 }]);
 
-app.controller('datasetsRCUKTableCtrl', ['$scope', '$rootScope', '$http', 'api', 'config', function($scope, $rootScope, $http, api, config) {  
+angular.module('dmaoApp').controller('datasetsRCUKTableCtrl', ['$scope', '$rootScope', '$http', 'api', 'config', function($scope, $rootScope, $http, api, config) {
     var params = {
                 startDate:          config.startDate,
                 endDate:            config.endDate,
@@ -2218,7 +2871,7 @@ var DatasetsRCUKTable = function() {
         init: init,
     };
 }();
-app.controller('datasetsTableCtrl', ['$scope', '$rootScope', '$http', 'api', 'config', function($scope, $rootScope, $http, api, config) {
+angular.module('dmaoApp').controller('datasetsTableCtrl', ['$scope', '$rootScope', '$http', 'api', 'config', function($scope, $rootScope, $http, api, config) {
     var params = {
                 startDate:          config.startDate,
                 endDate:            config.endDate,
@@ -2391,7 +3044,7 @@ var DatasetsTable = function() {
         init: init,
     };
 }();
-app.controller('dmpStatusTableCtrl', ['$scope', '$rootScope', '$http', 'api', 'config', function($scope, $rootScope, $http, api, config) {  
+angular.module('dmaoApp').controller('dmpStatusTableCtrl', ['$scope', '$rootScope', '$http', 'api', 'config', function($scope, $rootScope, $http, api, config) {
     var params = {
                 startDate:          config.startDate,
                 endDate:            config.endDate,
@@ -2554,7 +3207,7 @@ var DmpStatusTable = function() {
     };
 }();
 
-app.controller('dmpTableCtrl', ['$scope', '$rootScope', '$http', 'api', 'config', function($scope, $rootScope, $http, api, config) {  
+angular.module('dmaoApp').controller('dmpTableCtrl', ['$scope', '$rootScope', '$http', 'api', 'config', function($scope, $rootScope, $http, api, config) {
     var params = {
                 startDate:          config.startDate,
                 endDate:            config.endDate,
@@ -2724,7 +3377,7 @@ var DmpTable = function() {
         init: init,
     };
 }();
-app.controller('noDmpTableCtrl', ['$scope', '$rootScope', '$http', 'api', 'config', function($scope, $rootScope, $http, api, config) {  
+angular.module('dmaoApp').controller('noDmpTableCtrl', ['$scope', '$rootScope', '$http', 'api', 'config', function($scope, $rootScope, $http, api, config) {
     var params = {
                 startDate:          config.startDate,
                 endDate:            config.endDate,
@@ -2890,7 +3543,7 @@ var NoDmpTable = function() {
         init: init,
     };
 }();
-app.controller('rcukAccessComplianceTableCtrl', ['$scope', '$rootScope', '$http', 'api', 'config', function($scope, $rootScope, $http, api, config) {  
+angular.module('dmaoApp').controller('rcukAccessComplianceTableCtrl', ['$scope', '$rootScope', '$http', 'api', 'config', function($scope, $rootScope, $http, api, config) {
     var params = {
                 startDate:          config.startDate,
                 endDate:            config.endDate,
@@ -3036,7 +3689,7 @@ var RcukAccessComplianceTable = function() {
         init: init,
     };
 }();
-app.controller('storageTableCtrl', ['$scope', '$rootScope', '$http', 'api', 'config', function($scope, $rootScope, $http, api, config) {
+angular.module('dmaoApp').controller('storageTableCtrl', ['$scope', '$rootScope', '$http', 'api', 'config', function($scope, $rootScope, $http, api, config) {
     var params = {
                 startDate:          config.startDate,
                 endDate:            config.endDate,
@@ -3177,7 +3830,445 @@ function toDataTablesFormat(data) {
 	hash['data'] = data;
 	return hash;
 }
-app.controller('uiGridDatasetsRcukTableCtrl', ['$scope', '$rootScope', '$http', 'api', 'ui', 'config', '$q', '$interval', function($scope, $rootScope, $http, api, ui, config, $q, $interval){
+angular.module('dmaoApp').controller('uiGridAdvocacyEventTableCtrl', ['$scope', '$rootScope', 'api', 'ui', 'config', '$q', '$interval', function($scope, $rootScope, api, ui, config, $q, $interval){
+    var params = {
+        // startDate:          config.startDate,
+        // endDate:            config.endDate,
+        // faculty:            config.faculty,
+    };
+
+    $scope.gridOptions = {};
+    $scope.modifications = {};
+
+    $scope.gridOptions = {
+        rowEditWaitInterval: 1,  // ms before row is 'saved'
+        enableGridMenu: true,
+        //showGridFooter: true,
+        rowHeight: 35,
+        enableColumnResizing: true,
+        //enableCellEditOnFocus: true,
+        enableFiltering: true,
+        //rowHeight: 70,
+
+        //exporting begin
+        enableSelectAll: true,
+        exporterCsvFilename: 'AdvocacyEvent.csv',
+        exporterPdfDefaultStyle: {fontSize: 8},
+        exporterPdfTableStyle: {margin: [0, 15, 0, 5]},
+        exporterPdfTableHeaderStyle: {fontSize: 10, bold: true, italics: true, color: 'black'},
+        exporterPdfHeader: { text: "Advocacy Event", style: 'headerStyle' },
+        exporterPdfFooter: function ( currentPage, pageCount ) {
+            return { text: currentPage.toString() + ' of ' + pageCount.toString(), style: 'footerStyle' };
+        },
+        exporterPdfCustomFormatter: function ( docDefinition ) {
+            docDefinition.styles.headerStyle = { fontSize: 22, bold: true, margin: [340, 0, 20, 0] };
+            docDefinition.styles.footerStyle = { fontSize: 10, bold: true, margin: [400, 0, 20, 0] };
+            return docDefinition;
+        },
+        exporterPdfOrientation: 'landscape',
+        exporterPdfPageSize: 'A4',
+        exporterPdfMaxGridWidth: 700,
+        exporterCsvLinkElement: angular.element(document.querySelectorAll(".custom-csv-link-location")),
+        //exporting end
+    };
+    $scope.gridOptions.columnDefs = [
+        {
+            name: 'session_date',
+            displayName: 'Date',
+            width: 80,
+            headerCellClass: 'columnEditableHeaderCell',
+            cellClass: 'columnEditableCellContents',
+            enableCellEdit: true
+        },
+        {
+            name: 'session_type',
+            displayName: 'Type',
+            width: 200,
+            headerCellClass: 'columnEditableHeaderCell',
+            cellClass: 'columnEditableCellContents',
+            enableCellEdit: true,
+            editDropdownIdLabel: 'value',
+            editDropdownValueLabel: 'ast_name',
+            editableCellTemplate: 'ui-grid/dropdownEditor',
+            // editDropdownOptionsArray: [
+            //     {id: 1, value: 'look'},
+            //     {id: 2, value: 'me'},
+            //     {id: 3, value: 'up'}
+            // ]
+        },
+        {
+            name: 'session_content',
+            displayName: 'Content',
+            width: 200,
+            headerCellClass: 'columnEditableHeaderCell',
+            cellClass: 'columnEditableCellContents',
+            enableCellEdit: true
+        },
+        {
+            name: 'notes',
+            displayName: 'Notes',
+            width: 200,
+            headerCellClass: 'columnEditableHeaderCell',
+            cellClass: 'columnEditableCellContents',
+            enableCellEdit: true
+        },
+        {
+            name: 'num_participants',
+            displayName: 'Participants',
+            width: 100,
+            headerCellClass: 'columnEditableHeaderCell',
+            cellClass: 'columnEditableCellContents',
+            enableCellEdit: true
+        }
+    ];
+
+    update(params);
+
+    function update(message){
+        $scope.dataFetched = false;
+        var spinner = ui.spinner('loader');
+        api.uri.advocacyEvents(params).then(function(data){
+            $scope.dataFetched = true;
+            $scope.gridOptions.data = data;
+            $scope.$apply();
+            spinner.stop();
+        });
+    }
+
+    $scope.gridOptions.onRegisterApi = function(gridApi) {
+        //set gridApi on scope
+        $scope.gridApi = gridApi;
+
+        gridApi.rowEdit.on.saveRow($scope, $scope.saveRow);
+
+        gridApi.edit.on.afterCellEdit($scope, function(rowEntity, colDef, newValue, oldValue) {
+            //console.log('Changing ', colDef, newValue, oldValue);
+            $scope.modifications[colDef.name] = {old: oldValue, new: newValue};
+            // console.log('rowEntity afterCellEdit ', rowEntity );
+        });
+    };
+
+    // saving begin
+    $scope.saveRow = function( rowEntity ) {
+        var spinner = ui.spinner('loader');
+
+        //console.log('rowEntity ', rowEntity);
+
+        var params = {};
+        var data = {
+            ast_name: rowEntity.ast_name,
+            inst_id: rowEntity.inst_id
+        };
+        data['pkey:ast_id'] = rowEntity.ast_id;
+        arr = [];
+        arr.push(data);
+        params['data'] = arr;
+
+        //console.log('params ', params);
+
+        // create a fake promise - normally you'd use the promise returned by $http or $resource
+        //var promise = $q.defer();
+        var promise = api.uri.put.advocacySessionTypes(params);
+        // console.log('promise ', promise);
+        //Cannot use promise.promise with exernal jquery api call
+        $scope.gridApi.rowEdit.setSavePromise( rowEntity, promise );
+            //Cannot use promise.reject() and promise.resolve() with external jquery api call
+            promise.success(function(data){
+                // console.log('promise SUCCESS');
+                $scope.modifications = {};
+                rowEntity.ast_name = data[1].ast_name;
+                //console.log('rowEntity ', rowEntity );
+
+                //needed as promise is not an angular promise and there is no promise.resolve()
+                $scope.gridApi.rowEdit.flushDirtyRows($scope.gridApi.grid);
+
+                spinner.stop();
+            });
+            promise.error(function(data){
+                alert('Error whilst saving data to server');
+                spinner.stop();
+            });
+        //}, 10, 1);
+    };
+    // saving end
+
+    //cell navigation begin
+    $scope.currentFocused = "";
+
+    $scope.getCurrentFocus = function(){
+        var rowCol = $scope.gridApi.cellNav.getFocusedCell();
+        if(rowCol !== null) {
+            $scope.currentFocused = 'Row Id:' + rowCol.row.entity.id + ' col:' + rowCol.col.colDef.name;
+        }
+    };
+
+    $scope.getCurrentSelection = function() {
+        var values = [];
+        var currentSelection = $scope.gridApi.cellNav.getCurrentSelection();
+        for (var i = 0; i < currentSelection.length; i++) {
+            values.push(currentSelection[i].row.entity[currentSelection[i].col.name]);
+        }
+        $scope.printSelection = values.toString();
+    };
+
+    $scope.scrollTo = function( rowIndex, colIndex ) {
+        $scope.gridApi.core.scrollTo( $scope.gridOptions.data[rowIndex], $scope.gridOptions.columnDefs[colIndex]);
+    };
+
+    $scope.scrollToFocus = function( rowIndex, colIndex ) {
+        $scope.gridApi.cellNav.scrollToFocus( $scope.gridOptions.data[rowIndex], $scope.gridOptions.columnDefs[colIndex]);
+    };
+
+    $scope.addRow = function() {
+        var n = $scope.gridOptions.data.length + 1;
+        var params = {};
+        var data = {
+            // ast_name: 'Session Type ' + n,
+            // ast_name: 1,
+            inst_id: config.institutionId
+            // session_date:
+        };
+        arr = [];
+        arr.push(data);
+        params['data'] = arr;
+
+        var promise = api.uri.post.advocacyEvents(params);
+        promise.success(function(data){
+            // $scope.gridOptions.data.push( { ast_name: 'Change me ' });
+            update();
+        });
+        promise.error(function(data){
+            update();
+            alert('Error whilst saving data to server');
+        });
+    };
+
+    $scope.removeRow = function(thing){
+        params = {};
+        var rowCol = $scope.gridApi.cellNav.getFocusedCell();
+        params.ast_id = rowCol.row.entity.ast_id;
+        api.uri.delete.advocacySessionTypes(params).then(function(data, textStatus, jqXHR){
+            // console.log(jqXHR);
+            if(jqXHR['status'] == 204) {
+                update();
+            }
+        });
+    };
+
+
+    function setupSessionTypes() {
+        // harcoded column position!
+        console.log($scope.gridOptions.columnDefs[1].editDropdownOptionsArray);
+        var spinner = ui.spinner('loader');
+        var sessionTypes = [];
+        api.uri.advocacySessionTypes().then(function(data){
+            for (var i=0; i<data.length; ++i){
+                o = {};
+                o['id'] = i+1;
+                o['value'] = data[i].ast_id
+                o['ast_name'] = data[i].ast_name;
+                sessionTypes.push(o);
+            }
+            $scope.gridOptions.columnDefs[1].editDropdownOptionsArray = sessionTypes;
+            $scope.$apply();
+            spinner.stop();
+            console.log($scope.gridOptions.columnDefs[1].editDropdownOptionsArray);
+        });
+    }
+
+    setupSessionTypes();
+
+}]);
+
+
+angular.module('dmaoApp').controller('uiGridAdvocacySessionTypeTableCtrl', ['$scope', '$rootScope', 'api', 'ui', 'config', '$q', '$interval', function($scope, $rootScope, api, ui, config, $q, $interval){
+    var params = {
+        // startDate:          config.startDate,
+        // endDate:            config.endDate,
+        // faculty:            config.faculty,
+    };
+
+    $scope.gridOptions = {};
+    $scope.modifications = {};
+
+    $scope.gridOptions = {
+        rowEditWaitInterval: 1,  // ms before row is 'saved'
+        enableGridMenu: true,
+        //showGridFooter: true,
+        rowHeight: 35,
+        enableColumnResizing: true,
+        //enableCellEditOnFocus: true,
+        enableFiltering: true,
+        //rowHeight: 70,
+
+        //exporting begin
+        enableSelectAll: true,
+        exporterCsvFilename: 'AdvocacySessionType.csv',
+        exporterPdfDefaultStyle: {fontSize: 8},
+        exporterPdfTableStyle: {margin: [0, 15, 0, 5]},
+        exporterPdfTableHeaderStyle: {fontSize: 10, bold: true, italics: true, color: 'black'},
+        exporterPdfHeader: { text: "Advocacy Session Type", style: 'headerStyle' },
+        exporterPdfFooter: function ( currentPage, pageCount ) {
+            return { text: currentPage.toString() + ' of ' + pageCount.toString(), style: 'footerStyle' };
+        },
+        exporterPdfCustomFormatter: function ( docDefinition ) {
+            docDefinition.styles.headerStyle = { fontSize: 22, bold: true, margin: [340, 0, 20, 0] };
+            docDefinition.styles.footerStyle = { fontSize: 10, bold: true, margin: [400, 0, 20, 0] };
+            return docDefinition;
+        },
+        exporterPdfOrientation: 'landscape',
+        exporterPdfPageSize: 'A4',
+        exporterPdfMaxGridWidth: 700,
+        exporterCsvLinkElement: angular.element(document.querySelectorAll(".custom-csv-link-location")),
+        //exporting end
+    };
+    $scope.gridOptions.columnDefs = [
+        {
+            name: 'ast_name',
+            displayName: 'Name',
+            width: 250,
+            sort: { direction: 'asc' },
+            headerCellClass: 'columnEditableHeaderCell',
+            cellClass: 'columnEditableCellContents',
+            enableCellEdit: true
+        }
+    ];
+
+    update(params);
+
+    function update(message){
+        $scope.dataFetched = false;
+        var spinner = ui.spinner('loader');
+        api.uri.advocacySessionTypes(params).then(function(data){
+            $scope.dataFetched = true;
+            $scope.gridOptions.data = data;
+            $scope.$apply();
+            spinner.stop();
+        });
+    }
+
+    $scope.gridOptions.onRegisterApi = function(gridApi) {
+        //set gridApi on scope
+        $scope.gridApi = gridApi;
+
+        gridApi.rowEdit.on.saveRow($scope, $scope.saveRow);
+
+        gridApi.edit.on.afterCellEdit($scope, function(rowEntity, colDef, newValue, oldValue) {
+            //console.log('Changing ', colDef, newValue, oldValue);
+            $scope.modifications[colDef.name] = {old: oldValue, new: newValue};
+            // console.log('rowEntity afterCellEdit ', rowEntity );
+        });
+    };
+
+    // saving begin
+    $scope.saveRow = function( rowEntity ) {
+        var spinner = ui.spinner('loader');
+
+        //console.log('rowEntity ', rowEntity);
+
+        var params = {};
+        var data = {
+            ast_name: rowEntity.ast_name,
+            inst_id: rowEntity.inst_id
+        };
+        data['pkey:ast_id'] = rowEntity.ast_id;
+        arr = [];
+        arr.push(data);
+        params['data'] = arr;
+
+        //console.log('params ', params);
+
+        // create a fake promise - normally you'd use the promise returned by $http or $resource
+        //var promise = $q.defer();
+        var promise = api.uri.put.advocacySessionTypes(params);
+        // console.log('promise ', promise);
+        //Cannot use promise.promise with exernal jquery api call
+        $scope.gridApi.rowEdit.setSavePromise( rowEntity, promise );
+            //Cannot use promise.reject() and promise.resolve() with external jquery api call
+            promise.success(function(data){
+                // console.log('promise SUCCESS');
+                $scope.modifications = {};
+                rowEntity.ast_name = data[1].ast_name;
+                //console.log('rowEntity ', rowEntity );
+
+                //needed as promise is not an angular promise and there is no promise.resolve()
+                $scope.gridApi.rowEdit.flushDirtyRows($scope.gridApi.grid);
+
+                spinner.stop();
+            });
+            promise.error(function(data){
+                alert('Error whilst saving data to server');
+                spinner.stop();
+            });
+        //}, 10, 1);
+    };
+    // saving end
+
+    //cell navigation begin
+    $scope.currentFocused = "";
+
+    $scope.getCurrentFocus = function(){
+        var rowCol = $scope.gridApi.cellNav.getFocusedCell();
+        if(rowCol !== null) {
+            $scope.currentFocused = 'Row Id:' + rowCol.row.entity.id + ' col:' + rowCol.col.colDef.name;
+        }
+    };
+
+    $scope.getCurrentSelection = function() {
+        var values = [];
+        var currentSelection = $scope.gridApi.cellNav.getCurrentSelection();
+        for (var i = 0; i < currentSelection.length; i++) {
+            values.push(currentSelection[i].row.entity[currentSelection[i].col.name]);
+        }
+        $scope.printSelection = values.toString();
+    };
+
+    $scope.scrollTo = function( rowIndex, colIndex ) {
+        $scope.gridApi.core.scrollTo( $scope.gridOptions.data[rowIndex], $scope.gridOptions.columnDefs[colIndex]);
+    };
+
+    $scope.scrollToFocus = function( rowIndex, colIndex ) {
+        $scope.gridApi.cellNav.scrollToFocus( $scope.gridOptions.data[rowIndex], $scope.gridOptions.columnDefs[colIndex]);
+    };
+
+    $scope.addRow = function() {
+        var n = $scope.gridOptions.data.length + 1;
+        var params = {};
+        var data = {
+            ast_name: 'Session Type ' + n,
+            inst_id: config.institutionId
+        };
+        arr = [];
+        arr.push(data);
+        params['data'] = arr;
+
+        var promise = api.uri.post.advocacySessionTypes(params);
+        promise.success(function(data){
+            // $scope.gridOptions.data.push( { ast_name: 'Change me ' });
+            update();
+        });
+        promise.error(function(data){
+            update();
+            alert('Error whilst saving data to server');
+        });
+    };
+
+    $scope.removeRow = function(thing){
+        params = {};
+        var rowCol = $scope.gridApi.cellNav.getFocusedCell();
+        params.ast_id = rowCol.row.entity.ast_id;
+        api.uri.delete.advocacySessionTypes(params).then(function(data, textStatus, jqXHR){
+            // console.log(jqXHR);
+            if(jqXHR['status'] == 204) {
+                update();
+            }
+        });
+    };
+
+}]);
+
+
+angular.module('dmaoApp').controller('uiGridDatasetsRcukTableCtrl', ['$scope', '$rootScope', '$http', 'api', 'ui', 'config', '$q', '$interval', function($scope, $rootScope, $http, api, ui, config, $q, $interval){
     //$scope.dataLoaded = false;
 
     var params = {
@@ -3353,7 +4444,7 @@ app.controller('uiGridDatasetsRcukTableCtrl', ['$scope', '$rootScope', '$http', 
 
 
 
-app.controller('uiGridDatasetsTableCtrl', ['$scope', '$rootScope', '$http', 'api', 'ui', 'config', '$q', '$interval', function($scope, $rootScope, $http, api, ui, config, $q, $interval){
+angular.module('dmaoApp').controller('uiGridDatasetsTableCtrl', ['$scope', '$rootScope', '$http', 'api', 'ui', 'config', '$q', '$interval', function($scope, $rootScope, $http, api, ui, config, $q, $interval){
     //$scope.dataLoaded = false;
 
     var params = {
@@ -3528,7 +4619,7 @@ app.controller('uiGridDatasetsTableCtrl', ['$scope', '$rootScope', '$http', 'api
 
 
 
-app.controller('uiGridDmpStatusTableCtrl', ['$scope', '$rootScope', '$http', 'api', 'ui', 'config', '$q', '$interval', function($scope, $rootScope, $http, api, ui, config, $q, $interval){
+angular.module('dmaoApp').controller('uiGridDmpStatusTableCtrl', ['$scope', '$rootScope', '$http', 'api', 'ui', 'config', '$q', '$interval', function($scope, $rootScope, $http, api, ui, config, $q, $interval){
     //$scope.dataLoaded = false;
 
     var params = {
@@ -3744,7 +4835,7 @@ app.controller('uiGridDmpStatusTableCtrl', ['$scope', '$rootScope', '$http', 'ap
 
 
 
-app.controller('uiGridDmpTableCtrl', ['$scope', '$rootScope', '$http', 'api', 'ui', 'config', '$q', '$interval', function($scope, $rootScope, $http, api, ui, config, $q, $interval){
+angular.module('dmaoApp').controller('uiGridDmpTableCtrl', ['$scope', '$rootScope', '$http', 'api', 'ui', 'config', '$q', '$interval', function($scope, $rootScope, $http, api, ui, config, $q, $interval){
     //$scope.dataLoaded = false;
 
     var params = {
@@ -3994,7 +5085,7 @@ app.controller('uiGridDmpTableCtrl', ['$scope', '$rootScope', '$http', 'api', 'u
 
 
 
-app.controller('uiGridNoDmpTableCtrl', ['$scope', '$rootScope', '$http', 'api', 'ui', 'config', '$q', '$interval', function($scope, $rootScope, $http, api, ui, config, $q, $interval){
+angular.module('dmaoApp').controller('uiGridNoDmpTableCtrl', ['$scope', '$rootScope', '$http', 'api', 'ui', 'config', '$q', '$interval', function($scope, $rootScope, $http, api, ui, config, $q, $interval){
     //$scope.dataLoaded = false;
 
     var params = {
@@ -4146,7 +5237,330 @@ app.controller('uiGridNoDmpTableCtrl', ['$scope', '$rootScope', '$http', 'api', 
 
 
 
-app.controller('uiGridRcukAccessComplianceTableCtrl', ['$scope', '$rootScope', '$http', 'api', 'ui', 'config', '$q', '$interval', function($scope, $rootScope, $http, api, ui, config, $q, $interval){
+angular.module('dmaoApp').controller('uiGridPublicationsTableCtrl', ['$scope', '$rootScope', '$http', 'api', 'ui', 'config', '$q', '$interval', function($scope, $rootScope, $http, api, ui, config, $q, $interval){
+    //$scope.dataLoaded = false;
+
+    var params = {
+        startDate:          config.startDate,
+        endDate:            config.endDate,
+        faculty:            config.faculty,
+    };
+
+    $scope.gridOptions = {};
+
+    $scope.gridOptions = {
+        rowEditWaitInterval: 1,  // ms before row is 'saved'
+        enableGridMenu: true,
+        //showGridFooter: true,
+        rowHeight: 35,
+        enableColumnResizing: true,
+        //enableCellEditOnFocus: true,
+        enableFiltering: true,
+        rowHeight: 70,
+
+        //exporting begin
+        enableSelectAll: true,
+        exporterCsvFilename: 'publications-editor.csv',
+        exporterPdfDefaultStyle: {fontSize: 8},
+        exporterPdfTableStyle: {margin: [0, 15, 0, 5]},
+        exporterPdfTableHeaderStyle: {fontSize: 10, bold: true, italics: true, color: 'black'},
+        exporterPdfHeader: { text: "Publications editor", style: 'headerStyle' },
+        exporterPdfFooter: function ( currentPage, pageCount ) {
+            return { text: currentPage.toString() + ' of ' + pageCount.toString(), style: 'footerStyle' };
+        },
+        exporterPdfCustomFormatter: function ( docDefinition ) {
+            docDefinition.styles.headerStyle = { fontSize: 22, bold: true, margin: [340, 0, 20, 0] };
+            docDefinition.styles.footerStyle = { fontSize: 10, bold: true, margin: [400, 0, 20, 0] };
+            return docDefinition;
+        },
+        exporterPdfOrientation: 'landscape',
+        exporterPdfPageSize: 'A4',
+        exporterPdfMaxGridWidth: 700,
+        exporterCsvLinkElement: angular.element(document.querySelectorAll(".custom-csv-link-location")),
+        //exporting end
+    };
+
+    $scope.gridOptions.columnDefs = [
+        {
+            name: 'inst_pub_title',
+            displayName: 'Publication',
+            width: 150,
+            enableCellEdit: false,
+            enableFiltering: false
+        },
+        {
+            name: 'project_name',
+            displayName: 'Project',
+            width: 90,
+            enableCellEdit: false,
+            enableFiltering: false
+        },
+        // {
+        //     name: 'cris_id',
+        //     displayName: 'CRIS ID',
+        //     width: 90,
+        //     enableCellEdit: false,
+        //     enableFiltering: false
+        // },
+        {
+            name: 'data_access_statement',
+            displayName: 'Access statement',
+            width: 140,
+            headerCellClass: 'columnEditableHeaderCell',
+            enableCellEdit: true,
+            enableFiltering: false,
+            editDropdownIdLabel: 'value',
+            editDropdownValueLabel: 'value',
+            editableCellTemplate: 'ui-grid/dropdownEditor',
+            editDropdownOptionsArray: [
+                {id: 1, value: 'y'},
+                {id: 2, value: 'n'},
+                {id: 3, value: 'partial'},
+                {id: 4, value: 'no_fulltext'}
+            ]
+        },
+        {
+            name: 'data_access_statement_notes',
+            displayName: 'Access statement notes',
+            width: 220,
+            headerCellClass: 'columnEditableHeaderCell',
+            enableCellEdit: true,
+            enableFiltering: false,
+            editableCellTemplate: '<textarea rows="3" style="width:100%" ng-class="col.uid" ui-grid-editor ng-model="MODEL_COL_FIELD"></textarea>'
+        },
+        {
+            name: 'dataset_pid',
+            displayName: 'Dataset PID',
+            width: 250,
+            enableCellEdit: false,
+            enableFiltering: false
+        },
+        // {
+        //     name: 'has_dataset_pid',
+        //     displayName: 'Dataset PID?',
+        //     width: 120,
+        //     headerCellClass: 'columnEditableHeaderCell',
+        //     enableCellEdit: false,
+        //     enableFiltering: false
+        // },
+        // {
+        //     name: 'inst_id',
+        //     displayName: 'Institution ID',
+        //     width: 50,
+        //     enableCellEdit: false,
+        //     enableFiltering: false
+        // },
+        {
+            name: 'inst_pub_status',
+            displayName: 'Pub status',
+            width: 100,
+            enableCellEdit: false,
+            enableFiltering: false
+        },
+        {
+            name: 'inst_pub_type',
+            displayName: 'Pub type',
+            width: 100,
+            enableCellEdit: false,
+            enableFiltering: false
+        },
+        {
+            name: 'faculty_abbreviation',
+            displayName: 'Lead Faculty',
+            width: 120,
+            enableCellEdit: false,
+            enableFiltering: false
+        },
+        {
+            name: 'department_name',
+            displayName: 'Lead Dept',
+            width: 110,
+            enableCellEdit: false,
+            enableFiltering: false
+        },
+        {
+            name: 'funder_compliant',
+            displayName: 'RCUK compliant',
+            width: 140,
+            headerCellClass: 'columnEditableHeaderCell',
+            enableCellEdit: true,
+            enableFiltering: false,
+            editDropdownIdLabel: 'value',
+            editDropdownValueLabel: 'value',
+            editableCellTemplate: 'ui-grid/dropdownEditor',
+            editDropdownOptionsArray: [
+                {id: 1, value: 'y'},
+                {id: 2, value: 'n'},
+                {id: 3, value: 'partial'}
+            ]
+        },
+        {
+            name: 'is_funded',
+            displayName: 'Funded',
+            width: 80,
+            headerCellClass: 'columnEditableHeaderCell',
+            enableCellEdit: true,
+            enableFiltering: false,
+            editDropdownIdLabel: 'value',
+            editDropdownValueLabel: 'value',
+            editableCellTemplate: 'ui-grid/dropdownEditor',
+            editDropdownOptionsArray: [
+                {id: 1, value: 'y'},
+                {id: 2, value: 'n'}
+            ]
+        },
+        {
+            name: 'is_rcuk_funder',
+            displayName: 'RCUK',
+            width: 70,
+            enableCellEdit: false,
+            enableFiltering: false
+        },
+        {
+            name: 'funder_name',
+            displayName: 'Funder',
+            width: 150,
+            enableCellEdit: false,
+            enableFiltering: false
+        }
+    ];
+
+    //console.log('$scope.gridOptions.columnDefs ', $scope.gridOptions.columnDefs);
+
+    update(params);
+
+    function update(message){
+        $scope.dataFetched = false;
+        var spinner = ui.spinner('loader');
+        var params = {
+            date:               'publication_date',
+            sd:                 message.startDate,
+            ed:                 message.endDate,
+            faculty:            message.faculty,
+        };
+        api.uri.publications(params).then(function(data){
+            //console.log('Datasets ' + uri);
+            //console.log(data);
+            //$scope.dataLoaded = true;
+            $scope.dataFetched = true;
+            $scope.gridOptions.data = data;
+            $scope.$apply();
+            spinner.stop();
+        });
+    }
+
+    api.uri.publications({modifiable: true}).success(function (data) {
+        // console.log('modifiables ', data);
+        $scope.modifiable_column_constraints = {};
+        for (var i in data){
+            $scope.modifiable_column_constraints[data[i].c_name] = data[i].c_vals;
+        }
+        //console.log('modifiable_column_constraints ', $scope.modifiable_column_constraints);
+    });
+
+    $scope.gridOptions.onRegisterApi = function(gridApi) {
+        //set gridApi on scope
+        $scope.gridApi = gridApi;
+        gridApi.rowEdit.on.saveRow($scope, $scope.saveRow);
+    };
+
+    $scope.saveRow = function( rowEntity ) {
+
+        var spinner = ui.spinner('loader');
+
+        var params = {
+            publication_id: rowEntity.publication_id,
+            data_access_statement: rowEntity.data_access_statement,
+            data_access_statement_notes: rowEntity.data_access_statement_notes,
+            funder_compliant: rowEntity.funder_compliant
+
+
+            // project_id: rowEntity.project_id,
+            // has_dmp_been_reviewed: rowEntity.has_dmp_been_reviewed
+        };
+
+        // create a fake promise - normally you'd use the promise returned by $http or $resource
+        //var promise = $q.defer();
+        var promise = api.uri.put.publications(params);
+        // console.log('promise ', promise);
+        //Cannot use promise.promise with exernal jquery api call
+        $scope.gridApi.rowEdit.setSavePromise( rowEntity, promise );
+
+        // fake a delay of 3 seconds
+        //$interval( function() {
+            //Cannot use promise.reject() and promise.resolve() with exernal jquery api call
+            promise.success(function(data){
+                // console.log('promise SUCCESS');
+
+                //needed as promise is not an angular promise and there is no promise.resolve()
+                $scope.gridApi.rowEdit.flushDirtyRows($scope.gridApi.grid);
+                spinner.stop();
+            });
+
+            promise.error(function(data){
+                alert('Error whilst saving data to server');
+                //console.log('promise ERROR');
+                //alert('Invalid input data:   ' + rowEntity.has_dmp_been_reviewed +
+                //'\n\nPermitted values:   ' + $scope.modifiable_column_constraints.has_dmp_been_reviewed.replace(/\|/g, ', '));
+                spinner.stop();
+            });
+            $scope.savingData = false;
+
+        //}, 3000, 1);
+    };
+    // saving end
+
+
+
+
+    //cell navigation begin
+    $scope.currentFocused = "";
+
+    $scope.getCurrentFocus = function(){
+        var rowCol = $scope.gridApi.cellNav.getFocusedCell();
+        if(rowCol !== null) {
+            $scope.currentFocused = 'Row Id:' + rowCol.row.entity.id + ' col:' + rowCol.col.colDef.name;
+        }
+    };
+
+    $scope.getCurrentSelection = function() {
+        var values = [];
+        var currentSelection = $scope.gridApi.cellNav.getCurrentSelection();
+        for (var i = 0; i < currentSelection.length; i++) {
+            values.push(currentSelection[i].row.entity[currentSelection[i].col.name])
+        }
+        $scope.printSelection = values.toString();
+    };
+
+    $scope.scrollTo = function( rowIndex, colIndex ) {
+        $scope.gridApi.core.scrollTo( $scope.gridOptions.data[rowIndex], $scope.gridOptions.columnDefs[colIndex]);
+    };
+
+    $scope.scrollToFocus = function( rowIndex, colIndex ) {
+        $scope.gridApi.cellNav.scrollToFocus( $scope.gridOptions.data[rowIndex], $scope.gridOptions.columnDefs[colIndex]);
+    };
+    //cell navigation end
+
+
+
+    $scope.filterEventListener = $rootScope.$on("FilterEvent", function (event, message) {
+        update(message);
+    });
+
+    $scope.$on('$destroy', function () {
+        // Remove the listener
+        $scope.filterEventListener();
+    });
+
+
+}]);
+
+
+
+
+
+
+angular.module('dmaoApp').controller('uiGridRcukAccessComplianceTableCtrl', ['$scope', '$rootScope', '$http', 'api', 'ui', 'config', '$q', '$interval', function($scope, $rootScope, $http, api, ui, config, $q, $interval){
     //$scope.dataLoaded = false;
 
     var params = {
@@ -4318,7 +5732,7 @@ app.controller('uiGridRcukAccessComplianceTableCtrl', ['$scope', '$rootScope', '
 
 
 
-app.controller('uiGridStorageTableCtrl', ['$scope', '$rootScope', 'api', 'ui', 'config', '$q', '$interval', function($scope, $rootScope, api, ui, config, $q, $interval){
+angular.module('dmaoApp').controller('uiGridStorageTableCtrl', ['$scope', '$rootScope', 'api', 'ui', 'config', '$q', '$interval', function($scope, $rootScope, api, ui, config, $q, $interval){
     var params = {
         startDate:          config.startDate,
         endDate:            config.endDate,

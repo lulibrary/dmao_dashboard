@@ -1,4 +1,4 @@
-app.controller('storageCostCtrl', function($scope, $rootScope, $http, api, config) {
+angular.module('dmaoApp').controller('storageCostCtrl', function($scope, $rootScope, $http, api, config) {
     // init
     $scope.value = 0;
         // $scope.currency = '';

@@ -1,4 +1,4 @@
-app.directive('aggregate', function() {
+angular.module('dmaoApp').directive('aggregate', function() {
 	return {
 		restrict: 		'E',
 		templateUrl: 	'app/statistics/aggregate-directive.html',

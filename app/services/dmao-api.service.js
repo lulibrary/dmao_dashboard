@@ -14,7 +14,7 @@ var ApiService = {
         var uri = URI({
             protocol:   'http',
             hostname:   'lib-dmao.lancs.ac.uk',
-            port:       '8090',
+            port:       '8070',
             path:       'dmaonline',             
         });
         uri += '/' + this.version;
@@ -41,12 +41,6 @@ var ApiService = {
         //console.log('uri ', uri);
         //console.log($.getJSON(uri));
         return $.getJSON(uri);
-            //.then(function( json ) {
-            //    //console.log('json response ', json);
-            //    ApiService.apiKey = json[0].api_key;
-            //    $cookies.put('apiKey', json[0].api_key);
-            //    //ApiService.apiKey = 'BLADEBLA';
-            //});
     },
     uri: {
         addParams: function(uri, params){
@@ -97,13 +91,6 @@ var ApiService = {
                 //var json = JSON.stringify (params)
             }
             return uri;
-            return $.ajax({
-                type: 'POST',
-                url: uri,
-                data: json,
-                contentType: "application/json",
-                dataType: 'json'
-            });
         },
         rcukAccessCompliance: function(params){
             var uri = URI(ApiService.prefix() + '/c/' + App.institutionId + '/' +
@@ -143,6 +130,38 @@ var ApiService = {
             }
             return $.getJSON(uri);
         },
+        publications: function(params){
+            var uri = URI(ApiService.prefix() + '/c/' + App.institutionId + '/' +
+            ApiService.apiKey + '/publications_editor');
+            if (params){
+                uri = this.addParams(uri, params);
+            }
+            return $.getJSON(uri);
+        },
+        persons: function(params){
+            var uri = URI(ApiService.prefix() + '/c/' + App.institutionId + '/' +
+                ApiService.apiKey + '/persons');
+            if (params){
+                uri = this.addParams(uri, params);
+            }
+            return $.getJSON(uri);
+        },
+        advocacyEvents: function(params){
+            var uri = URI(ApiService.prefix() + '/c/' + App.institutionId + '/' +
+                ApiService.apiKey + '/advocacy_events');
+            if (params){
+                uri = this.addParams(uri, params);
+            }
+            return $.getJSON(uri);
+        },
+        advocacySessionTypes: function(params){
+            var uri = URI(ApiService.prefix() + '/' + App.institutionId + '/' +
+                ApiService.apiKey + '/advocacy_session_types');
+            if (params){
+                uri = this.addParams(uri, params);
+            }
+            return $.getJSON(uri);
+        },
         put: {
             dmps: function (params) {
                 //alert('ApiService.uri.put.dmps called');
@@ -153,21 +172,9 @@ var ApiService = {
                     uri = ApiService.uri.addParams(uri, params);
                     // console.log('uri ', uri);
                 }
-                return $.ajax(
-                    {
+                return $.ajax({
                         url: uri,
-                        type: 'PUT',
-                        success: function(data, textStatus, jqXHR) {
-                            //alert('Thing updated successfully Status: '+textStatus); },
-                            // console.log('Updated ');
-                            // console.log('Data ', data);
-                        },
-                        error: function(jqXHR, textStatus, errorThrown) {
-                            // console.log('jqXHR ', jqXHR);
-                            // console.log('textStatus ', textStatus);
-                            // console.log('Error ', errorThrown);
-                            //alert(errorThrown);
-                        }
+                        type: 'PUT'
                     });
             },
             storage: function (params) {
@@ -179,21 +186,100 @@ var ApiService = {
                     uri = ApiService.uri.addParams(uri, params);
                     // console.log('uri ', uri);
                 }
-                return $.ajax(
-                    {
+                return $.ajax({
+                        url: uri,
+                        type: 'PUT'
+                    });
+            },
+            publications: function (params) {
+                //alert('ApiService.uri.put.storage called');
+                var uri = URI(ApiService.prefix() + '/c/' + App.institutionId + '/' + ApiService.apiKey + '/publications_editor');
+                if (params) {
+                    //uri = this.addParams(uri, params);
+                    uri = ApiService.uri.addParams(uri, params);
+                    // console.log('uri ', uri);
+                }
+                return $.ajax({
+                        url: uri,
+                        type: 'PUT'
+                    });
+            },
+            advocacySessionTypes: function (params) {
+                // console.log(JSON.stringify(params.data));
+                var uri = URI(ApiService.prefix() + '/' + App.institutionId + '/' + ApiService.apiKey + '/advocacy_session_types');
+                return $.ajax({
                         url: uri,
                         type: 'PUT',
-                        success: function(data, textStatus, jqXHR) {
-                            //alert('Thing updated successfully Status: '+textStatus); },
-                            // console.log('Updated ');
-                            // console.log('Data ', data);
-                        },
-                        error: function(jqXHR, textStatus, errorThrown) {
-                            // console.log('jqXHR ', jqXHR);
-                            // console.log('textStatus ', textStatus);
-                            // console.log('Error ', errorThrown);
-                            //alert(errorThrown);
-                        }
+                        data: JSON.stringify(params.data),
+                        contentType: "application/json; charset=UTF-8"
+                    });
+            },
+            advocacyEvents: function (params) {
+                // console.log(JSON.stringify(params.data));
+                var uri = URI(ApiService.prefix() + '/' + App.institutionId + '/' + ApiService.apiKey + '/advocacy');
+                return $.ajax({
+                        url: uri,
+                        type: 'PUT',
+                        data: JSON.stringify(params.data),
+                        contentType: "application/json; charset=UTF-8",
+                    });
+            }
+        },
+        post: {
+            advocacySessionTypes: function (params) {
+                var uri = URI(ApiService.prefix() + '/' + App.institutionId + '/' + ApiService.apiKey + '/advocacy_session_types');
+                return $.ajax({
+                        url: uri,
+                        type: 'POST',
+                        data: JSON.stringify(params.data),
+                        contentType: "application/json"
+                    });
+            },
+            advocacyEvents: function (params) {
+                var uri = URI(ApiService.prefix() + '/' + App.institutionId + '/' + ApiService.apiKey + '/advocacy');
+                return $.ajax({
+                        url: uri,
+                        type: 'POST',
+                        data: JSON.stringify(params.data),
+                        contentType: "application/json"
+                    });
+            },
+            advocacyPersons: function(params){
+                var uri = URI(ApiService.prefix() + '/' + App.institutionId + '/' + ApiService.apiKey + '/map_advocacy_person');
+                return $.ajax({
+                        url: uri,
+                        type: 'POST',
+                        data: JSON.stringify(params.data),
+                        contentType: "application/json"
+                    });
+            },
+        },
+        delete: {
+            advocacySessionTypes: function (params) {
+                var uri = URI(ApiService.prefix() + '/' + App.institutionId + '/' +
+                    ApiService.apiKey + '/advocacy_session_types' + '/' + 'ast_id' +
+                    '/' + params.ast_id);
+
+                return $.ajax({
+                        url: uri,
+                        type: 'DELETE'
+                    });
+            },
+            advocacyEvents: function (params) {
+                var uri = URI(ApiService.prefix() + '/' + App.institutionId + '/' +
+                    ApiService.apiKey + '/advocacy' + '/' + 'event_id' +
+                    '/' + params.event_id);
+                return $.ajax({
+                        url: uri,
+                        type: 'DELETE'
+                    });
+            },
+            advocacyPerson: function (params) {
+                var uri = URI(ApiService.prefix() + '/' + App.institutionId + '/' + ApiService.apiKey +
+                    '/map_advocacy_person' + '/' + 'event_id' + '/' + params.event_id + '/' + 'person_id' + '/' + params.person_id);
+                return $.ajax({
+                        url: uri,
+                        type: 'DELETE'
                     });
             }
         },

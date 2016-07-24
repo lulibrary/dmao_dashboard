@@ -1,0 +1,113 @@
+<div class="portlet box green-haze">
+    <div class="portlet-title">
+        <div class="caption">
+            Advocacy event
+        </div>
+    </div>
+    <div class="portlet-body">
+        <div ng-controller="advocacyEventCtrl" ng-init="show()" ng-cloak>
+            <h3>Description</h3>
+            <div class="container">
+                <div class="row">
+                    <!--<div class="col-md-9">-->
+                        <table class="table">
+                            <thead>
+                            <tr>
+                                <th class="col-xs-2">Date</th>
+                                <th class="col-xs-2">Content</th>
+                                <th class="col-xs-2">Type</th>
+                                <th class="col-xs-5">Notes</th>
+                                <th class="col-xs-1">Participants</th>
+                                <th></th>
+                                <th></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+
+                            <tr>
+                                <td>{{participants[0].session_date}}</td>
+                                <td>{{participants[0].session_content}}</td>
+                                <td>{{participants[0].ast_name}}</td>
+                                <td>{{participants[0].notes}}</td>
+                                <td>{{participants[0].num_participants}}</td>
+                                <td><a href="#advocacy/{{participants[0].event_id}}/edit">Edit</a></td>
+                                <td><a href ng-click="deleteAdvocacyEvent(participants[0].event_id)">Delete</a></td>
+                                <!--<td><a href="#advocacy_events/{{participants[0].event_id}}/delete">Delete</a></td>-->
+                            </tr>
+
+
+                            </tbody>
+                        </table>
+
+                        <!--<div ng-view></div>-->
+                    <!--</div>-->
+                </div>
+            </div>
+
+            <h3>Participants</h3>
+            <div class="container" ng-if=participants[0].last_name>
+                <div class="row">
+                    <!--<div class="col-md-9">-->
+                        <table class="table table-striped">
+                            <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Division</th>
+                                <th>Subdivision</th>
+                                <th>Email</th>
+                                <th></th>
+                                <!--<th></th>-->
+                                <!--<th></th>-->
+                            </tr>
+                            </thead>
+                            <tbody>
+
+                            <tr dir-paginate="participant in participants | orderBy:'participant.last_name' | itemsPerPage: 10">
+                                <td>{{participant.last_name}}, {{participant.first_name}}</td>
+                                <td>{{participant.faculty_name}}</td>
+                                <td>{{participant.department_name}}</td>
+                                <td>{{participant.email}}</td>
+                                <!--<td><a href="#advocacy_events/{{thing.event_id}}">Show</a></td>-->
+                                <td><a href ng-click="removePersonFromEvent(participant)">Delete</a></td>
+                                <!--<td><a href="#advocacy_events/{{participant.event_id}}/participants">Participants</a></td>-->
+                            </tr>
+
+
+                            </tbody>
+                        </table>
+
+                        <dir-pagination-controls></dir-pagination-controls>
+                        <!--<div ng-view></div>-->
+                    <!--</div>-->
+                </div>
+            </div>
+
+
+            <div class='container-fluid'>
+
+                <input type="text" ng-model="searchPerson" placeholder="Find using last name" uib-typeahead="person as person.last_name + ', ' + person.first_name for person in getPerson($viewValue)"
+                       typeahead-loading="loading" typeahead-no-results="noResults" class="form-control" typeahead-editable="false" class="form-control">
+                <i ng-show="loading" class="glyphicon glyphicon-refresh"></i>
+                <div ng-show="noResults">
+                    <i class="glyphicon glyphicon-remove"></i> No Results Found
+                </div>
+                <button class="btn btn-primary" ng-if=searchPerson ng-click="addPersonToEvent(searchPerson)">Add person to event</button>
+
+                <div ng-if=searchPerson class="alert alert-info">
+                    <!--<h4>Asynchronous results</h4>-->
+                    <!--<pre ng-if=searchPerson>{{searchPerson  | json}}</pre>-->
+                    <pre ng-if=searchPerson.last_name><strong>Name: </strong>{{searchPerson.last_name}}, {{searchPerson.first_name}}</pre>
+                    <!--<img ng-if=searchPerson.image_link src="{{searchPerson.image_link}}">-->
+                    <pre ng-if=searchPerson.faculty_name><strong>Division: </strong>{{searchPerson.faculty_name}}</pre>
+                    <pre ng-if=searchPerson.department_name><strong>Subdivision: </strong>{{searchPerson.department_name}}</pre>
+                    <pre ng-if=searchPerson.orcid><strong>Orcid: </strong>{{searchPerson.orcid}}</pre>
+                    <pre ng-if=searchPerson.cris_keywords><strong>Keywords: </strong>{{searchPerson.cris_keywords}}</pre>
+                    <pre ng-if=searchPerson.email><strong>Email: </strong>{{searchPerson.email}}</pre>
+                </div>
+
+            </div>
+        </div>
+
+
+    </div>
+</div>
