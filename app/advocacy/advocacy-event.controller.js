@@ -70,6 +70,8 @@ angular.module('dmaoApp').controller("advocacyEventCtrl", function($scope, $http
 
     $scope.model = {};
 
+    var path = $location.path();
+
     $scope.index = function(){
         var spinner = ui.spinner('loader');
         var promise = api.uri.advocacyEvents();
@@ -214,7 +216,12 @@ angular.module('dmaoApp').controller("advocacyEventCtrl", function($scope, $http
         // console.log('thing' , JSON.stringify(arr));
         var params = {};
         params.data = data;
-        api.uri.put.advocacyEvents(params);
+        api.uri.put.advocacyEvents(params).then(function(data, textStatus, jqXHR){
+            if(jqXHR['status'] == 204) {
+                $location.path('/advocacy');
+                $scope.$apply();
+            }
+        });
     }
 
     $scope.onSubmitEdit = function(form) {
@@ -224,7 +231,6 @@ angular.module('dmaoApp').controller("advocacyEventCtrl", function($scope, $http
         // Then we check if the form is valid
         if (form.$valid) {
             put();
-            $location.path('/advocacy');
             // $scope.$apply();
         }
     };
@@ -276,7 +282,8 @@ angular.module('dmaoApp').controller("advocacyEventCtrl", function($scope, $http
         api.uri.delete.advocacyPerson(params).then(function(data, textStatus, jqXHR){
             // console.log(jqXHR);
             if(jqXHR['status'] == 204) {
-                $route.reload();
+                $location.path(path);
+                // $route.reload();
             }
         });
     };

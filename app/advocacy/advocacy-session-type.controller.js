@@ -130,7 +130,10 @@ angular.module('dmaoApp').controller("advocacySessionTypeCtrl", function($scope,
         // console.log('thing' , JSON.stringify(arr));
         var params = {};
         params.data = data;
-        return api.uri.put.advocacySessionTypes(params);
+        api.uri.put.advocacySessionTypes(params).then(function(data){
+            $location.path('/advocacySessionTypes');
+            $scope.$apply();
+        });
     }
 
     $scope.onSubmitEdit = function(form) {
@@ -139,10 +142,7 @@ angular.module('dmaoApp').controller("advocacySessionTypeCtrl", function($scope,
 
         // Then we check if the form is valid
         if (form.$valid) {
-            put().then(function(data){
-                $location.path('/advocacySessionTypes');
-                $scope.$apply();
-            });
+            put();
         }
     };
 

@@ -7,6 +7,7 @@ angular.module('dmaoApp').controller('aggregateStatisticCtrl', ['$scope', '$root
     $scope.count_publications = 0;
     $scope.count_datasets = 0;
     $scope.count_dataset_accesses = 0;
+    $scope.irus_requests = 0;
 
     //$scope.data = {};
     //$scope.data.institutions = false;
@@ -26,20 +27,52 @@ angular.module('dmaoApp').controller('aggregateStatisticCtrl', ['$scope', '$root
         $scope.dataset_accesses = {};
         $scope.dataset_accesses.data = config.loadingText;
         $scope.dataset_accesses.metadata = config.loadingText;
-        // if(config.inView.datasetsRCUKCtrl){        
-            var params = {
-                            //sd:         message.startDate,
-                            //ed:         message.endDate,
-                            //count:      true
-                        };
+        $scope.irus_requests = config.loadingText;
 
-            //api.uri.datasets(params).then(function(response) {
-            //    $scope.$apply(function(){
-            //        var value = response[0].num_datasets;
-            //        // only update if dirty
-            //        if (value !== $scope.value) $scope.value = value;
-            //    });
-            //});
+        /************************ IRUS-UK BEGIN **********************************/
+        //fudge for now (there is no repo data for datasets for our demo institutions)
+
+        var params = {
+            Report:               'RR1',
+            Release:              '4',
+            RequestorID:          'MyOrg',
+            BeginDate:            '2000-01-01', // Datepicker default start
+            EndDate:              '2035-01-01', // Datepicker default end
+            Granularity:          'Totals'
+        };
+
+        params.RepositoryIdentifier = 'irusuk:24'; // not dataset repo but http://eprints.lancs.ac.uk/ (Eprints)
+        var irusuk_24 = api.irus.report(params);
+
+        params.RepositoryIdentifier = 'irusuk:44'; // not dataset repo but http://epapers.bham.ac.uk/ (Eprints)
+        var irusuk_44 = api.irus.report(params);
+
+        // add all institutional IRUS data together, quick and dirty for now
+        $.when(irusuk_24, irusuk_44).then(function(irusuk_24_response, irusuk_44_response) {
+
+            var value = 0;
+            var reportItems = [];
+
+            // 24
+            reportItems = [];
+            reportItems = irusuk_24_response[0].ReportResponse.Report.Report.Customer.ReportItems;
+            if (reportItems.length) {
+                value += parseInt(irusuk_24_response[0].ReportResponse.Report.Report.Customer.ReportItems[0].ItemPerformance[0].Instance.Count);
+            }
+
+            // 44
+            reportItems = [];
+            reportItems = irusuk_44_response[0].ReportResponse.Report.Report.Customer.ReportItems;
+            if (reportItems.length) {
+                value += parseInt(irusuk_44_response[0].ReportResponse.Report.Report.Customer.ReportItems[0].ItemPerformance[0].Instance.Count);
+            }
+
+            $scope.$apply(function(){
+                $scope.irus_requests = numeral(value).format('0,0');
+            });
+        });
+        /************************ IRUS-UK END **********************************/
+
 
         api.uri.public('o_count_institutions').then(function(response) {
             //$scope.$apply(function(){
@@ -102,6 +135,7 @@ angular.module('dmaoApp').controller('aggregateStatisticCtrl', ['$scope', '$root
                 }
             });
         });
+
     }
 
     $scope.filterEventListener = $rootScope.$on("FilterEvent", function (event, message) {

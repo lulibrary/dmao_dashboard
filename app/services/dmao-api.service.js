@@ -263,7 +263,7 @@ var ApiService = {
                 return $.ajax({
                         url: uri,
                         type: 'DELETE'
-                    });
+                });
             },
             advocacyEvents: function (params) {
                 var uri = URI(ApiService.prefix() + '/' + App.institutionId + '/' +
@@ -272,7 +272,7 @@ var ApiService = {
                 return $.ajax({
                         url: uri,
                         type: 'DELETE'
-                    });
+                });
             },
             advocacyPerson: function (params) {
                 var uri = URI(ApiService.prefix() + '/' + App.institutionId + '/' + ApiService.apiKey +
@@ -304,6 +304,16 @@ var ApiService = {
     datacite: {
         minted: function (queryString) {
             var uri = URI(queryString);
+            return $.getJSON(uri);
+        }
+    },
+    irus: {
+        base_url: 'http://irus.mimas.ac.uk/api/sushilite/v1_7/GetReport',
+        report: function(params) {
+            var uri = URI(ApiService.irus.base_url);
+            if (params){
+                uri = ApiService.uri.addParams(uri, params);
+            }
             return $.getJSON(uri);
         }
     },

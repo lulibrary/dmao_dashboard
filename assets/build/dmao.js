@@ -124,6 +124,8 @@ angular.module('dmaoApp').controller("advocacyEventCtrl", ['$scope', '$http', '$
 
     $scope.model = {};
 
+    var path = $location.path();
+
     $scope.index = function(){
         var spinner = ui.spinner('loader');
         var promise = api.uri.advocacyEvents();
@@ -268,7 +270,12 @@ angular.module('dmaoApp').controller("advocacyEventCtrl", ['$scope', '$http', '$
         // console.log('thing' , JSON.stringify(arr));
         var params = {};
         params.data = data;
-        api.uri.put.advocacyEvents(params);
+        api.uri.put.advocacyEvents(params).then(function(data, textStatus, jqXHR){
+            if(jqXHR['status'] == 204) {
+                $location.path('/advocacy');
+                $scope.$apply();
+            }
+        });
     }
 
     $scope.onSubmitEdit = function(form) {
@@ -278,7 +285,6 @@ angular.module('dmaoApp').controller("advocacyEventCtrl", ['$scope', '$http', '$
         // Then we check if the form is valid
         if (form.$valid) {
             put();
-            $location.path('/advocacy');
             // $scope.$apply();
         }
     };
@@ -330,7 +336,8 @@ angular.module('dmaoApp').controller("advocacyEventCtrl", ['$scope', '$http', '$
         api.uri.delete.advocacyPerson(params).then(function(data, textStatus, jqXHR){
             // console.log(jqXHR);
             if(jqXHR['status'] == 204) {
-                $route.reload();
+                $location.path(path);
+                // $route.reload();
             }
         });
     };
@@ -510,7 +517,10 @@ angular.module('dmaoApp').controller("advocacySessionTypeCtrl", ['$scope', '$htt
         // console.log('thing' , JSON.stringify(arr));
         var params = {};
         params.data = data;
-        return api.uri.put.advocacySessionTypes(params);
+        api.uri.put.advocacySessionTypes(params).then(function(data){
+            $location.path('/advocacySessionTypes');
+            $scope.$apply();
+        });
     }
 
     $scope.onSubmitEdit = function(form) {
@@ -519,10 +529,7 @@ angular.module('dmaoApp').controller("advocacySessionTypeCtrl", ['$scope', '$htt
 
         // Then we check if the form is valid
         if (form.$valid) {
-            put().then(function(data){
-                $location.path('/advocacySessionTypes');
-                $scope.$apply();
-            });
+            put();
         }
     };
 
@@ -1866,7 +1873,7 @@ var ApiService = {
                 return $.ajax({
                         url: uri,
                         type: 'DELETE'
-                    });
+                });
             },
             advocacyEvents: function (params) {
                 var uri = URI(ApiService.prefix() + '/' + App.institutionId + '/' +
@@ -1875,7 +1882,7 @@ var ApiService = {
                 return $.ajax({
                         url: uri,
                         type: 'DELETE'
-                    });
+                });
             },
             advocacyPerson: function (params) {
                 var uri = URI(ApiService.prefix() + '/' + App.institutionId + '/' + ApiService.apiKey +
@@ -1907,6 +1914,16 @@ var ApiService = {
     datacite: {
         minted: function (queryString) {
             var uri = URI(queryString);
+            return $.getJSON(uri);
+        }
+    },
+    irus: {
+        base_url: 'http://irus.mimas.ac.uk/api/sushilite/v1_7/GetReport',
+        report: function(params) {
+            var uri = URI(ApiService.irus.base_url);
+            if (params){
+                uri = ApiService.uri.addParams(uri, params);
+            }
             return $.getJSON(uri);
         }
     },
@@ -2060,6 +2077,7 @@ angular.module('dmaoApp').controller('aggregateStatisticCtrl', ['$scope', '$root
     $scope.count_publications = 0;
     $scope.count_datasets = 0;
     $scope.count_dataset_accesses = 0;
+    $scope.irus_requests = 0;
 
     //$scope.data = {};
     //$scope.data.institutions = false;
@@ -2079,20 +2097,52 @@ angular.module('dmaoApp').controller('aggregateStatisticCtrl', ['$scope', '$root
         $scope.dataset_accesses = {};
         $scope.dataset_accesses.data = config.loadingText;
         $scope.dataset_accesses.metadata = config.loadingText;
-        // if(config.inView.datasetsRCUKCtrl){        
-            var params = {
-                            //sd:         message.startDate,
-                            //ed:         message.endDate,
-                            //count:      true
-                        };
+        $scope.irus_requests = config.loadingText;
 
-            //api.uri.datasets(params).then(function(response) {
-            //    $scope.$apply(function(){
-            //        var value = response[0].num_datasets;
-            //        // only update if dirty
-            //        if (value !== $scope.value) $scope.value = value;
-            //    });
-            //});
+        /************************ IRUS-UK BEGIN **********************************/
+        //fudge for now (there is no repo data for datasets for our demo institutions)
+
+        var params = {
+            Report:               'RR1',
+            Release:              '4',
+            RequestorID:          'MyOrg',
+            BeginDate:            '2000-01-01', // Datepicker default start
+            EndDate:              '2035-01-01', // Datepicker default end
+            Granularity:          'Totals'
+        };
+
+        params.RepositoryIdentifier = 'irusuk:24'; // not dataset repo but http://eprints.lancs.ac.uk/ (Eprints)
+        var irusuk_24 = api.irus.report(params);
+
+        params.RepositoryIdentifier = 'irusuk:44'; // not dataset repo but http://epapers.bham.ac.uk/ (Eprints)
+        var irusuk_44 = api.irus.report(params);
+
+        // add all institutional IRUS data together, quick and dirty for now
+        $.when(irusuk_24, irusuk_44).then(function(irusuk_24_response, irusuk_44_response) {
+
+            var value = 0;
+            var reportItems = [];
+
+            // 24
+            reportItems = [];
+            reportItems = irusuk_24_response[0].ReportResponse.Report.Report.Customer.ReportItems;
+            if (reportItems.length) {
+                value += parseInt(irusuk_24_response[0].ReportResponse.Report.Report.Customer.ReportItems[0].ItemPerformance[0].Instance.Count);
+            }
+
+            // 44
+            reportItems = [];
+            reportItems = irusuk_44_response[0].ReportResponse.Report.Report.Customer.ReportItems;
+            if (reportItems.length) {
+                value += parseInt(irusuk_44_response[0].ReportResponse.Report.Report.Customer.ReportItems[0].ItemPerformance[0].Instance.Count);
+            }
+
+            $scope.$apply(function(){
+                $scope.irus_requests = numeral(value).format('0,0');
+            });
+        });
+        /************************ IRUS-UK END **********************************/
+
 
         api.uri.public('o_count_institutions').then(function(response) {
             //$scope.$apply(function(){
@@ -2155,6 +2205,7 @@ angular.module('dmaoApp').controller('aggregateStatisticCtrl', ['$scope', '$root
                 }
             });
         });
+
     }
 
     $scope.filterEventListener = $rootScope.$on("FilterEvent", function (event, message) {
@@ -2459,6 +2510,75 @@ angular.module('dmaoApp').controller('doiMintingCtrl', ['$scope', '$rootScope', 
         });
 
 
+
+    }
+
+    $scope.filterEventListener = $rootScope.$on("FilterEvent", function (event, message) {
+        update(message);
+    });
+
+    $scope.$on('$destroy', function () {
+        // Remove the listener
+        $scope.filterEventListener();
+    });
+
+
+}]);
+
+
+
+
+angular.module('dmaoApp').controller('irusRequestCtrl', ['$scope', '$rootScope', 'api', 'config', function($scope, $rootScope, api, config) {
+    // init
+    $scope.value = 0;
+    $scope.dois = {};
+
+    update({
+                startDate:      config.startDate,
+                endDate:        config.endDate
+            });
+
+    function update(message){
+        $scope.value = config.loadingText;
+
+        var isoStartDate =  message.startDate.substr(0,4) + '-' +
+                            message.startDate.substr(4,2) + '-' +
+                            message.startDate.substr(6,2);
+        var isoEndDate =    message.endDate.substr(0,4) + '-' +
+                            message.endDate.substr(4,2) + '-' +
+                            message.endDate.substr(6,2);
+
+
+        //fudge for now (there is no repo data for datasets for our demo institutions)
+        var repo_id = 'irusuk:24'; // not dataset repo but http://eprints.lancs.ac.uk/ (Eprints)
+        if (config.institutionId === 'birmingham'){
+            repo_id = 'irusuk:44';  // not dataset repo but http://epapers.bham.ac.uk/ (Eprints)
+        }
+        if (config.institutionId === 'york'){
+            repo_id = 'irusuk:1000'; // no repos at all at IRUS
+        }
+
+        var params = {
+            Report:               'RR1',
+            Release:              '4',
+            RequestorID:          'MyOrg',
+            BeginDate:            isoStartDate,
+            EndDate:              isoEndDate,
+            RepositoryIdentifier: repo_id,
+            Granularity:          'Totals'
+        };
+
+        api.irus.report(params).then(function(response) {
+            $scope.$apply(function(){ // why needed?
+                var reportItems = response.ReportResponse.Report.Report.Customer.ReportItems;
+                var value = 0;
+                if (reportItems.length) {
+                    value = response.ReportResponse.Report.Report.Customer.ReportItems[0].ItemPerformance[0].Instance.Count;
+                }
+                // only update if dirty
+                if (value !== $scope.value) $scope.value = numeral(value).format('0,0');
+            });
+        });
 
     }
 

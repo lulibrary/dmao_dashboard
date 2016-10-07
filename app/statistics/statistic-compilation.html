@@ -101,22 +101,22 @@
 					</statistic>
 				</div>
 
-				<div ng-controller="dataCtrl">
-					<statistic 	value="{{dataset_accesses.data}}"
-								  description="Data downloads"
-								  icon="cloud-download"
-								  colour="yellow-casablanca"
-								  link="#/data"
-							>
-					</statistic>
-					<statistic 	value="{{dataset_accesses.metadata}}"
-								  description="Metadata accesses"
-								  icon="cloud-download"
-								  colour="yellow-casablanca"
-								  link="#/metadata"
-							>
-					</statistic>
-				</div>
+				<!--<div ng-controller="dataCtrl">-->
+					<!--<statistic 	value="{{dataset_accesses.data}}"-->
+								  <!--description="Data downloads"-->
+								  <!--icon="cloud-download"-->
+								  <!--colour="yellow-casablanca"-->
+								  <!--link="#/data"-->
+							<!--&gt;-->
+					<!--</statistic>-->
+					<!--<statistic 	value="{{dataset_accesses.metadata}}"-->
+								  <!--description="Metadata accesses"-->
+								  <!--icon="cloud-download"-->
+								  <!--colour="yellow-casablanca"-->
+								  <!--link="#/metadata"-->
+							<!--&gt;-->
+					<!--</statistic>-->
+				<!--</div>-->
 			</div>
 	</div>
 </div>
@@ -138,6 +138,14 @@
 							  icon="link"
 							  colour="grey-cascade"
 						>
+				</aggregate>
+			</div>
+			<div ng-controller="irusRequestCtrl">
+				<aggregate 	value="{{value}}"
+							  description="IRUS-UK requests"
+							  icon="link"
+							  colour="grey-cascade"
+				>
 				</aggregate>
 			</div>
 		</div>
